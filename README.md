@@ -96,8 +96,15 @@ an isolated environment with [uv](https://docs.astral.sh/uv/) in
 `~/.local/share/umbrielmod`, and adds `umbrielmod` to `~/.local/bin` plus a
 desktop entry.
 
-Run it again to update. Options: `--install` (non-interactive), `--uninstall`,
-`--skip-deps`, `--branch <name>`.
+**Updates are automatic:** on start UmbrielMod checks GitHub in the background
+(one `git ls-remote`, no start-up delay). When a newer version exists it runs
+that version's installer itself and then offers a restart. Turn this off under
+*Menu → Update automatically*, check manually with *Menu → Check for updates*,
+or set `UMBRIELMOD_NO_UPDATE=1`. Only installations made by the installer update
+themselves; source checkouts never do.
+
+Installer options: `--install` (non-interactive), `--uninstall`, `--skip-deps`,
+`--branch <name>`.
 
 ### Requirements
 
