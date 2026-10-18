@@ -209,3 +209,12 @@ def windows() -> list[dict]:
         return list(json.loads(line).get("data", []))
     except ValueError:
         return []
+
+
+def config_replace(path: str) -> tuple[bool, str]:
+    """Make the running compositor load (and watch) another config file."""
+    try:
+        proc = _run("config-replace", path)
+    except UmbrielError as exc:
+        return False, str(exc)
+    return proc.returncode == 0, _ANSI_RE.sub("", proc.stdout + proc.stderr).strip()

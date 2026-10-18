@@ -72,6 +72,23 @@ def _kick_pool():
     threading.Thread(target=run, daemon=True).start()
 
 
+def _with_header(content: Gtk.Widget, end: Gtk.Widget | None = None) -> Gtk.Widget:
+    """Toolbar with its own header bar so pushed pages get a back button."""
+    tv = Adw.ToolbarView(content=content)
+    header = Adw.HeaderBar(show_start_title_buttons=False, show_end_title_buttons=False)
+    if end is not None:
+        header.pack_end(end)
+    tv.add_top_bar(header)
+    return tv
+
+
+def _preview_button(callback) -> Gtk.Button:
+    btn = Gtk.Button(css_classes=["suggested-action"])
+    btn.set_child(Adw.ButtonContent(icon_name="media-playback-start-symbolic", label=_("Live preview")))
+    btn.connect("clicked", lambda *_: callback())
+    return btn
+
+
 def _active_selections(ctx: AppContext, name: str) -> list[str]:
     return [".".join(str(p) for p in path) for path in shaders.references(ctx.cfg, {name})]
 
@@ -112,6 +129,11 @@ class ShadersPage(Gtk.Box):
             page.refresh()
 
     # ----------------------------------------------------------------- operations
+
+    def preview(self, effect: shaders.Effect):
+        from .preview_window import PreviewWindow
+
+        PreviewWindow.show(self.ctx, effect, self.window)
 
     def show_detail(self, effect: shaders.Effect):
         self.nav.push(DetailPage(self, effect))
@@ -170,17 +192,6 @@ class ShadersPage(Gtk.Box):
 
         dlg.connect("response", resp)
         dlg.present(self.window)
-
-    def live(self, kind: str, name: str | None):
-        action = f"effect-{kind}-set:{name}" if name else f"effect-{kind}-reset"
-        ok, msg = umbriel.msg(action)
-        target = {"border": _("the focused window"), "window": _("the focused window"),
-                  "screen": _("the preferred output"), "cursor": _("the cursor")}[kind]
-        if ok:
-            self.ctx.toast(_("Live: {name} on {target} (not saved)").format(name=name, target=target)
-                           if name else _("Live test reset"))
-        else:
-            self.ctx.toast(_("Error: {message}").format(message=msg))
 
 
 # =========================================================================== catalog
@@ -286,9 +297,15 @@ class DetailPage(Adw.NavigationPage):
         super().__init__(title=effect.title)
         self.page, self.effect = page, effect
         self.body = Adw.PreferencesPage()
-        self.set_child(self.body)
+        self.set_child(_with_header(self.body, _preview_button(lambda: page.preview(self._preview_effect()))))
         self._groups = []
         self.refresh()
+
+    def _preview_effect(self) -> shaders.Effect:
+        """Prefer the installed copy (it may be tuned), else the catalogue files."""
+        if shaders.is_installed(self.effect):
+            return shaders.load_effect(shaders.install_root(), shaders.installed_dir(self.effect))
+        return self.effect
 
     def refresh(self):
         for g in self._groups:
@@ -463,9 +480,8 @@ class InstalledView(Adw.PreferencesPage):
         row = Adw.ActionRow(title=esc(title), subtitle=esc(sub), activatable=tf is not None)
         if active:
             row.add_prefix(Gtk.Image(icon_name="media-playback-start-symbolic", tooltip_text=_("Active")))
-        if eff.kind in shaders.SLOT_KINDS and tf is not None and not ctx.cfg.dirty:
-            row.add_suffix(icon_button("media-playback-start-symbolic", _("Live test (without saving)"),
-                                       lambda: self.page.live(eff.kind, eff.name)))
+        row.add_suffix(icon_button("media-playback-start-symbolic", _("Live preview"),
+                                   lambda: self.page.preview(eff)))
         if tf is None:
             inc = Gtk.Button(label=_("Include"), valign=Gtk.Align.CENTER)
 
@@ -498,8 +514,8 @@ class PresetPage(Adw.NavigationPage):
         super().__init__(title=name)
         self.page, self.tf, self.name, self.effect = page, tf, name, effect
         self.body = Adw.PreferencesPage()
-        tv = Adw.ToolbarView(content=self.body)
-        self.set_child(tv)
+        extra = _preview_button(lambda: page.preview(effect)) if effect is not None else None
+        self.set_child(_with_header(self.body, extra))
         self._groups = []
         self.refresh()
 
@@ -534,16 +550,14 @@ class PresetPage(Adw.NavigationPage):
 
             sw.connect("notify::active", toggled)
             sel.add(sw)
-            apply_btn = Gtk.Button(label=_("Apply"), valign=Gtk.Align.CENTER)
-            reset_btn = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER)
-            live = Adw.ActionRow(title=_("Live test"),
-                                 subtitle=_("Applies the saved preset right away without changing the config."))
-            apply_btn.connect("clicked", lambda *_: self.page.live(kind, self.name))
-            reset_btn.connect("clicked", lambda *_: self.page.live(kind, None))
-            live.add_suffix(apply_btn)
-            live.add_suffix(reset_btn)
-            live.add_suffix(doc_button(ctx, section_url("effects", "Runtime selection"), _("Live test")))
-            sel.add(live)
+            if self.effect is not None:
+                live = Adw.ActionRow(title=_("Live preview"),
+                                     subtitle=_("Opens a window on which Umbriel renders this effect – "
+                                                "nothing in your config changes."))
+                btn = Gtk.Button(label=_("Open"), valign=Gtk.Align.CENTER)
+                btn.connect("clicked", lambda *_: self.page.preview(self.effect))
+                live.add_suffix(btn)
+                sel.add(live)
         elif kind == "animation":
             for event in self._animation_events():
                 path = ("animation", event, "effect")

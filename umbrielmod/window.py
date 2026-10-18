@@ -9,14 +9,14 @@ from typing import Callable
 
 from gi.repository import Adw, Gio, GLib, Gtk
 
-from . import __version__, i18n, settings, theme, updater
+from . import __version__, i18n, preview, settings, theme, updater
 from . import docs as docsmod
 from .context import AppContext
 from .i18n import N_, _
 # Import every page up front: a self-update may replace the sources while the
 # app runs, and lazily imported modules would then mix versions.
 from .pages import keybinds as _keybinds, outputs as _outputs, raw as _raw  # noqa: F401
-from .pages import rules as _rules, shaders as _shaders_page  # noqa: F401
+from .pages import preview_window as _preview_window, rules as _rules, shaders as _shaders_page  # noqa: F401
 from .pages.schema_page import SchemaPage
 from .widgets import doc_button, esc
 
@@ -78,6 +78,8 @@ class MainWindow(Adw.ApplicationWindow):
         self.toasts.set_child(split)
         self.set_content(self.toasts)
         self._install_actions(app)
+        if preview.recover(ctx.cfg):  # a preview survived a crash: back to the real config
+            GLib.idle_add(lambda: self.toast(_("A leftover preview configuration was reset")) and False)
         self._watch_files()
         self.connect("close-request", self._on_close)
         self.sidebar.select_row(self.sidebar.get_row_at_index(0))
