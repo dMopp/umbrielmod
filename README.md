@@ -7,6 +7,8 @@
   [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
   [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue?logo=python&logoColor=white)](https://python.org)
   [![GTK4](https://img.shields.io/badge/GTK-4%20%2B%20libadwaita-4A90D9?logo=gnome&logoColor=white)](https://gtk.org)
+  [![Release](https://img.shields.io/github/v/release/dMopp/umbrielmod)](https://github.com/dMopp/umbrielmod/releases)
+  [![CI](https://github.com/dMopp/umbrielmod/actions/workflows/ci.yml/badge.svg)](https://github.com/dMopp/umbrielmod/actions/workflows/ci.yml)
 </div>
 
 Umbriel is configured with a single TOML file. UmbrielMod puts a native
@@ -113,20 +115,24 @@ curl -sSL https://raw.githubusercontent.com/dMopp/umbrielmod/main/install.sh | b
 ```
 
 The installer checks for Python 3, PyGObject, GTK 4, libadwaita and git (and
-offers to install them with apt, pacman, dnf, zypper, emerge or xbps), creates
-an isolated environment with [uv](https://docs.astral.sh/uv/) in
-`~/.local/share/umbrielmod`, and adds `umbrielmod` to `~/.local/bin` plus a
-desktop entry.
+offers to install them with apt, pacman, dnf, zypper, emerge or xbps), installs
+the **latest release** into an isolated environment made with
+[uv](https://docs.astral.sh/uv/) in `~/.local/share/umbrielmod`, and adds
+`umbrielmod` to `~/.local/bin` plus a desktop entry.
 
-**Updates are automatic:** on start UmbrielMod checks GitHub in the background
-(one `git ls-remote`, no start-up delay). When a newer version exists it runs
-that version's installer itself and then offers a restart. Turn this off under
+**Updates are automatic:** on start (and every six hours) UmbrielMod checks
+GitHub in the background – one `git ls-remote`, no start-up delay. When a newer
+[release](https://github.com/dMopp/umbrielmod/releases) exists it runs that
+version's installer itself and then offers a restart. Turn this off under
 *Menu → Update automatically*, check manually with *Menu → Check for updates*,
 or set `UMBRIELMOD_NO_UPDATE=1`. Only installations made by the installer update
 themselves; source checkouts never do.
 
 Installer options: `--install` (non-interactive), `--uninstall`, `--skip-deps`,
-`--branch <name>`.
+`--version X.Y.Z` (a specific release), `--branch main` (follow the development
+branch instead of releases – updates then track every commit).
+
+What changed between versions: [CHANGELOG.md](CHANGELOG.md).
 
 ### Requirements
 
@@ -182,6 +188,11 @@ uv run python -m umbrielmod.i18n extract   # update umbrielmod.pot
 uv run python -m umbrielmod.i18n update    # merge into every shipped .po
 uv run python -m umbrielmod.i18n stats     # coverage
 ```
+
+## Contributing
+
+Pull requests target `main`; see [CONTRIBUTING.md](CONTRIBUTING.md) for the
+development setup, the changelog convention and how releases are made.
 
 ## Licence
 

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "umbrielmod"
-version = "0.1.0"
+dynamic = ["version"]
 description = "GTK4/libadwaita configuration editor for the Umbriel Wayland compositor"
 readme = "README.md"
 license = "MIT"
@@ -17,6 +17,9 @@ dependencies = [
 
 [project.scripts]
 umbrielmod = "umbrielmod.__main__:main"
+
+[tool.hatch.version]
+path = "umbrielmod/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["umbrielmod"]

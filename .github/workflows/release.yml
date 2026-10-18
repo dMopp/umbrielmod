@@ -1,0 +1,47 @@
+name: Release
+
+# Creates a GitHub release for every vX.Y.Z tag that has a CHANGELOG section.
+# Runs on tag pushes and on pushes to main, so releases for tags whose commit
+# predates this workflow (e.g. v0.1.0) are created as well. Idempotent.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: releases
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Publish missing releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git fetch --quiet origin main
+          git show origin/main:CHANGELOG.md > changelog.md
+          versions=$(sed -n 's/^## \[\([0-9][0-9.]*\)\].*/\1/p' changelog.md | sort -V)
+          latest=$(git tag --list 'v*' | sed 's/^v//' | sort -V | tail -n 1)
+          for v in $versions; do
+            tag="v$v"
+            git rev-parse -q --verify "refs/tags/$tag" >/dev/null || continue
+            if gh release view "$tag" >/dev/null 2>&1; then continue; fi
+            code=$(git show "$tag:umbrielmod/__init__.py" | sed -n 's/^__version__ = "\(.*\)"/\1/p')
+            if [ "$code" != "$v" ]; then
+              echo "::error::$tag contains version $code"; exit 1
+            fi
+            awk -v v="$v" 'index($0, "## [" v "]") == 1 {f=1; next} /^## \[/ {f=0} f' changelog.md > notes.md
+            [ "$v" = "$latest" ] && flag="--latest" || flag="--latest=false"
+            gh release create "$tag" --verify-tag --title "UmbrielMod $tag" --notes-file notes.md "$flag" \
+              || gh release view "$tag" >/dev/null
+            echo "published $tag"
+          done

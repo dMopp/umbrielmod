@@ -1,11 +1,18 @@
 """Self-update for installations made by install.sh.
 
-The launcher written by the installer exports ``UMBRIELMOD_MANAGED=1`` (plus
-the branch and its own path). Only then does UmbrielMod look for updates:
-``git ls-remote`` against the install's origin, and – if the branch moved –
-it runs the *new* version's ``install.sh --install --skip-deps``, exactly as a
-user re-running the curl command would. The running app keeps working (all
-modules are already imported); a restart picks up the new version.
+The launcher written by the installer exports ``UMBRIELMOD_MANAGED=1`` plus the
+update channel and its own path. Only then does UmbrielMod look for updates
+with one ``git ls-remote`` against the install's origin:
+
+* ``release`` channel (default): the newest ``vX.Y.Z`` tag is compared with
+  the installed version;
+* ``branch`` channel (``install.sh --branch main``): the branch head is
+  compared with the installed commit.
+
+When something newer exists it runs the *new* version's
+``install.sh --install --skip-deps``, exactly as re-running the curl command
+would. The running app keeps working (all modules are already imported); a
+restart picks up the new version.
 """
 
 from __future__ import annotations
@@ -22,13 +29,37 @@ _ENV = dict(os.environ, GIT_TERMINAL_PROMPT="0", LC_ALL="C")
 
 @dataclass
 class UpdateInfo:
-    branch: str
-    local: str
-    remote: str
+    channel: str  # "release" or "branch"
+    ref: str  # tag (vX.Y.Z) or branch name to install
+    local: str  # installed version or commit
+    remote: str  # newest version or commit
 
     @property
     def available(self) -> bool:
-        return bool(self.remote) and self.remote != self.local
+        if not self.remote:
+            return False
+        if self.channel == "release":
+            return parse_version(self.remote) > parse_version(self.local)
+        return self.remote != self.local
+
+    @property
+    def branch(self) -> str:  # backwards compatible name
+        return self.ref
+
+
+def parse_version(text: str) -> tuple[int, ...]:
+    parts = []
+    for p in text.lstrip("v").split("."):
+        digits = "".join(c for c in p if c.isdigit())
+        parts.append(int(digits) if digits else 0)
+    return tuple(parts)
+
+
+def channel() -> str:
+    """Launchers from before releases existed set only a branch (always main by
+    default); they move to the release channel."""
+    value = os.environ.get("UMBRIELMOD_CHANNEL", "")
+    return value if value in ("release", "branch") else "release"
 
 
 def is_managed(root: Path = ROOT) -> bool:
@@ -47,10 +78,30 @@ def branch(root: Path = ROOT) -> str:
     return out if out and out != "HEAD" else "main"
 
 
+def latest_release(root: Path = ROOT, timeout: float = 10) -> str | None:
+    """Newest ``X.Y.Z`` from the origin's ``vX.Y.Z`` tags ("" when none)."""
+    proc = _git(root, "ls-remote", "--tags", "--refs", "origin", "v*", timeout=timeout)
+    if proc.returncode != 0:
+        return None
+    versions = []
+    for line in proc.stdout.splitlines():
+        tag = line.rsplit("refs/tags/", 1)[-1]
+        if tag.startswith("v") and tag[1:2].isdigit():
+            versions.append(tag[1:])
+    return max(versions, key=parse_version) if versions else ""
+
+
 def check(root: Path = ROOT, timeout: float = 10) -> UpdateInfo | None:
-    """Compare the installed commit with the remote branch (one network call).
+    """One network call: is a newer release (or branch commit) available?
     Returns None when the check could not be done (offline, no git …)."""
     try:
+        if channel() == "release":
+            from . import __version__
+
+            latest = latest_release(root, timeout)
+            if latest is None:
+                return None
+            return UpdateInfo("release", f"v{latest}" if latest else "", __version__, latest)
         br = branch(root)
         local = _git(root, "rev-parse", "HEAD").stdout.strip()
         proc = _git(root, "ls-remote", "origin", f"refs/heads/{br}", timeout=timeout)
@@ -59,18 +110,23 @@ def check(root: Path = ROOT, timeout: float = 10) -> UpdateInfo | None:
     if proc.returncode != 0 or not local:
         return None
     remote = proc.stdout.split()[0] if proc.stdout.strip() else ""
-    return UpdateInfo(br, local, remote)
+    return UpdateInfo("branch", br, local, remote)
 
 
 def apply(info: UpdateInfo, root: Path = ROOT) -> tuple[bool, str]:
     """Fetch the new version and run its installer. Blocking; returns (ok, log)."""
     log: list[str] = []
     try:
-        fetch = _git(root, "fetch", "--depth", "1", "origin", info.branch, timeout=300)
+        if info.channel == "release":
+            fetch = _git(root, "fetch", "--depth", "1", "--force", "origin", "tag", info.ref, timeout=300)
+            script_ref = info.ref
+        else:
+            fetch = _git(root, "fetch", "--depth", "1", "origin", info.ref, timeout=300)
+            script_ref = "FETCH_HEAD"
         log.append(fetch.stdout + fetch.stderr)
         if fetch.returncode != 0:
             return False, "".join(log).strip()
-        script = _git(root, "show", "FETCH_HEAD:install.sh").stdout
+        script = _git(root, "show", f"{script_ref}:install.sh").stdout
         if not script.startswith("#!"):
             return False, "install.sh not found in the new version"
         url = _git(root, "remote", "get-url", "origin").stdout.strip()
@@ -79,8 +135,9 @@ def apply(info: UpdateInfo, root: Path = ROOT) -> tuple[bool, str]:
             path = fh.name
         try:
             env = dict(_ENV, UMBRIELMOD_REPO=url, LC_ALL=os.environ.get("LC_ALL", ""))
+            target = ["--version", info.ref] if info.channel == "release" else ["--branch", info.ref]
             proc = subprocess.run(
-                ["bash", path, "--install", "--skip-deps", "--branch", info.branch],
+                ["bash", path, "--install", "--skip-deps", *target],
                 capture_output=True, text=True, env=env, timeout=900,
             )
         finally:
@@ -93,7 +150,10 @@ def apply(info: UpdateInfo, root: Path = ROOT) -> tuple[bool, str]:
 
 
 def summary(root: Path = ROOT) -> str:
-    """Subject of the installed commit, e.g. after an update."""
+    """The installed version: release tag if HEAD is one, else the commit."""
+    tag = _git(root, "describe", "--tags", "--exact-match").stdout.strip()
+    if tag:
+        return tag
     return _git(root, "log", "-1", "--format=%h %s").stdout.strip()
 
 
