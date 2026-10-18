@@ -17,6 +17,13 @@ every edit.
 Available in **English** and **German**; more languages can be added without
 touching the code (see [Translations](#translations)).
 
+<p align="center">
+  <img src="media/live-preview.gif" width="680" alt="Live preview: Umbriel renders a border effect, a window effect and a window animation on a preview window">
+  <br>
+  <sub><b>Live preview</b> – the effect is rendered by Umbriel itself on a preview window, nothing in your config changes
+  (<a href="media/live-preview.webm">WebM</a>)</sub>
+</p>
+
 ## Every option, straight from Umbriel
 
 UmbrielMod does not hard-code a list of settings. At start-up it asks the
@@ -46,6 +53,17 @@ UmbrielMod follows the [Noctalia](https://github.com/noctalia-dev/noctalia) shel
 
 Without Noctalia the regular libadwaita look is used.
 
+## Screenshots
+
+| | |
+| --- | --- |
+| ![Shader catalogue](media/shader-catalog.png) | ![Shader tuning](media/shader-tuning.png) |
+| **Shader catalogue** – 120 community effects with previews, install with one click | **Tune a preset** – only the keys Umbriel supports, plus live preview |
+| ![Shader constants](media/shader-tuning-constants.png) | ![Keybind editor](media/keybind-dialog.png) |
+| **Shader controls** – the GLSL constants the collection documents for fine-tuning | **Keybinds** – key capture, action picker from `umbriel msg --help`, conflict detection |
+| ![Window rules](media/window-rules.png) | ![Outputs](media/outputs.png) |
+| **Window rules** – only the keys a rule sets, more from a searchable list | **Outputs** – arrangement, modes and every output option, each with a (?) link to the docs |
+
 ## Features
 
 - **Outputs** – drag-and-drop arrangement with edge snapping, modes detected via
@@ -67,8 +85,12 @@ Without Noctalia the regular libadwaita look is used.
   - top-level `#define`/`const` values in the GLSL source (the collection's
     documented way to fine-tune), with colour pickers for colour vectors and
     one-click restore of the original shader,
-  - **live preview** through `umbriel msg effect-<slot>-set:<name>` without
-    touching the config.
+  - **live preview** in its own window, rendered by Umbriel: border and window
+    effects on the preview window only, screen and cursor effects while it is
+    open, animations played on demand (open/close a window, switch workspace,
+    move a window). Effects that are not installed yet are loaded through a
+    temporary copy of your saved config, which is restored when the preview
+    closes.
 - **Raw editor** for any loaded file, **undo/redo**, and a backup browser.
 
 ## Configuration safety
@@ -133,6 +155,8 @@ uv run python -m umbrielmod.docs /path/to/umbriel -v
 
 Translations are plain gettext `.po` files, read directly at runtime (no
 compile step), so they can be edited with Poedit, Weblate or any text editor.
+**[docs/TRANSLATING.md](docs/TRANSLATING.md)** walks through adding a language
+step by step.
 
 | Location | Purpose |
 | --- | --- |
