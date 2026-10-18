@@ -118,9 +118,9 @@ msgstr "trotz Inhibit"
 #: umbrielmod/pages/keybinds.py:211
 #: umbrielmod/pages/shaders.py:174
 #: umbrielmod/pages/shaders.py:402
-#: umbrielmod/window.py:454
-#: umbrielmod/window.py:284
-#: umbrielmod/window.py:352
+#: umbrielmod/window.py:476
+#: umbrielmod/window.py:289
+#: umbrielmod/window.py:374
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -894,7 +894,7 @@ msgid "Catalogue updated ({revision})"
 msgstr "Katalog aktualisiert ({revision})"
 
 #: umbrielmod/pages/shaders.py:290
-#: umbrielmod/window.py:308
+#: umbrielmod/window.py:313
 msgid "Error: {message}"
 msgstr "Fehler: {message}"
 
@@ -1041,150 +1041,154 @@ msgstr "Ausgaben"
 msgid "Raw editor"
 msgstr "Roh-Editor"
 
-#: umbrielmod/window.py:109
+#: umbrielmod/window.py:114
 msgid "Reload"
 msgstr "Neu laden"
 
-#: umbrielmod/window.py:110
+#: umbrielmod/window.py:115
 msgid "Update schema and descriptions"
 msgstr "Schema und Beschreibungen aktualisieren"
 
-#: umbrielmod/window.py:112
+#: umbrielmod/window.py:117
 msgid "System default"
 msgstr "Systemvorgabe"
 
-#: umbrielmod/window.py:115
+#: umbrielmod/window.py:120
 msgid "Language"
 msgstr "Sprache"
 
-#: umbrielmod/window.py:121
+#: umbrielmod/window.py:126
 msgid "About UmbrielMod"
 msgstr "Über UmbrielMod"
 
-#: umbrielmod/window.py:296
+#: umbrielmod/window.py:301
 msgid "Fetching the Umbriel documentation for the installed version…"
 msgstr "Lade Umbriel-Dokumentation für die installierte Version…"
 
-#: umbrielmod/window.py:455
-#: umbrielmod/window.py:139
-#: umbrielmod/window.py:285
-#: umbrielmod/window.py:353
+#: umbrielmod/window.py:477
+#: umbrielmod/window.py:144
+#: umbrielmod/window.py:290
+#: umbrielmod/window.py:375
 msgid "Discard"
 msgstr "Verwerfen"
 
-#: umbrielmod/window.py:456
-#: umbrielmod/window.py:137
-#: umbrielmod/window.py:354
+#: umbrielmod/window.py:478
+#: umbrielmod/window.py:142
+#: umbrielmod/window.py:376
 msgid "Save"
 msgstr "Speichern"
 
-#: umbrielmod/window.py:118
+#: umbrielmod/window.py:123
 msgid "Check for updates"
 msgstr "Nach Updates suchen"
 
-#: umbrielmod/window.py:119
+#: umbrielmod/window.py:124
 msgid "Update automatically"
 msgstr "Automatisch aktualisieren"
 
-#: umbrielmod/window.py:133
+#: umbrielmod/window.py:138
 msgid "Undo (Ctrl+Z)"
 msgstr "Rückgängig (Strg+Z)"
 
-#: umbrielmod/window.py:134
+#: umbrielmod/window.py:139
 msgid "Redo (Ctrl+Shift+Z)"
 msgstr "Wiederholen (Strg+Umschalt+Z)"
 
-#: umbrielmod/window.py:138
+#: umbrielmod/window.py:143
 msgid "Validate and save (Ctrl+S) – Umbriel reloads automatically"
 msgstr "Prüfen und speichern (Strg+S) – Umbriel lädt automatisch neu"
 
-#: umbrielmod/window.py:145
+#: umbrielmod/window.py:150
 msgid "The configuration was changed outside UmbrielMod."
 msgstr "Die Konfiguration wurde außerhalb von UmbrielMod geändert."
 
-#: umbrielmod/window.py:146
+#: umbrielmod/window.py:151
 msgid "Reload (discards changes)"
 msgstr "Neu laden (verwirft Änderungen)"
 
-#: umbrielmod/window.py:149
+#: umbrielmod/window.py:154
 msgid "Restart now"
 msgstr "Jetzt neu starten"
 
-#: umbrielmod/window.py:273
+#: umbrielmod/window.py:278
 msgid "Saved – Umbriel applies the changes automatically"
 msgstr "Gespeichert – Umbriel übernimmt die Änderungen automatisch"
 
-#: umbrielmod/window.py:276
+#: umbrielmod/window.py:281
 msgid "Invalid configuration – not saved"
 msgstr "Konfiguration ungültig – nicht gespeichert"
 
-#: umbrielmod/window.py:322
+#: umbrielmod/window.py:344
 msgid "Checking for updates…"
 msgstr "Suche nach Updates…"
 
-#: umbrielmod/window.py:390
+#: umbrielmod/window.py:412
 msgid "Graphical configuration for the Umbriel Wayland compositor"
 msgstr "Grafische Konfiguration für den Umbriel-Wayland-Compositor"
 
-#: umbrielmod/window.py:446
+#: umbrielmod/window.py:468
 msgid "The configuration changed on disk and was reloaded"
 msgstr "Die Konfiguration wurde extern geändert und neu geladen"
 
-#: umbrielmod/window.py:452
-#: umbrielmod/window.py:350
+#: umbrielmod/window.py:474
+#: umbrielmod/window.py:372
 msgid "Unsaved changes"
 msgstr "Ungespeicherte Änderungen"
 
-#: umbrielmod/window.py:453
+#: umbrielmod/window.py:475
 msgid "Save the changes before closing?"
 msgstr "Sollen die Änderungen vor dem Beenden gespeichert werden?"
 
-#: umbrielmod/window.py:122
+#: umbrielmod/window.py:127
 msgid "Menu"
 msgstr "Menü"
 
-#: umbrielmod/window.py:282
+#: umbrielmod/window.py:287
 msgid "Discard unsaved changes?"
 msgstr "Ungespeicherte Änderungen verwerfen?"
 
-#: umbrielmod/window.py:283
+#: umbrielmod/window.py:288
 msgid "The configuration will be reloaded from disk."
 msgstr "Die Konfiguration wird von der Festplatte neu geladen."
 
-#: umbrielmod/window.py:339
+#: umbrielmod/window.py:361
 msgid "Update failed"
 msgstr "Update fehlgeschlagen"
 
-#: umbrielmod/window.py:351
+#: umbrielmod/window.py:373
 msgid "Save the changes before restarting?"
 msgstr "Sollen die Änderungen vor dem Neustart gespeichert werden?"
 
-#: umbrielmod/window.py:391
-#: umbrielmod/window.py:391
+#: umbrielmod/window.py:413
+#: umbrielmod/window.py:413
 msgid "translator-credits"
 msgstr "Daniel Quolke"
 
-#: umbrielmod/window.py:256
+#: umbrielmod/window.py:261
 msgid "Unsaved: {files}"
 msgstr "Ungespeichert: {files}"
 
-#: umbrielmod/window.py:344
+#: umbrielmod/window.py:366
 msgid "UmbrielMod was updated ({version}). Restart to use it."
 msgstr "UmbrielMod wurde aktualisiert ({version}). Zum Verwenden neu starten."
 
-#: umbrielmod/window.py:82
+#: umbrielmod/window.py:84
 msgid "A leftover preview configuration was reset"
 msgstr "Eine übrig gebliebene Vorschau-Konfiguration wurde zurückgesetzt"
 
-#: umbrielmod/window.py:330
+#: umbrielmod/window.py:352
 msgid "Installing an UmbrielMod update…"
 msgstr "Installiere ein UmbrielMod-Update…"
 
-#: umbrielmod/window.py:328
+#: umbrielmod/window.py:338
+msgid "Updated to {version}"
+msgstr "Aktualisiert auf {version}"
+
+#: umbrielmod/window.py:350
 msgid "Could not check for updates"
 msgstr "Konnte nicht nach Updates suchen"
 
-#: umbrielmod/window.py:328
+#: umbrielmod/window.py:350
 msgid "UmbrielMod is up to date"
 msgstr "UmbrielMod ist aktuell"
 
@@ -2272,30 +2276,3 @@ msgstr ""
 #: umbriel-docs:workspaces-overview
 msgid "The overview displays every workspace and lets you navigate, focus, close, and move windows."
 msgstr ""
-
-#~ msgid "the focused window"
-#~ msgstr "das fokussierte Fenster"
-
-#~ msgid "the preferred output"
-#~ msgstr "den bevorzugten Bildschirm"
-
-#~ msgid "the cursor"
-#~ msgstr "den Cursor"
-
-#~ msgid "Live test reset"
-#~ msgstr "Live-Test zurückgesetzt"
-
-#~ msgid "Live test (without saving)"
-#~ msgstr "Live testen (ohne zu speichern)"
-
-#~ msgid "Reset"
-#~ msgstr "Zurücksetzen"
-
-#~ msgid "Live test"
-#~ msgstr "Live testen"
-
-#~ msgid "Applies the saved preset right away without changing the config."
-#~ msgstr "Wendet das gespeicherte Preset sofort an, ohne die Config zu ändern."
-
-#~ msgid "Live: {name} on {target} (not saved)"
-#~ msgstr "Live: {name} auf {target} (nicht gespeichert)"

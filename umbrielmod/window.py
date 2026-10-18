@@ -39,6 +39,8 @@ PAGES: list[tuple[str, str, str, object, str]] = [
     ("backups", N_("Backups"), "history", "backups", ""),
 ]
 
+UPDATE_INTERVAL = 6 * 60 * 60  # seconds between background update checks
+
 CUSTOM_SECTIONS = {"output", "keybinds", "effects", "window_rule"}
 
 
@@ -89,6 +91,9 @@ class MainWindow(Adw.ApplicationWindow):
         elif not MainWindow._update_checked and self._auto_update_enabled():
             MainWindow._update_checked = True
             GLib.timeout_add_seconds(2, lambda: self.check_updates(quiet=True) and False)
+            # long-running sessions: look again every few hours
+            GLib.timeout_add_seconds(UPDATE_INTERVAL, self._periodic_update_check)
+        self._announce_new_version()
 
     # ----------------------------------------------------------------- layout
 
@@ -314,6 +319,23 @@ class MainWindow(Adw.ApplicationWindow):
     def _auto_update_enabled(self) -> bool:
         return (updater.is_managed() and settings.get("auto_update", True) is not False
                 and os.environ.get("UMBRIELMOD_NO_UPDATE") != "1")
+
+    def _periodic_update_check(self):
+        if MainWindow._update_installed or not self._auto_update_enabled():
+            return not MainWindow._update_installed
+        self.check_updates(quiet=True)
+        return True
+
+    def _announce_new_version(self):
+        """After restarting into a new version, say so once."""
+        if not updater.is_managed():
+            return
+        current = updater.summary()
+        last = settings.get("last_version")
+        if current and current != last:
+            settings.set("last_version", current)
+            if last:
+                GLib.idle_add(lambda: self.toast(_("Updated to {version}").format(version=current)) and False)
 
     def check_updates(self, quiet: bool):
         if not updater.is_managed():
