@@ -63,7 +63,9 @@ uninstall() {
   step "Removing UmbrielMod"
   rm -rf "$APP_DIR"
   rm -f "$BIN_DIR/umbrielmod" "$DESKTOP_DIR/io.github.umbrielmod.desktop" "$ICON_DIR/io.github.umbrielmod.svg"
-  have update-desktop-database && update-desktop-database "$DESKTOP_DIR" >/dev/null 2>&1 || true
+  if have update-desktop-database; then
+    update-desktop-database "$DESKTOP_DIR" >/dev/null 2>&1 || true
+  fi
   success "Removed. Your Umbriel configuration and backups (~/.local/state/umbrielmod) were left untouched."
 }
 
@@ -195,8 +197,12 @@ EOF
 chmod +x "$BIN_DIR/umbrielmod"
 install -m 644 "$APP_DIR/data/io.github.umbrielmod.svg" "$ICON_DIR/io.github.umbrielmod.svg"
 sed "s|^Exec=.*|Exec=$BIN_DIR/umbrielmod|" "$APP_DIR/data/io.github.umbrielmod.desktop" > "$DESKTOP_DIR/io.github.umbrielmod.desktop"
-have update-desktop-database && update-desktop-database "$DESKTOP_DIR" >/dev/null 2>&1 || true
-have gtk-update-icon-cache && gtk-update-icon-cache -q "$PREFIX/icons/hicolor" >/dev/null 2>&1 || true
+if have update-desktop-database; then
+  update-desktop-database "$DESKTOP_DIR" >/dev/null 2>&1 || true
+fi
+if have gtk-update-icon-cache; then
+  gtk-update-icon-cache -q "$PREFIX/icons/hicolor" >/dev/null 2>&1 || true
+fi
 success "Command: $BIN_DIR/umbrielmod"
 case ":$PATH:" in
   *":$BIN_DIR:"*) ;;
