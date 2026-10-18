@@ -455,6 +455,22 @@ def pool_names(cfg: cfgmod.Config) -> dict[str, str]:
     return out
 
 
+PALETTE_KEYS = ("accent_primary", "accent_secondary", "warning", "error")
+
+
+def palette_colors(cfg: cfgmod.Config, schema) -> list[tuple[str, str]]:
+    """The four colours Umbriel passes to palette presets, in shader order
+    (``umbriel_palette_at`` wraps through them)."""
+    out = []
+    for key in PALETTE_KEYS:
+        value = cfg.effective(("colors", key))
+        if value is None:
+            opt = schema.options.get(f"colors.{key}")
+            value = opt.default if opt is not None else "#000000ff"
+        out.append((key, value))
+    return out
+
+
 def suggestions_for(cfg: cfgmod.Config, kind: str | None, *, pools: bool = True, off: bool = False) -> list[str]:
     names = [n for n, k in preset_names(cfg).items() if kind is None or k == kind]
     if pools:

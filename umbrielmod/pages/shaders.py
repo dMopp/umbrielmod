@@ -13,7 +13,7 @@ from ..config import TomlFile, toml_literal
 from ..context import AppContext
 from ..docs import DOCS_SITE, section_url
 from ..i18n import N_, _
-from ..widgets import AnimatedPicture, doc_button, esc, icon_button, option_doc_url, option_row, rgba_from_string, rgba_to_string
+from ..widgets import AnimatedPicture, color_swatches, doc_button, esc, icon_button, option_doc_url, option_row, rgba_from_string, rgba_to_string
 from .schema_page import MapGroup, leaf_groups
 
 ANIMATION_EVENTS_LABELS = {
@@ -611,6 +611,8 @@ class PresetPage(Adw.NavigationPage):
             if opt is None:
                 continue
             grp.add(option_row(ctx, opt, base + (key,), self.tf))
+            if key == "palette":
+                grp.add(self._palette_row())
         if kind == "border" and self._ring_padding() is not None:
             sync = Adw.ButtonRow(title=_("Match ring_padding in the shader to padding"))
             sync.connect("activated", lambda *_: self._sync_padding())
@@ -646,6 +648,18 @@ class PresetPage(Adw.NavigationPage):
         # ---- GLSL constants
         for shader_path in self._shader_paths():
             self._push(self._constants_group(shader_path))
+
+    def _palette_row(self) -> Adw.ActionRow:
+        ctx = self.page.ctx
+        row = Adw.ActionRow(
+            title=_("Theme colours for this effect"),
+            subtitle=esc(_("With “Palette” on, the shader recolours its artwork with these colours from [colors] "
+                           "(accent_primary, accent_secondary, warning, error). Off shows the shader's original "
+                           "colours – as in the catalogue previews.")),
+        )
+        row.set_subtitle_lines(4)
+        row.add_suffix(color_swatches(shaders.palette_colors(ctx.cfg, ctx.schema)))
+        return row
 
     def _animation_events(self) -> list[str]:
         out = []

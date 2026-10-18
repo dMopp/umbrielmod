@@ -48,6 +48,8 @@ class PreviewSession:
     def __init__(self, cfg: cfgmod.Config, effect: shaders.Effect):
         self.cfg = cfg
         self.effect = effect
+        self.palette: bool | None = None  # None: as configured; else override `palette`
+        self.windows: list[tuple[str, int, int]] = []
         self.replaced = False
         self.applied: list[str] = []  # reset actions to run on stop
 
@@ -63,14 +65,27 @@ class PreviewSession:
         return [p[1] for p, _v in shaders.activation_changes(self.effect)
                 if len(p) == 3 and p[0] == "animation" and p[2] == "effect"]
 
-    def start(self, windows: list[tuple[str, int, int]] = ()) -> tuple[bool, str]:
+    def start(self, windows: list[tuple[str, int, int]] | None = None) -> tuple[bool, str]:
         """Load a temporary copy of the saved config that has the preset (and,
         for animations, its event selection) plus floating rules for our own
         preview windows ``(title, width, height)``. Returns (ok, message)."""
+        if windows is not None:
+            self.windows = list(windows)
         target = preview_path(self.cfg)
         target.write_text(self.cfg.main.real_path.read_text())
         tmp = cfgmod.TomlFile(target)
-        if self.name not in _loaded_presets(self.cfg):
+        if self.palette is not None:
+            # include a copy of the effect with `palette` overridden instead of the original
+            original = self.effect.effect_toml.resolve()
+            for key in (("include", "files"), ("include", "optional", "files")):
+                entries = tmp.get(key) or []
+                keep = [e for e in entries if _resolve(self.cfg.dir, e) != original]
+                if keep != entries:
+                    tmp.set(key, keep)
+            files = list(tmp.get(("include", "files"), []) or [])
+            files.append(str(_palette_copy(self.effect, self.palette)))
+            tmp.set(("include", "files"), files)
+        elif self.name not in _loaded_presets(self.cfg):
             files = list(tmp.get(("include", "files"), []) or [])
             files.append(str(self.effect.effect_toml))
             tmp.set(("include", "files"), files)
@@ -78,7 +93,7 @@ class PreviewSession:
             for path, value in shaders.activation_changes(self.effect):
                 if path[0] == "animation":
                     tmp.set(path, value)
-        for title, width, height in windows:
+        for title, width, height in self.windows:
             idx = tmp.append_table(("window_rule",), {})
             tmp.set(("window_rule", idx, "match", "title"), "^" + re.escape(title) + "$")
             tmp.set(("window_rule", idx, "default_floating"), True)
@@ -127,6 +142,33 @@ class PreviewSession:
             umbriel.config_replace(str(self.cfg.main.real_path))
             preview_path(self.cfg).unlink(missing_ok=True)
             self.replaced = False
+
+
+def _resolve(base: Path, entry: str) -> Path:
+    p = Path(os.path.expanduser(entry))
+    return (p if p.is_absolute() else base / p).resolve()
+
+
+def _palette_copy(effect: shaders.Effect, palette: bool) -> Path:
+    """Copy an effect next to the cache with every preset's ``palette`` set."""
+    import shutil
+
+    import tomlkit
+
+    dest = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "umbrielmod" / "preview-effect"
+    shutil.rmtree(dest, ignore_errors=True)
+    shutil.copytree(effect.dir, dest, ignore=shutil.ignore_patterns("*.png", "*.gif", "*.md"))
+    toml = dest / "effect.toml"
+    doc = tomlkit.parse(toml.read_text())
+    inc = doc.get("include")
+    if inc is not None:  # companion includes are relative to the original directory
+        for table in (inc, inc.get("optional")):
+            if table is not None and "files" in table:
+                table["files"] = [str((effect.dir / f).resolve()) for f in table["files"]]
+    for preset in doc.get("effects", {}).get("preset", {}).values():
+        preset["palette"] = palette
+    toml.write_text(doc.as_string())
+    return toml
 
 
 def find_window(title: str, pid: int | None = None) -> dict | None:

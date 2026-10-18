@@ -541,3 +541,29 @@ class AnimatedPicture(Gtk.Picture):
             GLib.source_remove(self._timer)
             self._timer = 0
         self._anim_iter = None
+
+
+def color_swatches(colors: list[tuple[str, str]], size: int = 22) -> Gtk.Widget:
+    """A row of small rounded colour squares with the key as tooltip."""
+    box = Gtk.Box(spacing=4, valign=Gtk.Align.CENTER)
+    for key, value in colors:
+        rgba = rgba_from_string(value)
+        area = Gtk.DrawingArea(content_width=size, content_height=size, tooltip_text=f"{key}: {value}")
+
+        def draw(_a, cr, w, h, rgba=rgba):
+            r = 5
+            cr.new_sub_path()
+            cr.arc(w - r, r, r, -1.5708, 0)
+            cr.arc(w - r, h - r, r, 0, 1.5708)
+            cr.arc(r, h - r, r, 1.5708, 3.1416)
+            cr.arc(r, r, r, 3.1416, 4.7124)
+            cr.close_path()
+            cr.set_source_rgba(rgba.red, rgba.green, rgba.blue, max(rgba.alpha, 0.15))
+            cr.fill_preserve()
+            cr.set_source_rgba(0.5, 0.5, 0.5, 0.45)
+            cr.set_line_width(1)
+            cr.stroke()
+
+        area.set_draw_func(draw)
+        box.append(area)
+    return box

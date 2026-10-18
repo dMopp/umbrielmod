@@ -7,7 +7,7 @@ from gi.repository import Adw, GLib, Gtk
 from .. import preview, shaders, umbriel
 from ..context import AppContext
 from ..i18n import N_, _
-from ..widgets import AnimatedPicture, esc
+from ..widgets import AnimatedPicture, color_swatches, esc
 
 SAMPLE_TEXT = (
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore "
@@ -148,6 +148,16 @@ class PreviewWindow(Adw.Window):
             self.global_toggle = Gtk.ToggleButton(label=label, active=True)
             self.global_toggle.connect("toggled", lambda b: self._global(b.get_active()))
             bar.append(self.global_toggle)
+        if self._preset_palette() is not None:
+            pal = Gtk.Box(spacing=6, valign=Gtk.Align.CENTER,
+                          tooltip_text=_("On: recoloured with your theme colours ([colors]). "
+                                         "Off: the shader's original colours. Only affects this preview."))
+            pal.append(Gtk.Label(label=_("Theme colours")))
+            pal.append(color_swatches(shaders.palette_colors(self.ctx.cfg, self.ctx.schema), size=16))
+            self.palette_switch = Gtk.Switch(active=bool(self._preset_palette()), valign=Gtk.Align.CENTER)
+            self.palette_switch.connect("notify::active", lambda sw, *_: self._set_palette(sw.get_active()))
+            pal.append(self.palette_switch)
+            bar.append(pal)
         if kind in ("border", "window", "screen", "cursor"):
             again = Gtk.Button(icon_name="view-refresh-symbolic", tooltip_text=_("Apply again"))
             again.connect("clicked", lambda *_: self._apply())
@@ -205,6 +215,22 @@ class PreviewWindow(Adw.Window):
         hint = (_("The effect is shown on your screen until the preview closes.") if self.effect.kind == "screen"
                 else _("Move the pointer to see the cursor effect."))
         self._report(ok, msg, hint if enabled else "")
+
+    def _preset_palette(self) -> bool | None:
+        """The preset's configured `palette` (False when unset), None if not a preset with presets."""
+        preset = self.effect.presets.get(self.effect.name)
+        if preset is None:
+            return None
+        return bool(preset.get("palette", False))
+
+    def _set_palette(self, enabled: bool):
+        self.session.palette = enabled
+        ok, msg = self.session.start()
+        if not ok:
+            self._fail(_("Umbriel could not load the effect:") + "\n" + msg)
+            return
+        # the config reload resets runtime selections; apply the effect again
+        GLib.timeout_add(400, lambda: self._apply() and False)
 
     # ----------------------------------------------------------------- animation demos
 
