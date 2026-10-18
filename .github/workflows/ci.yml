@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: System packages
+        run: sudo apt-get update && sudo apt-get install -y python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 shellcheck
+      - uses: astral-sh/setup-uv@v6
+      - name: Environment
+        run: |
+          uv venv --system-site-packages --python /usr/bin/python3
+          uv sync
+      - name: Tests
+        run: uv run pytest -q
+      - name: Installer lint
+        run: shellcheck install.sh

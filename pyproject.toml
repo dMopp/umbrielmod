@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "umbrielmod"
+version = "0.1.0"
+description = "GTK4/libadwaita configuration editor for the Umbriel Wayland compositor"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+dependencies = [
+    # PyGObject (gi.repository.Gtk, Adw) comes from the system package manager:
+    # Debian/PikaOS: sudo apt install python3-gi gir1.2-gtk-4.0 gir1.2-adw-1
+    "tomlkit>=0.13",
+]
+
+[project.scripts]
+umbrielmod = "umbrielmod.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["umbrielmod"]
+
+[tool.uv]
+python-preference = "system"
+
+[dependency-groups]
+dev = ["pytest>=8"]

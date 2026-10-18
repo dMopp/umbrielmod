@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=UmbrielMod
+GenericName=Umbriel Settings
+Comment=Configure the Umbriel Wayland compositor
+Comment[de]=Den Umbriel-Wayland-Compositor konfigurieren
+Exec=umbrielmod
+Icon=io.github.umbrielmod
+Terminal=false
+Categories=Settings;DesktopSettings;GTK;
+Keywords=umbriel;wayland;compositor;keybinds;monitor;shader;
+StartupNotify=true
+StartupWMClass=io.github.umbrielmod
