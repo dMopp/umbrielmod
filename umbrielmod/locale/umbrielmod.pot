@@ -69,7 +69,7 @@ msgstr ""
 
 #: umbrielmod/pages/keybinds.py:20
 #: umbrielmod/pages/schema_page.py:24
-#: umbrielmod/window.py:24
+#: umbrielmod/window.py:30
 msgid "Workspaces"
 msgstr ""
 
@@ -101,7 +101,7 @@ msgid "Show conflicts only"
 msgstr ""
 
 #: umbrielmod/pages/keybinds.py:93
-#: umbrielmod/window.py:21
+#: umbrielmod/window.py:27
 msgid "Keybinds"
 msgstr ""
 
@@ -120,8 +120,9 @@ msgstr ""
 #: umbrielmod/pages/keybinds.py:211
 #: umbrielmod/pages/shaders.py:152
 #: umbrielmod/pages/shaders.py:385
-#: umbrielmod/window.py:365
-#: umbrielmod/window.py:250
+#: umbrielmod/window.py:452
+#: umbrielmod/window.py:282
+#: umbrielmod/window.py:350
 msgid "Cancel"
 msgstr ""
 
@@ -313,7 +314,7 @@ msgid "Edited – “Apply” loads the text into the editor"
 msgstr ""
 
 #: umbrielmod/pages/raw.py:113
-#: umbrielmod/window.py:33
+#: umbrielmod/window.py:39
 msgid "Backups"
 msgstr ""
 
@@ -359,7 +360,7 @@ msgid "Rule for {app} created"
 msgstr ""
 
 #: umbrielmod/pages/schema_page.py:14
-#: umbrielmod/window.py:30
+#: umbrielmod/window.py:36
 msgid "General"
 msgstr ""
 
@@ -384,12 +385,12 @@ msgid "DRM / graphics cards"
 msgstr ""
 
 #: umbrielmod/pages/schema_page.py:20
-#: umbrielmod/window.py:20
+#: umbrielmod/window.py:26
 msgid "Input"
 msgstr ""
 
 #: umbrielmod/pages/schema_page.py:21
-#: umbrielmod/window.py:22
+#: umbrielmod/window.py:28
 msgid "Appearance"
 msgstr ""
 
@@ -398,7 +399,7 @@ msgid "Colours"
 msgstr ""
 
 #: umbrielmod/pages/schema_page.py:23
-#: umbrielmod/window.py:23
+#: umbrielmod/window.py:29
 msgid "Layout"
 msgstr ""
 
@@ -415,17 +416,17 @@ msgid "Scratchpads"
 msgstr ""
 
 #: umbrielmod/pages/schema_page.py:29
-#: umbrielmod/window.py:26
+#: umbrielmod/window.py:32
 msgid "Animations"
 msgstr ""
 
 #: umbrielmod/pages/schema_page.py:30
-#: umbrielmod/window.py:27
+#: umbrielmod/window.py:33
 msgid "Window rules"
 msgstr ""
 
 #: umbrielmod/pages/schema_page.py:31
-#: umbrielmod/window.py:28
+#: umbrielmod/window.py:34
 msgid "Layer rules"
 msgstr ""
 
@@ -684,7 +685,7 @@ msgid "Global effects"
 msgstr ""
 
 #: umbrielmod/pages/shaders.py:102
-#: umbrielmod/window.py:29
+#: umbrielmod/window.py:35
 msgid "Effects & shaders"
 msgstr ""
 
@@ -788,7 +789,7 @@ msgstr ""
 
 #: umbrielmod/pages/shaders.py:183
 #: umbrielmod/pages/shaders.py:279
-#: umbrielmod/window.py:274
+#: umbrielmod/window.py:306
 msgid "Error: {message}"
 msgstr ""
 
@@ -979,112 +980,155 @@ msgstr ""
 msgid "Not set – Umbriel decides"
 msgstr ""
 
-#: umbrielmod/window.py:19
+#: umbrielmod/window.py:25
 msgid "Outputs"
 msgstr ""
 
-#: umbrielmod/window.py:32
+#: umbrielmod/window.py:38
 msgid "Raw editor"
 msgstr ""
 
-#: umbrielmod/window.py:93
+#: umbrielmod/window.py:107
 msgid "Reload"
 msgstr ""
 
-#: umbrielmod/window.py:94
+#: umbrielmod/window.py:108
 msgid "Update schema and descriptions"
 msgstr ""
 
-#: umbrielmod/window.py:96
+#: umbrielmod/window.py:110
 msgid "System default"
 msgstr ""
 
-#: umbrielmod/window.py:99
+#: umbrielmod/window.py:113
 msgid "Language"
 msgstr ""
 
-#: umbrielmod/window.py:100
+#: umbrielmod/window.py:119
 msgid "About UmbrielMod"
 msgstr ""
 
-#: umbrielmod/window.py:262
+#: umbrielmod/window.py:294
 msgid "Fetching the Umbriel documentation for the installed version…"
 msgstr ""
 
-#: umbrielmod/window.py:366
-#: umbrielmod/window.py:118
-#: umbrielmod/window.py:251
+#: umbrielmod/window.py:453
+#: umbrielmod/window.py:137
+#: umbrielmod/window.py:283
+#: umbrielmod/window.py:351
 msgid "Discard"
 msgstr ""
 
-#: umbrielmod/window.py:367
-#: umbrielmod/window.py:116
+#: umbrielmod/window.py:454
+#: umbrielmod/window.py:135
+#: umbrielmod/window.py:352
 msgid "Save"
 msgstr ""
 
-#: umbrielmod/window.py:112
-msgid "Undo (Ctrl+Z)"
-msgstr ""
-
-#: umbrielmod/window.py:113
-msgid "Redo (Ctrl+Shift+Z)"
+#: umbrielmod/window.py:116
+msgid "Check for updates"
 msgstr ""
 
 #: umbrielmod/window.py:117
+msgid "Update automatically"
+msgstr ""
+
+#: umbrielmod/window.py:131
+msgid "Undo (Ctrl+Z)"
+msgstr ""
+
+#: umbrielmod/window.py:132
+msgid "Redo (Ctrl+Shift+Z)"
+msgstr ""
+
+#: umbrielmod/window.py:136
 msgid "Validate and save (Ctrl+S) – Umbriel reloads automatically"
 msgstr ""
 
-#: umbrielmod/window.py:124
+#: umbrielmod/window.py:143
 msgid "The configuration was changed outside UmbrielMod."
 msgstr ""
 
-#: umbrielmod/window.py:125
+#: umbrielmod/window.py:144
 msgid "Reload (discards changes)"
 msgstr ""
 
-#: umbrielmod/window.py:239
+#: umbrielmod/window.py:147
+msgid "Restart now"
+msgstr ""
+
+#: umbrielmod/window.py:271
 msgid "Saved – Umbriel applies the changes automatically"
 msgstr ""
 
-#: umbrielmod/window.py:242
+#: umbrielmod/window.py:274
 msgid "Invalid configuration – not saved"
 msgstr ""
 
-#: umbrielmod/window.py:301
+#: umbrielmod/window.py:320
+msgid "Checking for updates…"
+msgstr ""
+
+#: umbrielmod/window.py:388
 msgid "Graphical configuration for the Umbriel Wayland compositor"
 msgstr ""
 
-#: umbrielmod/window.py:357
+#: umbrielmod/window.py:444
 msgid "The configuration changed on disk and was reloaded"
 msgstr ""
 
-#: umbrielmod/window.py:363
+#: umbrielmod/window.py:450
+#: umbrielmod/window.py:348
 msgid "Unsaved changes"
 msgstr ""
 
-#: umbrielmod/window.py:364
+#: umbrielmod/window.py:451
 msgid "Save the changes before closing?"
 msgstr ""
 
-#: umbrielmod/window.py:101
+#: umbrielmod/window.py:120
 msgid "Menu"
 msgstr ""
 
-#: umbrielmod/window.py:248
+#: umbrielmod/window.py:280
 msgid "Discard unsaved changes?"
 msgstr ""
 
-#: umbrielmod/window.py:249
+#: umbrielmod/window.py:281
 msgid "The configuration will be reloaded from disk."
 msgstr ""
 
-#: umbrielmod/window.py:302
-#: umbrielmod/window.py:302
+#: umbrielmod/window.py:337
+msgid "Update failed"
+msgstr ""
+
+#: umbrielmod/window.py:349
+msgid "Save the changes before restarting?"
+msgstr ""
+
+#: umbrielmod/window.py:389
+#: umbrielmod/window.py:389
 msgid "translator-credits"
 msgstr ""
 
-#: umbrielmod/window.py:222
+#: umbrielmod/window.py:254
 msgid "Unsaved: {files}"
+msgstr ""
+
+#: umbrielmod/window.py:342
+msgid "UmbrielMod was updated ({version}). Restart to use it."
+msgstr ""
+
+#: umbrielmod/window.py:328
+msgid "Installing an UmbrielMod update…"
+msgstr ""
+
+#: umbrielmod/window.py:326
+msgid "Could not check for updates"
+msgstr ""
+
+#: umbrielmod/window.py:326
+msgid "UmbrielMod is up to date"
 msgstr ""
 
 #: umbriel-docs:animation.curve
