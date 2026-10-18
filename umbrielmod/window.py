@@ -2,15 +2,21 @@
 
 from __future__ import annotations
 
+import os
+import sys
 import threading
 from typing import Callable
 
 from gi.repository import Adw, Gio, GLib, Gtk
 
-from . import __version__, i18n, settings, theme
+from . import __version__, i18n, settings, theme, updater
 from . import docs as docsmod
 from .context import AppContext
 from .i18n import N_, _
+# Import every page up front: a self-update may replace the sources while the
+# app runs, and lazily imported modules would then mix versions.
+from .pages import keybinds as _keybinds, outputs as _outputs, raw as _raw  # noqa: F401
+from .pages import rules as _rules, shaders as _shaders_page  # noqa: F401
 from .pages.schema_page import SchemaPage
 from .widgets import doc_button, esc
 
@@ -37,6 +43,9 @@ CUSTOM_SECTIONS = {"output", "keybinds", "effects", "window_rule"}
 
 
 class MainWindow(Adw.ApplicationWindow):
+    _update_checked = False  # once per process, not again after a language switch
+    _update_installed = ""
+
     def __init__(self, app: Adw.Application, ctx: AppContext):
         super().__init__(application=app, title="UmbrielMod", default_width=1180, default_height=820)
         self.ctx = ctx
@@ -73,6 +82,11 @@ class MainWindow(Adw.ApplicationWindow):
         self.connect("close-request", self._on_close)
         self.sidebar.select_row(self.sidebar.get_row_at_index(0))
         self._update_state()
+        if MainWindow._update_installed:
+            self._show_update_banner(MainWindow._update_installed)
+        elif not MainWindow._update_checked and self._auto_update_enabled():
+            MainWindow._update_checked = True
+            GLib.timeout_add_seconds(2, lambda: self.check_updates(quiet=True) and False)
 
     # ----------------------------------------------------------------- layout
 
@@ -97,6 +111,11 @@ class MainWindow(Adw.ApplicationWindow):
         for code, name in i18n.available_languages().items():
             langs.append(name, f"win.language('{code}')")
         menu.append_submenu(_("Language"), langs)
+        if updater.is_managed():
+            upd = Gio.Menu()
+            upd.append(_("Check for updates"), "win.check-updates")
+            upd.append(_("Update automatically"), "win.auto-update")
+            menu.append_section(None, upd)
         menu.append(_("About UmbrielMod"), "win.about")
         header.pack_end(Gtk.MenuButton(icon_name="open-menu-symbolic", menu_model=menu, tooltip_text=_("Menu")))
         tv.add_top_bar(header)
@@ -125,6 +144,9 @@ class MainWindow(Adw.ApplicationWindow):
                                  button_label=_("Reload (discards changes)"))
         self.banner.connect("button-clicked", lambda *_: self.reload(force=True))
         tv.add_top_bar(self.banner)
+        self.update_banner = Adw.Banner(button_label=_("Restart now"))
+        self.update_banner.connect("button-clicked", lambda *_: self.restart())
+        tv.add_top_bar(self.update_banner)
         tv.set_content(self.stack)
         self.content_page = Adw.NavigationPage(title="", child=tv)
         return self.content_page
@@ -206,6 +228,16 @@ class MainWindow(Adw.ApplicationWindow):
         add("reload", lambda: self.reload(force=False), ["<Control>r"])
         add("refresh-docs", self.refresh_docs)
         add("about", self.about)
+        add("check-updates", lambda: self.check_updates(quiet=False))
+        auto = Gio.SimpleAction.new_stateful("auto-update", None, GLib.Variant("b", self._auto_update_enabled()))
+
+        def toggle_auto(action, _param):
+            value = not action.get_state().get_boolean()
+            action.set_state(GLib.Variant("b", value))
+            settings.set("auto_update", value)
+
+        auto.connect("activate", toggle_auto)
+        self.add_action(auto)
         lang = Gio.SimpleAction.new_stateful("language", GLib.VariantType.new("s"),
                                              GLib.Variant("s", settings.get("language", "") or ""))
         lang.connect("activate", lambda a, v: self.set_language(a, v.get_string()))
@@ -274,6 +306,61 @@ class MainWindow(Adw.ApplicationWindow):
             self.toast(msg if ok else _("Error: {message}").format(message=msg))
 
         threading.Thread(target=work, daemon=True).start()
+
+    # ----------------------------------------------------------------- self-update
+
+    def _auto_update_enabled(self) -> bool:
+        return (updater.is_managed() and settings.get("auto_update", True) is not False
+                and os.environ.get("UMBRIELMOD_NO_UPDATE") != "1")
+
+    def check_updates(self, quiet: bool):
+        if not updater.is_managed():
+            return
+        if not quiet:
+            self.toast(_("Checking for updates…"))
+
+        def work():
+            info = updater.check()
+            if info is None or not info.available:
+                GLib.idle_add(lambda: (not quiet and self.toast(
+                    _("Could not check for updates") if info is None else _("UmbrielMod is up to date"))) and False)
+                return
+            GLib.idle_add(lambda: self.toast(_("Installing an UmbrielMod update…")) and False)
+            ok, log = updater.apply(info)
+            GLib.idle_add(done, ok, log)
+
+        def done(ok, log):
+            if ok:
+                MainWindow._update_installed = updater.summary()
+                self._show_update_banner(MainWindow._update_installed)
+            else:
+                self.error_dialog(_("Update failed"), log[-4000:])
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def _show_update_banner(self, summary: str):
+        self.update_banner.set_title(esc(_("UmbrielMod was updated ({version}). Restart to use it.").format(
+            version=summary)))
+        self.update_banner.set_revealed(True)
+
+    def restart(self):
+        if self.ctx.cfg.dirty:
+            dlg = Adw.AlertDialog(heading=_("Unsaved changes"),
+                                  body=_("Save the changes before restarting?"))
+            dlg.add_response("cancel", _("Cancel"))
+            dlg.add_response("discard", _("Discard"))
+            dlg.add_response("save", _("Save"))
+            dlg.set_response_appearance("discard", Adw.ResponseAppearance.DESTRUCTIVE)
+            dlg.set_response_appearance("save", Adw.ResponseAppearance.SUGGESTED)
+
+            def resp(_d, r):
+                if r == "discard" or (r == "save" and self.save()):
+                    updater.restart(sys.argv)
+
+            dlg.connect("response", resp)
+            dlg.present(self)
+            return
+        updater.restart(sys.argv)
 
     def set_language(self, action: Gio.SimpleAction, code: str):
         action.set_state(GLib.Variant("s", code))
