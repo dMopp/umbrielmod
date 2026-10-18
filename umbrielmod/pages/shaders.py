@@ -11,20 +11,26 @@ from gi.repository import Adw, Gdk, GdkPixbuf, GLib, Gtk, Pango
 from .. import shaders, umbriel
 from ..config import TomlFile
 from ..context import AppContext
-from ..widgets import esc, icon_button, option_row, rgba_from_string, rgba_to_string
+from ..docs import DOCS_SITE, section_url
+from ..i18n import N_, _
+from ..widgets import doc_button, esc, icon_button, option_doc_url, option_row, rgba_from_string, rgba_to_string
 from .schema_page import MapGroup, leaf_groups
 
 ANIMATION_EVENTS_LABELS = {
-    "windows_in": "Fenster öffnen",
-    "windows_out": "Fenster schließen",
-    "windows_move": "Fenster verschieben",
-    "workspaces": "Arbeitsbereich wechseln",
-    "overview": "Übersicht",
-    "scratchpad": "Scratchpad",
-    "border": "Rahmen",
-    "dim_unfocused": "Unfokussiert abdunkeln",
-    "layers": "Layer-Flächen",
+    "windows_in": N_("Window opens"),
+    "windows_out": N_("Window closes"),
+    "windows_move": N_("Window moves"),
+    "workspaces": N_("Workspace switch"),
+    "overview": N_("Overview"),
+    "scratchpad": N_("Scratchpad"),
+    "border": N_("Border"),
+    "dim_unfocused": N_("Dim unfocused"),
+    "layers": N_("Layer surfaces"),
 }
+
+
+def kind_label(kind: str) -> str:
+    return _(shaders.KIND_LABELS.get(kind, kind))
 
 
 def _markdown_to_text(md: str) -> str:
@@ -85,15 +91,15 @@ class ShadersPage(Gtk.Box):
         self.installed_page = InstalledView(self)
         self.catalog_page = CatalogView(self)
         self.global_page = GlobalEffectsView(ctx)
-        self.stack.add_titled_with_icon(self.installed_page, "installed", "Installiert", "emblem-ok-symbolic")
-        self.stack.add_titled_with_icon(self.catalog_page, "catalog", "Katalog", "system-software-install-symbolic")
-        self.stack.add_titled_with_icon(self.global_page, "global", "Auswahl & Pools", "emblem-system-symbolic")
+        self.stack.add_titled_with_icon(self.installed_page, "installed", _("Installed"), "emblem-ok-symbolic")
+        self.stack.add_titled_with_icon(self.catalog_page, "catalog", _("Catalogue"), "system-software-install-symbolic")
+        self.stack.add_titled_with_icon(self.global_page, "global", _("Selection & pools"), "emblem-system-symbolic")
         switcher = Adw.InlineViewSwitcher(stack=self.stack, halign=Gtk.Align.CENTER, margin_top=8, margin_bottom=4)
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         box.append(switcher)
         box.append(self.stack)
         self.stack.set_vexpand(True)
-        self.nav.add(Adw.NavigationPage(title="Effekte & Shader", tag="root", child=box))
+        self.nav.add(Adw.NavigationPage(title=_("Effects & shaders"), tag="root", child=box))
         if not shaders.installed():
             self.stack.set_visible_child_name("catalog")
 
@@ -117,7 +123,7 @@ class ShadersPage(Gtk.Box):
         try:
             shaders.install_files(effect)
         except OSError as exc:
-            self.window.error_dialog("Installation fehlgeschlagen", str(exc))
+            self.window.error_dialog(_("Installation failed"), str(exc))
             return
         installed = shaders.load_effect(shaders.install_root(), shaders.installed_dir(effect))
         tf = self.ctx.cfg.main
@@ -129,7 +135,7 @@ class ShadersPage(Gtk.Box):
 
         self.ctx.edit(tf, do)
         if self.window.save():
-            self.ctx.toast(f"{effect.title} installiert" + (" und aktiviert" if activate else ""))
+            self.ctx.toast((_("{name} installed and activated") if activate else _("{name} installed")).format(name=effect.title))
         else:
             self.ctx.cfg.undo()
             self.ctx.changed()
@@ -139,12 +145,12 @@ class ShadersPage(Gtk.Box):
         installed = shaders.load_effect(shaders.install_root(), shaders.installed_dir(effect))
         names = set(installed.presets)
         refs = shaders.references(self.ctx.cfg, names)
-        body = f"Die Dateien in {shaders.installed_dir(effect)} werden gelöscht."
+        body = _("The files in {dir} will be deleted.").format(dir=shaders.installed_dir(effect))
         if refs:
-            body += "\n\nDiese Auswahlen werden entfernt:\n" + "\n".join("• " + ".".join(map(str, r)) for r in refs)
-        dlg = Adw.AlertDialog(heading=f"{effect.title} deinstallieren?", body=body)
-        dlg.add_response("cancel", "Abbrechen")
-        dlg.add_response("remove", "Deinstallieren")
+            body += "\n\n" + _("These selections will be removed:") + "\n" + "\n".join("• " + ".".join(map(str, r)) for r in refs)
+        dlg = Adw.AlertDialog(heading=_("Uninstall {name}?").format(name=effect.title), body=body)
+        dlg.add_response("cancel", _("Cancel"))
+        dlg.add_response("remove", _("Uninstall"))
         dlg.set_response_appearance("remove", Adw.ResponseAppearance.DESTRUCTIVE)
 
         def resp(_d, r):
@@ -154,7 +160,7 @@ class ShadersPage(Gtk.Box):
                                                       shaders.remove_include(self.ctx.cfg, installed)))
             if self.window.save():
                 shaders.remove_files(installed)
-                self.ctx.toast(f"{effect.title} entfernt")
+                self.ctx.toast(_("{name} removed").format(name=effect.title))
                 while self.nav.get_visible_page().get_tag() != "root":
                     self.nav.pop()
             else:
@@ -168,12 +174,13 @@ class ShadersPage(Gtk.Box):
     def live(self, kind: str, name: str | None):
         action = f"effect-{kind}-set:{name}" if name else f"effect-{kind}-reset"
         ok, msg = umbriel.msg(action)
-        target = {"border": "fokussierte Fenster", "window": "fokussierte Fenster",
-                  "screen": "bevorzugten Bildschirm", "cursor": "Cursor"}[kind]
+        target = {"border": _("the focused window"), "window": _("the focused window"),
+                  "screen": _("the preferred output"), "cursor": _("the cursor")}[kind]
         if ok:
-            self.ctx.toast(f"Live: {name} auf {target} (nicht gespeichert)" if name else "Live-Test zurückgesetzt")
+            self.ctx.toast(_("Live: {name} on {target} (not saved)").format(name=name, target=target)
+                           if name else _("Live test reset"))
         else:
-            self.ctx.toast(f"Fehler: {msg}")
+            self.ctx.toast(_("Error: {message}").format(message=msg))
 
 
 # =========================================================================== catalog
@@ -184,14 +191,15 @@ class CatalogView(Gtk.Box):
         super().__init__(orientation=Gtk.Orientation.VERTICAL)
         self.page = page
         bar = Gtk.Box(spacing=6, margin_top=6, margin_bottom=6, margin_start=12, margin_end=12)
-        self.search = Gtk.SearchEntry(placeholder_text="Effekte suchen…", hexpand=True)
+        self.search = Gtk.SearchEntry(placeholder_text=_("Search effects…"), hexpand=True)
         self.search.connect("search-changed", lambda *_: self.flow.invalidate_filter())
-        self.kind = Gtk.DropDown(model=Gtk.StringList.new(["Alle"] + [shaders.KIND_LABELS[k] for k in shaders.KINDS]))
+        self.kind = Gtk.DropDown(model=Gtk.StringList.new([_("All")] + [kind_label(k) for k in shaders.KINDS]))
         self.kind.connect("notify::selected", lambda *_: self.flow.invalidate_filter())
-        self.sync_btn = Gtk.Button(icon_name="view-refresh-symbolic", tooltip_text="Katalog von GitHub aktualisieren")
+        self.sync_btn = Gtk.Button(icon_name="view-refresh-symbolic", tooltip_text=_("Update the catalogue from GitHub"))
         self.sync_btn.connect("clicked", lambda *_: self.sync())
         self.status = Gtk.Label(css_classes=["dim-label", "caption"])
-        for w in (self.search, self.kind, self.status, self.sync_btn):
+        for w in (self.search, self.kind, self.status, self.sync_btn,
+                  doc_button(page.ctx, f"{DOCS_SITE}/effects/", _("Effects"))):
             bar.append(w)
         self.append(bar)
 
@@ -202,12 +210,12 @@ class CatalogView(Gtk.Box):
         self.flow.connect("child-activated", lambda _f, child: self.page.show_detail(child.effect))
         self.scroller = Gtk.ScrolledWindow(vexpand=True, child=self.flow)
         self.empty = Adw.StatusPage(
-            icon_name="folder-download-symbolic", title="Community-Shader laden",
-            description=f"Lädt die Sammlung von github.com/{shaders.REPO_SLUG} (ca. 40 MB) nach "
-                        f"{shaders.cache_repo_dir()}.",
+            icon_name="folder-download-symbolic", title=_("Get the community shaders"),
+            description=_("Downloads the collection from github.com/{repo} (about 40 MB) to {dir}.").format(
+                repo=shaders.REPO_SLUG, dir=shaders.cache_repo_dir()),
             vexpand=True,
         )
-        dl = Gtk.Button(label="Herunterladen", css_classes=["pill", "suggested-action"], halign=Gtk.Align.CENTER)
+        dl = Gtk.Button(label=_("Download"), css_classes=["pill", "suggested-action"], halign=Gtk.Align.CENTER)
         dl.connect("clicked", lambda *_: self.sync())
         self.empty.set_child(dl)
         self.append(self.scroller)
@@ -222,7 +230,7 @@ class CatalogView(Gtk.Box):
         self.scroller.set_visible(has)
         self.empty.set_visible(not has)
         rev = shaders.repo_revision()
-        self.status.set_label(f"{len(effects)} Effekte · {rev}" if has else "")
+        self.status.set_label(_("{n} effects · {revision}").format(n=len(effects), revision=rev) if has else "")
         for eff in effects:
             self.flow.append(self._card(eff))
 
@@ -239,9 +247,9 @@ class CatalogView(Gtk.Box):
         title = Gtk.Label(label=eff.title, xalign=0, hexpand=True, ellipsize=Pango.EllipsizeMode.END, css_classes=["heading"])
         top.append(title)
         if shaders.is_installed(eff):
-            top.append(Gtk.Image(icon_name="emblem-ok-symbolic", tooltip_text="Installiert"))
+            top.append(Gtk.Image(icon_name="emblem-ok-symbolic", tooltip_text=_("Installed")))
         box.append(top)
-        badge = Gtk.Label(label=shaders.KIND_LABELS.get(eff.kind, eff.kind), xalign=0, halign=Gtk.Align.START,
+        badge = Gtk.Label(label=kind_label(eff.kind), xalign=0, halign=Gtk.Align.START,
                           css_classes=["kind-badge"])
         box.append(badge)
         child.set_child(box)
@@ -256,8 +264,8 @@ class CatalogView(Gtk.Box):
 
     def sync(self):
         self.sync_btn.set_sensitive(False)
-        self.status.set_label("Lade…")
-        self.page.ctx.toast("Lade Community-Shader von GitHub…")
+        self.status.set_label(_("Loading…"))
+        self.page.ctx.toast(_("Fetching the community shaders from GitHub…"))
 
         def work():
             ok, msg = shaders.sync_repo()
@@ -267,7 +275,8 @@ class CatalogView(Gtk.Box):
             self.sync_btn.set_sensitive(True)
             self.refresh()
             self.page.installed_page.refresh()
-            self.page.ctx.toast(f"Katalog aktualisiert ({msg})" if ok else f"Fehler: {msg}")
+            self.page.ctx.toast(_("Catalogue updated ({revision})").format(revision=msg) if ok
+                                else _("Error: {message}").format(message=msg))
 
         threading.Thread(target=work, daemon=True).start()
 
@@ -299,20 +308,20 @@ class DetailPage(Adw.NavigationPage):
         installed = shaders.is_installed(eff)
         btns = Gtk.Box(spacing=6)
         if installed:
-            upd = Gtk.Button(label="Aktualisieren")
+            upd = Gtk.Button(label=_("Update"))
             upd.connect("clicked", lambda *_: self.page.install(eff, activate=False))
-            rm = Gtk.Button(label="Deinstallieren", css_classes=["destructive-action"])
+            rm = Gtk.Button(label=_("Uninstall"), css_classes=["destructive-action"])
             rm.connect("clicked", lambda *_: self.page.uninstall(eff))
             btns.append(upd)
             btns.append(rm)
         else:
-            inst = Gtk.Button(label="Installieren")
+            inst = Gtk.Button(label=_("Install"))
             inst.connect("clicked", lambda *_: self.page.install(eff, activate=False))
-            act = Gtk.Button(label="Installieren & aktivieren", css_classes=["suggested-action"])
+            act = Gtk.Button(label=_("Install & activate"), css_classes=["suggested-action"])
             act.connect("clicked", lambda *_: self._confirm_activate())
             btns.append(inst)
             btns.append(act)
-        gh = icon_button("web-browser-symbolic", "Auf GitHub ansehen",
+        gh = icon_button("web-browser-symbolic", _("View on GitHub"),
                          lambda: ctx.open_uri(f"{shaders.REPO_URL}/tree/main/{eff.rel}"))
         btns.append(gh)
         info.set_header_suffix(btns)
@@ -322,39 +331,39 @@ class DetailPage(Adw.NavigationPage):
             r.set_subtitle_selectable(True)
             info.add(r)
 
-        row("Art", shaders.KIND_LABELS.get(eff.kind, eff.kind))
-        row("Preset-Namen", ", ".join(eff.presets) or "—")
+        row(_("Kind"), kind_label(eff.kind))
+        row(_("Preset names"), ", ".join(eff.presets) or "—")
         if eff.companions():
-            row("Begleit-Effekte (werden mitinstalliert)", ", ".join(str(Path(c).name) for c in eff.companions()))
-        row("Installationsort", str(shaders.installed_dir(eff)))
+            row(_("Companion effects (installed too)"), ", ".join(str(Path(c).name) for c in eff.companions()))
+        row(_("Install location"), str(shaders.installed_dir(eff)))
         lic = [p.name for p in eff.license_files]
         if lic:
-            row("Lizenz", ", ".join(lic))
+            row(_("Licence"), ", ".join(lic))
         if eff.needs_pointer_history:
-            warn = Adw.ActionRow(title="Benötigt die Cursor-Verlaufs-API",
-                                 subtitle="Nutzt umbriel_pointer_path/umbriel_pointer_count – funktioniert nur mit "
-                                          "neueren Umbriel-Builds.")
+            warn = Adw.ActionRow(title=_("Needs the cursor history API"),
+                                 subtitle=_("Uses umbriel_pointer_path/umbriel_pointer_count – only works with "
+                                            "newer Umbriel builds."))
             warn.add_prefix(Gtk.Image(icon_name="dialog-warning-symbolic"))
             info.add(warn)
         changes = shaders.activation_changes(eff)
         if changes:
-            row("Aktivierung setzt", "\n".join(f"{'.'.join(map(str, p))} = {v!r}" for p, v in changes))
+            row(_("Activation sets"), "\n".join(f"{'.'.join(map(str, p))} = {v!r}" for p, v in changes))
         if installed:
             for name in eff.presets:
-                cfg_row = Adw.ActionRow(title=f"Preset „{esc(name)}“ konfigurieren", activatable=True)
+                cfg_row = Adw.ActionRow(title=esc(_("Configure preset “{name}”").format(name=name)), activatable=True)
                 cfg_row.add_suffix(Gtk.Image(icon_name="go-next-symbolic"))
                 inst_eff = shaders.load_effect(shaders.install_root(), shaders.installed_dir(eff))
                 tf = ctx.cfg.file_for(inst_eff.effect_toml)
                 if tf is None:
                     cfg_row.set_sensitive(False)
-                    cfg_row.set_subtitle("Nicht eingebunden")
+                    cfg_row.set_subtitle(_("Not included"))
                 else:
                     cfg_row.connect("activated", lambda *_, t=tf, n=name, e=inst_eff: self.page.show_config(t, n, e))
                 info.add(cfg_row)
         self._push(info)
 
         readme = Adw.PreferencesGroup(title="README")
-        exp = Adw.ExpanderRow(title="Beschreibung, Optionen und Shader-Regler")
+        exp = Adw.ExpanderRow(title=_("Description, options and shader controls"))
         lbl = Gtk.Label(label=_markdown_to_text(eff.readme), wrap=True, xalign=0, selectable=True,
                         margin_top=8, margin_bottom=8, margin_start=12, margin_end=12)
         exp.add_row(lbl)
@@ -371,11 +380,11 @@ class DetailPage(Adw.NavigationPage):
         if not current:
             self.page.install(self.effect, activate=True)
             return
-        dlg = Adw.AlertDialog(heading="Bestehende Einstellungen überschreiben?",
-                              body="Das Aktivierungsbeispiel ändert:\n" + "\n".join(current))
-        dlg.add_response("cancel", "Abbrechen")
-        dlg.add_response("only", "Nur installieren")
-        dlg.add_response("ok", "Übernehmen")
+        dlg = Adw.AlertDialog(heading=_("Overwrite existing settings?"),
+                              body=_("The activation example changes:") + "\n" + "\n".join(current))
+        dlg.add_response("cancel", _("Cancel"))
+        dlg.add_response("only", _("Install only"))
+        dlg.add_response("ok", _("Apply"))
         dlg.set_response_appearance("ok", Adw.ResponseAppearance.SUGGESTED)
         dlg.connect("response", lambda _d, r: r in ("ok", "only") and self.page.install(self.effect, activate=r == "ok"))
         dlg.present(self.page.window)
@@ -410,7 +419,7 @@ class InstalledView(Adw.PreferencesPage):
             effs = by_kind.get(kind)
             if not effs:
                 continue
-            g = Adw.PreferencesGroup(title=shaders.KIND_LABELS[kind])
+            g = Adw.PreferencesGroup(title=kind_label(kind))
             for eff in effs:
                 seen_presets.update(eff.presets)
                 g.add(self._row(eff, catalog.get(str(eff.rel))))
@@ -423,9 +432,9 @@ class InstalledView(Adw.PreferencesPage):
                 if name not in seen_presets:
                     other.append((tf, name, p))
         if other:
-            g = Adw.PreferencesGroup(title="Weitere Presets", description="In der Konfiguration definiert, nicht aus dem Katalog.")
+            g = Adw.PreferencesGroup(title=_("Other presets"), description=_("Defined in the configuration, not from the catalogue."))
             for tf, name, p in other:
-                r = Adw.ActionRow(title=esc(name), subtitle=esc(f"{shaders.KIND_LABELS.get(p.get('kind', ''), '?')} · {tf.path.name}"),
+                r = Adw.ActionRow(title=esc(name), subtitle=esc(f"{kind_label(p.get('kind', ''))} · {tf.path.name}"),
                                   activatable=True)
                 r.add_suffix(Gtk.Image(icon_name="go-next-symbolic"))
                 r.connect("activated", lambda *_, t=tf, n=name: self.page.show_config(t, n, None))
@@ -434,8 +443,8 @@ class InstalledView(Adw.PreferencesPage):
 
         if not installed and not other:
             g = Adw.PreferencesGroup()
-            st = Adw.StatusPage(icon_name="applications-graphics-symbolic", title="Noch keine Effekte installiert",
-                                description="Im Katalog findest du die Community-Shader für Umbriel.")
+            st = Adw.StatusPage(icon_name="applications-graphics-symbolic", title=_("No effects installed yet"),
+                                description=_("The catalogue has the community shaders for Umbriel."))
             g.add(st)
             self._push(g)
 
@@ -448,17 +457,17 @@ class InstalledView(Adw.PreferencesPage):
             active += _active_selections(ctx, name)
         sub = ", ".join(eff.presets)
         if tf is None:
-            sub += " · nicht eingebunden"
+            sub += " · " + _("not included")
         elif active:
-            sub += " · aktiv: " + ", ".join(active)
+            sub += " · " + _("active: {where}").format(where=", ".join(active))
         row = Adw.ActionRow(title=esc(title), subtitle=esc(sub), activatable=tf is not None)
         if active:
-            row.add_prefix(Gtk.Image(icon_name="media-playback-start-symbolic", tooltip_text="Aktiv"))
+            row.add_prefix(Gtk.Image(icon_name="media-playback-start-symbolic", tooltip_text=_("Active")))
         if eff.kind in shaders.SLOT_KINDS and tf is not None and not ctx.cfg.dirty:
-            row.add_suffix(icon_button("media-playback-start-symbolic", "Live testen (ohne zu speichern)",
+            row.add_suffix(icon_button("media-playback-start-symbolic", _("Live test (without saving)"),
                                        lambda: self.page.live(eff.kind, eff.name)))
         if tf is None:
-            inc = Gtk.Button(label="Einbinden", valign=Gtk.Align.CENTER)
+            inc = Gtk.Button(label=_("Include"), valign=Gtk.Align.CENTER)
 
             def include():
                 ctx.edit(ctx.cfg.main, lambda: shaders.add_include(ctx.cfg, eff))
@@ -470,8 +479,8 @@ class InstalledView(Adw.PreferencesPage):
             row.add_suffix(Gtk.Image(icon_name="go-next-symbolic"))
             row.connect("activated", lambda *_: self.page.show_config(tf, eff.name, eff))
         if cat is not None:
-            row.add_suffix(icon_button("help-about-symbolic", "Details", lambda: self.page.show_detail(cat)))
-        row.add_suffix(icon_button("user-trash-symbolic", "Deinstallieren", lambda: self.page.uninstall(eff)))
+            row.add_suffix(icon_button("help-about-symbolic", _("Details"), lambda: self.page.show_detail(cat)))
+        row.add_suffix(icon_button("user-trash-symbolic", _("Uninstall"), lambda: self.page.uninstall(eff)))
         return row
 
     def _push(self, g):
@@ -507,12 +516,13 @@ class PresetPage(Adw.NavigationPage):
         base = ("effects", "preset", self.name)
 
         # ---- selection
-        sel = Adw.PreferencesGroup(title="Verwenden",
-                                   description="Auswahl in deiner config.toml. Fensterregeln und Ausgaben können "
-                                               "zusätzlich eigene Effekte setzen.")
+        sel = Adw.PreferencesGroup(title=_("Use"),
+                                   description=_("Selection in your config.toml. Window rules and outputs can "
+                                                 "set their own effects as well."))
+        sel.set_header_suffix(doc_button(ctx, section_url("effects", "Settings"), _("Use")))
         main = ctx.cfg.main
         if kind in shaders.SLOT_KINDS:
-            sw = Adw.SwitchRow(title=f"Als Standard-{shaders.KIND_LABELS[kind]}-Effekt",
+            sw = Adw.SwitchRow(title=esc(_("Use as default effect ({kind})").format(kind=kind_label(kind))),
                                subtitle=esc(f"[effects] {kind} = \"{self.name}\""),
                                active=main.get(("effects", kind)) == self.name)
 
@@ -524,19 +534,20 @@ class PresetPage(Adw.NavigationPage):
 
             sw.connect("notify::active", toggled)
             sel.add(sw)
-            apply_btn = Gtk.Button(label="Anwenden", valign=Gtk.Align.CENTER)
-            reset_btn = Gtk.Button(label="Zurücksetzen", valign=Gtk.Align.CENTER)
-            live = Adw.ActionRow(title="Live testen",
-                                 subtitle="Wendet das gespeicherte Preset sofort an, ohne die Config zu ändern.")
+            apply_btn = Gtk.Button(label=_("Apply"), valign=Gtk.Align.CENTER)
+            reset_btn = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER)
+            live = Adw.ActionRow(title=_("Live test"),
+                                 subtitle=_("Applies the saved preset right away without changing the config."))
             apply_btn.connect("clicked", lambda *_: self.page.live(kind, self.name))
             reset_btn.connect("clicked", lambda *_: self.page.live(kind, None))
             live.add_suffix(apply_btn)
             live.add_suffix(reset_btn)
+            live.add_suffix(doc_button(ctx, section_url("effects", "Runtime selection"), _("Live test")))
             sel.add(live)
         elif kind == "animation":
             for event in self._animation_events():
                 path = ("animation", event, "effect")
-                sw = Adw.SwitchRow(title=esc(ANIMATION_EVENTS_LABELS.get(event, event)),
+                sw = Adw.SwitchRow(title=esc(_(ANIMATION_EVENTS_LABELS.get(event, event))),
                                    subtitle=esc(f"animation.{event}.effect"),
                                    active=main.get(path) == self.name)
 
@@ -547,21 +558,25 @@ class PresetPage(Adw.NavigationPage):
                         ctx.delete(main, p)
 
                 sw.connect("notify::active", toggled)
+                eff_opt = ctx.schema.options.get(f"animation.{event}.effect")
+                if eff_opt is not None:
+                    sw.add_suffix(doc_button(ctx, option_doc_url(ctx, eff_opt), f"animation.{event}.effect"))
                 sel.add(sw)
         if self.effect is not None:
             cat = next((e for e in shaders.catalog() if e.rel == self.effect.rel), None)
             if cat is not None and shaders.activation_changes(cat):
-                ex = Adw.ButtonRow(title="Aktivierungsbeispiel übernehmen")
+                ex = Adw.ButtonRow(title=_("Apply the activation example"))
                 ex.connect("activated", lambda *_: (ctx.edit(main, lambda: shaders.apply_activation(ctx.cfg, cat)),
                                                      self.refresh()))
                 sel.add(ex)
         self._push(sel)
 
         # ---- preset keys
-        grp = Adw.PreferencesGroup(title="Preset", description=esc(f"[effects.preset.\"{self.name}\"] in {self.tf.path}"))
-        kind_row = Adw.ActionRow(title="Art", subtitle=esc(shaders.KIND_LABELS.get(kind, kind)))
+        grp = Adw.PreferencesGroup(title=_("Preset"), description=esc(f"[effects.preset.\"{self.name}\"] – {self.tf.path}"))
+        grp.set_header_suffix(doc_button(ctx, section_url("effects", "Define a preset"), _("Preset")))
+        kind_row = Adw.ActionRow(title=_("Kind"), subtitle=esc(kind_label(kind)))
         grp.add(kind_row)
-        shader_row = Adw.ActionRow(title="Shader", subtitle=esc(str(self.preset.get("shader", "—"))))
+        shader_row = Adw.ActionRow(title=_("Shader"), subtitle=esc(str(self.preset.get("shader", "—"))))
         grp.add(shader_row)
         for key in shaders.PRESET_KEYS.get(kind, ("palette",)):
             opt = ctx.schema.options.get(f"effects.preset.<name>.{key}")
@@ -569,17 +584,20 @@ class PresetPage(Adw.NavigationPage):
                 continue
             grp.add(option_row(ctx, opt, base + (key,), self.tf))
         if kind == "border" and self._ring_padding() is not None:
-            sync = Adw.ButtonRow(title="ring_padding im Shader an padding angleichen")
+            sync = Adw.ButtonRow(title=_("Match ring_padding in the shader to padding"))
             sync.connect("activated", lambda *_: self._sync_padding())
             grp.add(sync)
         self._push(grp)
 
         # ---- light (border only)
         if kind == "border":
-            lg = Adw.PreferencesGroup(title="Licht",
-                                      description="Rahmen strahlt Licht auf die Umgebung ab. Ohne Tabelle aus.")
+            lg = Adw.PreferencesGroup(title=_("Light"),
+                                      description=_("The border casts light onto its surroundings. Off without the table."))
+            light_opt = ctx.schema.options.get("effects.preset.<name>.light.spread")
+            if light_opt is not None:
+                lg.set_header_suffix(doc_button(ctx, option_doc_url(ctx, light_opt), _("Light")))
             has_light = self.tf.has(base + ("light",))
-            sw = Adw.SwitchRow(title="Licht aktivieren", active=has_light)
+            sw = Adw.SwitchRow(title=_("Enable light"), active=has_light)
 
             def light_toggled(row, *_):
                 if row.get_active():
@@ -637,9 +655,9 @@ class PresetPage(Adw.NavigationPage):
         src = cfg.raw_text(shader_path)
         consts = shaders.parse_constants(src)
         g = Adw.PreferencesGroup(
-            title=f"Shader-Regler ({esc(shader_path.name)})",
-            description="Top-Level-Konstanten aus dem GLSL-Code – so dokumentiert die Sammlung das Feintuning. "
-                        "Werden beim Speichern in die Shader-Datei geschrieben.",
+            title=esc(_("Shader controls ({file})").format(file=shader_path.name)),
+            description=_("Top-level constants from the GLSL code – the collection's documented way to fine-tune. "
+                          "Written to the shader file when you save."),
         )
         orig = shader_path.with_name(shader_path.name + ".orig")
         if orig.exists():
@@ -648,9 +666,9 @@ class PresetPage(Adw.NavigationPage):
                 ctx.changed()
                 self.refresh()
 
-            g.set_header_suffix(icon_button("edit-undo-symbolic", "Original wiederherstellen", restore, flat=False))
+            g.set_header_suffix(icon_button("edit-undo-symbolic", _("Restore the original"), restore, flat=False))
         if not consts:
-            g.add(Adw.ActionRow(title="Keine einstellbaren Konstanten gefunden"))
+            g.add(Adw.ActionRow(title=_("No adjustable constants found")))
             return g
 
         def write(const, values):
@@ -665,7 +683,7 @@ class PresetPage(Adw.NavigationPage):
             title = esc(c.name)
             sub = esc(c.comment) if c.comment else esc(f"{c.kind} {c.type}")
             if c.name == "ring_padding":
-                sub = "Muss dem padding des Presets entsprechen"
+                sub = _("Must match the preset padding")
             if c.type == "bool":
                 row = Adw.SwitchRow(title=title, subtitle=sub, active=bool(c.values[0]))
                 row.connect("notify::active", lambda r, *_, c=c: write(c, [r.get_active()]))
@@ -733,7 +751,7 @@ class GlobalEffectsView(Adw.PreferencesPage):
         for g in self._groups:
             self.remove(g)
         self._groups = []
-        for g in leaf_groups(self.ctx, "effects", ("effects",), title="Globale Effekte"):
+        for g in leaf_groups(self.ctx, "effects", ("effects",), title=_("Global effects")):
             self.add(g)
             self._groups.append(g)
         pools = MapGroup(self.ctx, "effects.pool", ("effects", "pool"))

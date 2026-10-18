@@ -1,0 +1,2171 @@
+# German translation of UmbrielMod.
+msgid ""
+msgstr ""
+"Project-Id-Version: UmbrielMod\n"
+"Language-Team: Deutsch\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: umbrielmod/__main__.py:59
+msgid "GTK4 configuration editor for Umbriel"
+msgstr "GTK4-Konfigurationseditor für Umbriel"
+
+#: umbrielmod/__main__.py:60
+msgid "path to config.toml"
+msgstr "Pfad zur config.toml"
+
+#: umbrielmod/__main__.py:61
+msgid "interface language, e.g. en or de"
+msgstr "Sprache der Oberfläche, z. B. en oder de"
+
+#: umbrielmod/__main__.py:69
+msgid "umbrielmod: `umbriel` was not found on PATH"
+msgstr "umbrielmod: `umbriel` wurde nicht im PATH gefunden"
+
+#: umbrielmod/__main__.py:52
+msgid "UmbrielMod cannot start"
+msgstr "UmbrielMod kann nicht starten"
+
+#: umbrielmod/__main__.py:43
+msgid "{file} is not valid TOML:\n{error}"
+msgstr "{file} ist kein gültiges TOML:\n{error}"
+
+#: umbrielmod/__main__.py:39
+msgid "Could not read the Umbriel schema:\n{error}\n\nIs `umbriel` installed and on PATH?"
+msgstr "Das Umbriel-Schema konnte nicht gelesen werden:\n{error}\n\nIst `umbriel` installiert und im PATH?"
+
+#: umbrielmod/pages/keybinds.py:18
+msgid "Other"
+msgstr "Sonstige"
+
+#: umbrielmod/pages/keybinds.py:20
+msgid "Apps"
+msgstr "Anwendungen"
+
+#: umbrielmod/pages/keybinds.py:20
+msgid "Screencasting"
+msgstr "Bildschirmfreigabe"
+
+#: umbrielmod/pages/keybinds.py:20
+msgid "Focus"
+msgstr "Fokus"
+
+#: umbrielmod/pages/keybinds.py:20
+msgid "Move & size"
+msgstr "Verschieben & Größe"
+
+#: umbrielmod/pages/keybinds.py:20
+msgid "Windows"
+msgstr "Fenster"
+
+#: umbrielmod/pages/keybinds.py:20
+#: umbrielmod/pages/shaders.py:25
+msgid "Scratchpad"
+msgstr "Scratchpad"
+
+#: umbrielmod/pages/keybinds.py:20
+#: umbrielmod/pages/schema_page.py:24
+#: umbrielmod/window.py:24
+msgid "Workspaces"
+msgstr "Arbeitsbereiche"
+
+#: umbrielmod/pages/keybinds.py:20
+#: umbrielmod/pages/schema_page.py:26
+#: umbrielmod/pages/shaders.py:24
+msgid "Overview"
+msgstr "Übersicht"
+
+#: umbrielmod/pages/keybinds.py:20
+msgid "System"
+msgstr "System"
+
+#: umbrielmod/pages/keybinds.py:271
+msgid "Cooldown (ms)"
+msgstr "Abklingzeit (ms)"
+
+#: umbrielmod/pages/keybinds.py:310
+#: umbrielmod/pages/keybinds.py:226
+msgid "Key combination"
+msgstr "Tastenkombination"
+
+#: umbrielmod/pages/keybinds.py:83
+msgid "Search keys or actions…"
+msgstr "Taste oder Aktion suchen…"
+
+#: umbrielmod/pages/keybinds.py:86
+msgid "Show conflicts only"
+msgstr "Nur Konflikte zeigen"
+
+#: umbrielmod/pages/keybinds.py:93
+#: umbrielmod/window.py:21
+msgid "Keybinds"
+msgstr "Tastenkürzel"
+
+#: umbrielmod/pages/keybinds.py:173
+msgid "no repeat"
+msgstr "keine Wiederholung"
+
+#: umbrielmod/pages/keybinds.py:175
+msgid "also when locked"
+msgstr "auch gesperrt"
+
+#: umbrielmod/pages/keybinds.py:177
+msgid "despite inhibit"
+msgstr "trotz Inhibit"
+
+#: umbrielmod/pages/keybinds.py:211
+#: umbrielmod/pages/shaders.py:152
+#: umbrielmod/pages/shaders.py:385
+#: umbrielmod/window.py:365
+#: umbrielmod/window.py:250
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: umbrielmod/pages/keybinds.py:213
+#: umbrielmod/pages/raw.py:30
+#: umbrielmod/pages/shaders.py:387
+#: umbrielmod/pages/shaders.py:537
+msgid "Apply"
+msgstr "Übernehmen"
+
+#: umbrielmod/pages/keybinds.py:223
+#: umbrielmod/pages/keybinds.py:225
+msgid "Key"
+msgstr "Taste"
+
+#: umbrielmod/pages/keybinds.py:224
+msgid "Same format as the config, e.g. Mod+Shift+Q, XF86AudioMute, Mod+WheelDown."
+msgstr "Format wie in der Config, z. B. Mod+Shift+Q, XF86AudioMute, Mod+WheelDown."
+
+#: umbrielmod/pages/keybinds.py:229
+msgid "Record the next key combination"
+msgstr "Nächste Tastenkombination aufnehmen"
+
+#: umbrielmod/pages/keybinds.py:246
+#: umbrielmod/pages/keybinds.py:247
+#: umbrielmod/pages/keybinds.py:254
+msgid "Action"
+msgstr "Aktion"
+
+#: umbrielmod/pages/keybinds.py:260
+msgid "Argument"
+msgstr "Argument"
+
+#: umbrielmod/pages/keybinds.py:265
+msgid "Options"
+msgstr "Optionen"
+
+#: umbrielmod/pages/keybinds.py:266
+msgid "Repeat while held"
+msgstr "Wiederholen beim Halten"
+
+#: umbrielmod/pages/keybinds.py:267
+msgid "Also on the lock screen"
+msgstr "Auch im Sperrbildschirm"
+
+#: umbrielmod/pages/keybinds.py:268
+msgid "Also while shortcuts are inhibited"
+msgstr "Auch wenn Shortcuts blockiert sind"
+
+#: umbrielmod/pages/keybinds.py:273
+msgid "Submap"
+msgstr "Submap"
+
+#: umbrielmod/pages/keybinds.py:299
+msgid "Press the key combination…"
+msgstr "Drücke die gewünschte Kombination…"
+
+#: umbrielmod/pages/keybinds.py:380
+msgid "Enter a key and an action"
+msgstr "Taste und Aktion angeben"
+
+#: umbrielmod/pages/keybinds.py:90
+#: umbrielmod/pages/schema_page.py:249
+msgid "New"
+msgstr "Neu"
+
+#: umbrielmod/pages/keybinds.py:168
+msgid "Run: {command}"
+msgstr "Starten: {command}"
+
+#: umbrielmod/pages/keybinds.py:200
+msgid "Edit keybind"
+msgstr "Tastenkürzel bearbeiten"
+
+#: umbrielmod/pages/keybinds.py:200
+msgid "New keybind"
+msgstr "Neues Tastenkürzel"
+
+#: umbrielmod/pages/keybinds.py:252
+msgid "unknown action"
+msgstr "unbekannte Aktion"
+
+#: umbrielmod/pages/keybinds.py:283
+msgid "Delete keybind"
+msgstr "Tastenkürzel löschen"
+
+#: umbrielmod/pages/keybinds.py:126
+msgid "Same key with the same modifiers (order and spelling do not matter)."
+msgstr "Gleiche Taste mit gleichen Modifikatoren (Reihenfolge und Schreibweise egal)."
+
+#: umbrielmod/pages/keybinds.py:147
+msgid "Read-only"
+msgstr "Schreibgeschützt"
+
+#: umbrielmod/pages/keybinds.py:157
+msgid "No keybinds found"
+msgstr "Keine Tastenkürzel gefunden"
+
+#: umbrielmod/pages/keybinds.py:179
+msgid "cooldown {ms} ms"
+msgstr "Abklingzeit {ms} ms"
+
+#: umbrielmod/pages/keybinds.py:181
+msgid "submap {name}"
+msgstr "Submap {name}"
+
+#: umbrielmod/pages/keybinds.py:384
+msgid "The action {action} needs an argument {spec}"
+msgstr "Die Aktion {action} braucht ein Argument {spec}"
+
+#: umbrielmod/pages/keybinds.py:398
+msgid "{key} already exists – edit it there or delete it first"
+msgstr "{key} existiert bereits – dort bearbeiten oder zuerst löschen"
+
+#: umbrielmod/pages/keybinds.py:190
+msgid "Conflicts with: {keys}"
+msgstr "Kollidiert mit: {keys}"
+
+#: umbrielmod/pages/keybinds.py:373
+msgid "Already used: {key} → {action}"
+msgstr "Bereits belegt: {key} → {action}"
+
+#: umbrielmod/pages/keybinds.py:125
+msgid "{n} key combinations conflict"
+msgstr "{n} Tastenkombinationen kollidieren"
+
+#: umbrielmod/pages/keybinds.py:363
+msgid "Argument {spec}"
+msgstr "Argument {spec}"
+
+#: umbrielmod/pages/keybinds.py:364
+msgid "(optional)"
+msgstr "(optional)"
+
+#: umbrielmod/pages/keybinds.py:146
+msgid "From {file}"
+msgstr "Aus {file}"
+
+#: umbrielmod/pages/outputs.py:238
+msgid "Positions updated – not saved yet"
+msgstr "Positionen aktualisiert – noch nicht gespeichert"
+
+#: umbrielmod/pages/outputs.py:158
+msgid "Arrangement"
+msgstr "Anordnung"
+
+#: umbrielmod/pages/outputs.py:159
+msgid "Drag to move; edges snap together. Positions are logical pixels (after scaling)."
+msgstr "Ziehen zum Verschieben; Kanten rasten ein. Positionen sind logische Pixel (nach Skalierung)."
+
+#: umbrielmod/pages/outputs.py:209
+msgid "Automatic (preferred mode)"
+msgstr "Automatisch (bevorzugter Modus)"
+
+#: umbrielmod/pages/outputs.py:213
+msgid "Mode"
+msgstr "Modus"
+
+#: umbrielmod/pages/outputs.py:181
+msgid "Only one monitor connected."
+msgstr "Nur ein Bildschirm angeschlossen."
+
+#: umbrielmod/pages/outputs.py:199
+msgid "Not connected – settings are kept."
+msgstr "Nicht angeschlossen – Einstellungen bleiben erhalten."
+
+#: umbrielmod/pages/outputs.py:214
+msgid "Resolution and refresh rate"
+msgstr "Auflösung und Bildwiederholrate"
+
+#: umbrielmod/pages/outputs.py:212
+msgid "{mode} (from config)"
+msgstr "{mode} (aus Config)"
+
+#: umbrielmod/pages/raw.py:104
+msgid "Text applied – not saved yet"
+msgstr "Text übernommen – noch nicht gespeichert"
+
+#: umbrielmod/pages/raw.py:151
+msgid "Backup loaded – press “Save” to keep it"
+msgstr "Sicherung geladen – mit „Speichern“ übernehmen"
+
+#: umbrielmod/pages/raw.py:28
+msgid "Validate"
+msgstr "Prüfen"
+
+#: umbrielmod/pages/raw.py:71
+msgid "Edited – “Apply” loads the text into the editor"
+msgstr "Bearbeitet – „Übernehmen“ überträgt den Text in die Oberfläche"
+
+#: umbrielmod/pages/raw.py:113
+#: umbrielmod/window.py:33
+msgid "Backups"
+msgstr "Sicherungen"
+
+#: umbrielmod/pages/raw.py:143
+msgid "This file is no longer part of the configuration"
+msgstr "Diese Datei gehört nicht mehr zur Konfiguration"
+
+#: umbrielmod/pages/raw.py:90
+msgid "Invalid"
+msgstr "Ungültig"
+
+#: umbrielmod/pages/raw.py:129
+msgid "Restore"
+msgstr "Wiederherstellen"
+
+#: umbrielmod/pages/raw.py:135
+msgid "No backups yet"
+msgstr "Noch keine Sicherungen"
+
+#: umbrielmod/pages/raw.py:83
+#: umbrielmod/pages/raw.py:98
+msgid "TOML error: {error}"
+msgstr "TOML-Fehler: {error}"
+
+#: umbrielmod/pages/raw.py:114
+msgid "Before every save a copy is stored in {dir} (the last 50 per file)."
+msgstr "Vor jedem Speichern wird eine Kopie in {dir} abgelegt (je Datei die letzten 50)."
+
+#: umbrielmod/pages/rules.py:37
+msgid "New rule matching the app ID of an open window"
+msgstr "Neue Regel mit der App-ID eines geöffneten Fensters"
+
+#: umbrielmod/pages/rules.py:39
+msgid "Rules apply in order; later rules override earlier ones. Each rule only lists the keys it sets – add more with “Add”."
+msgstr "Regeln werden der Reihe nach angewendet; spätere überschreiben frühere. Jede Regel zeigt nur die gesetzten Schlüssel – weitere über „Hinzufügen“."
+
+#: umbrielmod/pages/rules.py:36
+msgid "From open window"
+msgstr "Aus offenem Fenster"
+
+#: umbrielmod/pages/rules.py:32
+msgid "Rule for {app} created"
+msgstr "Regel für {app} angelegt"
+
+#: umbrielmod/pages/schema_page.py:14
+#: umbrielmod/window.py:30
+msgid "General"
+msgstr "Allgemein"
+
+#: umbrielmod/pages/schema_page.py:15
+msgid "Environment variables"
+msgstr "Umgebungsvariablen"
+
+#: umbrielmod/pages/schema_page.py:16
+msgid "Events"
+msgstr "Ereignisse"
+
+#: umbrielmod/pages/schema_page.py:17
+msgid "Screen sharing"
+msgstr "Bildschirmfreigabe"
+
+#: umbrielmod/pages/schema_page.py:18
+msgid "Included files"
+msgstr "Eingebundene Dateien"
+
+#: umbrielmod/pages/schema_page.py:19
+msgid "DRM / graphics cards"
+msgstr "DRM / Grafikkarten"
+
+#: umbrielmod/pages/schema_page.py:20
+#: umbrielmod/window.py:20
+msgid "Input"
+msgstr "Eingabe"
+
+#: umbrielmod/pages/schema_page.py:21
+#: umbrielmod/window.py:22
+msgid "Appearance"
+msgstr "Darstellung"
+
+#: umbrielmod/pages/schema_page.py:22
+msgid "Colours"
+msgstr "Farben"
+
+#: umbrielmod/pages/schema_page.py:23
+#: umbrielmod/window.py:23
+msgid "Layout"
+msgstr "Layout"
+
+#: umbrielmod/pages/schema_page.py:25
+msgid "Workspace rules"
+msgstr "Arbeitsbereich-Regeln"
+
+#: umbrielmod/pages/schema_page.py:27
+msgid "Hot corners"
+msgstr "Aktive Ecken"
+
+#: umbrielmod/pages/schema_page.py:28
+msgid "Scratchpads"
+msgstr "Scratchpads"
+
+#: umbrielmod/pages/schema_page.py:29
+#: umbrielmod/window.py:26
+msgid "Animations"
+msgstr "Animationen"
+
+#: umbrielmod/pages/schema_page.py:30
+#: umbrielmod/window.py:27
+msgid "Window rules"
+msgstr "Fensterregeln"
+
+#: umbrielmod/pages/schema_page.py:31
+#: umbrielmod/window.py:28
+msgid "Layer rules"
+msgstr "Layer-Regeln"
+
+#: umbrielmod/pages/schema_page.py:32
+msgid "Security context rules"
+msgstr "Sicherheitskontext-Regeln"
+
+#: umbrielmod/pages/schema_page.py:33
+#: umbrielmod/pages/shaders.py:202
+msgid "Effects"
+msgstr "Effekte"
+
+#: umbrielmod/pages/schema_page.py:34
+msgid "Per-device settings"
+msgstr "Gerätespezifische Einstellungen"
+
+#: umbrielmod/pages/schema_page.py:35
+msgid "Bézier curves"
+msgstr "Bézier-Kurven"
+
+#: umbrielmod/pages/schema_page.py:36
+msgid "Spring curves"
+msgstr "Federkurven"
+
+#: umbrielmod/pages/schema_page.py:37
+msgid "Effect pools"
+msgstr "Effekt-Pools"
+
+#: umbrielmod/pages/schema_page.py:313
+msgid "Move up (later entries override earlier ones)"
+msgstr "Nach oben (spätere Einträge überschreiben frühere)"
+
+#: umbrielmod/pages/schema_page.py:315
+msgid "Move down"
+msgstr "Nach unten"
+
+#: umbrielmod/pages/schema_page.py:116
+msgid "Name"
+msgstr "Name"
+
+#: umbrielmod/pages/schema_page.py:117
+msgid "Create"
+msgstr "Anlegen"
+
+#: umbrielmod/pages/schema_page.py:191
+msgid "Delete entry"
+msgstr "Eintrag löschen"
+
+#: umbrielmod/pages/schema_page.py:217
+msgid "All windows"
+msgstr "Alle Fenster"
+
+#: umbrielmod/pages/schema_page.py:317
+msgid "Duplicate"
+msgstr "Duplizieren"
+
+#: umbrielmod/pages/schema_page.py:318
+msgid "Delete"
+msgstr "Löschen"
+
+#: umbrielmod/pages/schema_page.py:335
+msgid "More options…"
+msgstr "Weitere Optionen…"
+
+#: umbrielmod/pages/schema_page.py:133
+#: umbrielmod/pages/schema_page.py:336
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: umbrielmod/pages/schema_page.py:219
+msgid "All layers"
+msgstr "Alle Layer"
+
+#: umbrielmod/pages/schema_page.py:221
+msgid "Entry"
+msgstr "Eintrag"
+
+#: umbrielmod/pages/schema_page.py:172
+msgid "No entries"
+msgstr "Keine Einträge"
+
+#: umbrielmod/pages/schema_page.py:284
+msgid "No entries yet"
+msgstr "Noch keine Einträge"
+
+#: umbrielmod/pages/schema_page.py:168
+msgid "From {file} (read-only)"
+msgstr "Aus {file} (schreibgeschützt)"
+
+#: umbrielmod/pages/schema_page.py:280
+msgid "(from {file}, read-only)"
+msgstr "(aus {file}, schreibgeschützt)"
+
+#: umbrielmod/pages/shaders.py:20
+msgid "Window opens"
+msgstr "Fenster öffnen"
+
+#: umbrielmod/pages/shaders.py:21
+msgid "Window closes"
+msgstr "Fenster schließen"
+
+#: umbrielmod/pages/shaders.py:22
+msgid "Window moves"
+msgstr "Fenster verschieben"
+
+#: umbrielmod/pages/shaders.py:23
+msgid "Workspace switch"
+msgstr "Arbeitsbereich wechseln"
+
+#: umbrielmod/pages/shaders.py:26
+#: umbrielmod/shaders.py:33
+msgid "Border"
+msgstr "Rahmen"
+
+#: umbrielmod/pages/shaders.py:27
+msgid "Dim unfocused"
+msgstr "Unfokussiert abdunkeln"
+
+#: umbrielmod/pages/shaders.py:28
+msgid "Layer surfaces"
+msgstr "Layer-Flächen"
+
+#: umbrielmod/pages/shaders.py:94
+#: umbrielmod/pages/shaders.py:250
+msgid "Installed"
+msgstr "Installiert"
+
+#: umbrielmod/pages/shaders.py:95
+msgid "Catalogue"
+msgstr "Katalog"
+
+#: umbrielmod/pages/shaders.py:96
+msgid "Selection & pools"
+msgstr "Auswahl & Pools"
+
+#: umbrielmod/pages/shaders.py:153
+#: umbrielmod/pages/shaders.py:483
+#: umbrielmod/pages/shaders.py:313
+msgid "Uninstall"
+msgstr "Deinstallieren"
+
+#: umbrielmod/pages/shaders.py:267
+msgid "Loading…"
+msgstr "Lade…"
+
+#: umbrielmod/pages/shaders.py:268
+msgid "Fetching the community shaders from GitHub…"
+msgstr "Lade Community-Shader von GitHub…"
+
+#: umbrielmod/pages/shaders.py:324
+msgid "View on GitHub"
+msgstr "Auf GitHub ansehen"
+
+#: umbrielmod/pages/shaders.py:334
+#: umbrielmod/pages/shaders.py:577
+msgid "Kind"
+msgstr "Art"
+
+#: umbrielmod/pages/shaders.py:335
+msgid "Preset names"
+msgstr "Preset-Namen"
+
+#: umbrielmod/pages/shaders.py:338
+msgid "Install location"
+msgstr "Installationsort"
+
+#: umbrielmod/pages/shaders.py:386
+msgid "Install only"
+msgstr "Nur installieren"
+
+#: umbrielmod/pages/shaders.py:148
+msgid "The files in {dir} will be deleted."
+msgstr "Die Dateien in {dir} werden gelöscht."
+
+#: umbrielmod/pages/shaders.py:177
+#: umbrielmod/pages/shaders.py:177
+msgid "the focused window"
+msgstr "das fokussierte Fenster"
+
+#: umbrielmod/pages/shaders.py:178
+msgid "the preferred output"
+msgstr "den bevorzugten Bildschirm"
+
+#: umbrielmod/pages/shaders.py:178
+msgid "the cursor"
+msgstr "den Cursor"
+
+#: umbrielmod/pages/shaders.py:194
+msgid "Search effects…"
+msgstr "Effekte suchen…"
+
+#: umbrielmod/pages/shaders.py:198
+msgid "Update the catalogue from GitHub"
+msgstr "Katalog von GitHub aktualisieren"
+
+#: umbrielmod/pages/shaders.py:213
+msgid "Get the community shaders"
+msgstr "Community-Shader laden"
+
+#: umbrielmod/pages/shaders.py:218
+msgid "Download"
+msgstr "Herunterladen"
+
+#: umbrielmod/pages/shaders.py:337
+msgid "Companion effects (installed too)"
+msgstr "Begleit-Effekte (werden mitinstalliert)"
+
+#: umbrielmod/pages/shaders.py:341
+msgid "Licence"
+msgstr "Lizenz"
+
+#: umbrielmod/pages/shaders.py:350
+msgid "Activation sets"
+msgstr "Aktivierung setzt"
+
+#: umbrielmod/pages/shaders.py:366
+msgid "Description, options and shader controls"
+msgstr "Beschreibung, Optionen und Shader-Regler"
+
+#: umbrielmod/pages/shaders.py:383
+msgid "Overwrite existing settings?"
+msgstr "Bestehende Einstellungen überschreiben?"
+
+#: umbrielmod/pages/shaders.py:460
+msgid "not included"
+msgstr "nicht eingebunden"
+
+#: umbrielmod/pages/shaders.py:519
+#: umbrielmod/pages/shaders.py:522
+msgid "Use"
+msgstr "Verwenden"
+
+#: umbrielmod/pages/shaders.py:520
+msgid "Selection in your config.toml. Window rules and outputs can set their own effects as well."
+msgstr "Auswahl in deiner config.toml. Fensterregeln und Ausgaben können zusätzlich eigene Effekte setzen."
+
+#: umbrielmod/pages/shaders.py:575
+#: umbrielmod/pages/shaders.py:576
+msgid "Preset"
+msgstr "Preset"
+
+#: umbrielmod/pages/shaders.py:579
+msgid "Shader"
+msgstr "Shader"
+
+#: umbrielmod/pages/shaders.py:659
+msgid "Top-level constants from the GLSL code – the collection's documented way to fine-tune. Written to the shader file when you save."
+msgstr "Top-Level-Konstanten aus dem GLSL-Code – so dokumentiert die Sammlung das Feintuning. Werden beim Speichern in die Shader-Datei geschrieben."
+
+#: umbrielmod/pages/shaders.py:686
+msgid "Must match the preset padding"
+msgstr "Muss dem padding des Presets entsprechen"
+
+#: umbrielmod/pages/shaders.py:754
+msgid "Global effects"
+msgstr "Globale Effekte"
+
+#: umbrielmod/pages/shaders.py:102
+#: umbrielmod/window.py:29
+msgid "Effects & shaders"
+msgstr "Effekte & Shader"
+
+#: umbrielmod/pages/shaders.py:126
+msgid "Installation failed"
+msgstr "Installation fehlgeschlagen"
+
+#: umbrielmod/pages/shaders.py:181
+msgid "Live test reset"
+msgstr "Live-Test zurückgesetzt"
+
+#: umbrielmod/pages/shaders.py:311
+msgid "Update"
+msgstr "Aktualisieren"
+
+#: umbrielmod/pages/shaders.py:318
+msgid "Install"
+msgstr "Installieren"
+
+#: umbrielmod/pages/shaders.py:320
+msgid "Install & activate"
+msgstr "Installieren & aktivieren"
+
+#: umbrielmod/pages/shaders.py:343
+msgid "Needs the cursor history API"
+msgstr "Benötigt die Cursor-Verlaufs-API"
+
+#: umbrielmod/pages/shaders.py:344
+msgid "Uses umbriel_pointer_path/umbriel_pointer_count – only works with newer Umbriel builds."
+msgstr "Nutzt umbriel_pointer_path/umbriel_pointer_count – funktioniert nur mit neueren Umbriel-Builds."
+
+#: umbrielmod/pages/shaders.py:435
+msgid "Other presets"
+msgstr "Weitere Presets"
+
+#: umbrielmod/pages/shaders.py:435
+msgid "Defined in the configuration, not from the catalogue."
+msgstr "In der Konfiguration definiert, nicht aus dem Katalog."
+
+#: umbrielmod/pages/shaders.py:446
+msgid "No effects installed yet"
+msgstr "Noch keine Effekte installiert"
+
+#: umbrielmod/pages/shaders.py:447
+msgid "The catalogue has the community shaders for Umbriel."
+msgstr "Im Katalog findest du die Community-Shader für Umbriel."
+
+#: umbrielmod/pages/shaders.py:467
+msgid "Live test (without saving)"
+msgstr "Live testen (ohne zu speichern)"
+
+#: umbrielmod/pages/shaders.py:470
+msgid "Include"
+msgstr "Einbinden"
+
+#: umbrielmod/pages/shaders.py:482
+msgid "Details"
+msgstr "Details"
+
+#: umbrielmod/pages/shaders.py:538
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#: umbrielmod/pages/shaders.py:539
+#: umbrielmod/pages/shaders.py:545
+msgid "Live test"
+msgstr "Live testen"
+
+#: umbrielmod/pages/shaders.py:540
+msgid "Applies the saved preset right away without changing the config."
+msgstr "Wendet das gespeicherte Preset sofort an, ohne die Config zu ändern."
+
+#: umbrielmod/pages/shaders.py:587
+msgid "Match ring_padding in the shader to padding"
+msgstr "ring_padding im Shader an padding angleichen"
+
+#: umbrielmod/pages/shaders.py:594
+#: umbrielmod/pages/shaders.py:598
+msgid "Light"
+msgstr "Licht"
+
+#: umbrielmod/pages/shaders.py:595
+msgid "The border casts light onto its surroundings. Off without the table."
+msgstr "Der Rahmen strahlt Licht auf die Umgebung ab. Ohne Tabelle aus."
+
+#: umbrielmod/pages/shaders.py:600
+msgid "Enable light"
+msgstr "Licht aktivieren"
+
+#: umbrielmod/pages/shaders.py:669
+msgid "Restore the original"
+msgstr "Original wiederherstellen"
+
+#: umbrielmod/pages/shaders.py:150
+msgid "These selections will be removed:"
+msgstr "Diese Auswahlen werden entfernt:"
+
+#: umbrielmod/pages/shaders.py:151
+msgid "Uninstall {name}?"
+msgstr "{name} deinstallieren?"
+
+#: umbrielmod/pages/shaders.py:183
+#: umbrielmod/pages/shaders.py:279
+#: umbrielmod/window.py:274
+msgid "Error: {message}"
+msgstr "Fehler: {message}"
+
+#: umbrielmod/pages/shaders.py:214
+msgid "Downloads the collection from github.com/{repo} (about 40 MB) to {dir}."
+msgstr "Lädt die Sammlung von github.com/{repo} (ca. 40 MB) nach {dir}."
+
+#: umbrielmod/pages/shaders.py:233
+msgid "{n} effects · {revision}"
+msgstr "{n} Effekte · {revision}"
+
+#: umbrielmod/pages/shaders.py:359
+msgid "Not included"
+msgstr "Nicht eingebunden"
+
+#: umbrielmod/pages/shaders.py:384
+msgid "The activation example changes:"
+msgstr "Das Aktivierungsbeispiel ändert:"
+
+#: umbrielmod/pages/shaders.py:465
+msgid "Active"
+msgstr "Aktiv"
+
+#: umbrielmod/pages/shaders.py:568
+msgid "Apply the activation example"
+msgstr "Aktivierungsbeispiel übernehmen"
+
+#: umbrielmod/pages/shaders.py:671
+msgid "No adjustable constants found"
+msgstr "Keine einstellbaren Konstanten gefunden"
+
+#: umbrielmod/pages/shaders.py:138
+msgid "{name} installed and activated"
+msgstr "{name} installiert und aktiviert"
+
+#: umbrielmod/pages/shaders.py:138
+msgid "{name} installed"
+msgstr "{name} installiert"
+
+#: umbrielmod/pages/shaders.py:163
+msgid "{name} removed"
+msgstr "{name} entfernt"
+
+#: umbrielmod/pages/shaders.py:180
+msgid "Live: {name} on {target} (not saved)"
+msgstr "Live: {name} auf {target} (nicht gespeichert)"
+
+#: umbrielmod/pages/shaders.py:196
+msgid "All"
+msgstr "Alle"
+
+#: umbrielmod/pages/shaders.py:278
+msgid "Catalogue updated ({revision})"
+msgstr "Katalog aktualisiert ({revision})"
+
+#: umbrielmod/pages/shaders.py:462
+msgid "active: {where}"
+msgstr "aktiv: {where}"
+
+#: umbrielmod/pages/shaders.py:658
+msgid "Shader controls ({file})"
+msgstr "Shader-Regler ({file})"
+
+#: umbrielmod/pages/shaders.py:525
+msgid "Use as default effect ({kind})"
+msgstr "Als Standard-Effekt verwenden ({kind})"
+
+#: umbrielmod/pages/shaders.py:353
+msgid "Configure preset “{name}”"
+msgstr "Preset „{name}“ konfigurieren"
+
+#: umbrielmod/shaders.py:34
+msgid "Window"
+msgstr "Fenster"
+
+#: umbrielmod/shaders.py:35
+msgid "Screen"
+msgstr "Bildschirm"
+
+#: umbrielmod/shaders.py:36
+msgid "Cursor"
+msgstr "Cursor"
+
+#: umbrielmod/shaders.py:37
+msgid "Animation"
+msgstr "Animation"
+
+#: umbrielmod/umbriel.py:116
+msgid "current"
+msgstr "aktuell"
+
+#: umbrielmod/umbriel.py:116
+msgid "preferred"
+msgstr "bevorzugt"
+
+#: umbrielmod/widgets.py:235
+#: umbrielmod/widgets.py:416
+msgid "Reset to default (removes the key)"
+msgstr "Auf Standard zurücksetzen (entfernt den Schlüssel)"
+
+#: umbrielmod/widgets.py:319
+msgid "Not set"
+msgstr "Nicht gesetzt"
+
+#: umbrielmod/widgets.py:371
+msgid "TOML value, e.g. \"text\", 1.5, [1, 2] or { a = 1 }"
+msgstr "TOML-Wert, z. B. \"text\", 1.5, [1, 2] oder { a = 1 }"
+
+#: umbrielmod/widgets.py:450
+msgid "Add entry"
+msgstr "Eintrag hinzufügen"
+
+#: umbrielmod/widgets.py:64
+msgid "Suggestions"
+msgstr "Vorschläge"
+
+#: umbrielmod/widgets.py:70
+msgid "Search…"
+msgstr "Suchen…"
+
+#: umbrielmod/widgets.py:139
+msgid "built-in"
+msgstr "eingebaut"
+
+#: umbrielmod/widgets.py:143
+msgid "Spring: damping, stiffness"
+msgstr "Feder: Dämpfung, Steifigkeit"
+
+#: umbrielmod/widgets.py:144
+msgid "Bézier curve"
+msgstr "Bézier-Kurve"
+
+#: umbrielmod/widgets.py:413
+#: umbrielmod/widgets.py:426
+msgid "empty"
+msgstr "leer"
+
+#: umbrielmod/widgets.py:444
+msgid "Remove"
+msgstr "Entfernen"
+
+#: umbrielmod/widgets.py:40
+msgid "Open the Umbriel documentation"
+msgstr "Umbriel-Dokumentation öffnen"
+
+#: umbrielmod/widgets.py:137
+msgid "suppress"
+msgstr "unterdrücken"
+
+#: umbrielmod/widgets.py:141
+msgid "Bézier"
+msgstr "Bézier"
+
+#: umbrielmod/widgets.py:142
+msgid "Spring"
+msgstr "Feder"
+
+#: umbrielmod/widgets.py:218
+msgid "Range: {min} – {max}"
+msgstr "Bereich: {min} – {max}"
+
+#: umbrielmod/widgets.py:319
+msgid "Default ({value})"
+msgstr "Standard ({value})"
+
+#: umbrielmod/widgets.py:499
+msgid "Add option"
+msgstr "Option hinzufügen"
+
+#: umbrielmod/widgets.py:220
+#: umbrielmod/widgets.py:203
+msgid "Default: {value}"
+msgstr "Standard: {value}"
+
+#: umbrielmod/widgets.py:430
+msgid "Entry {n}"
+msgstr "Eintrag {n}"
+
+#: umbrielmod/widgets.py:200
+msgid "Set in {file}"
+msgstr "Festgelegt in {file}"
+
+#: umbrielmod/widgets.py:223
+msgid "Description taken from {path}"
+msgstr "Beschreibung übernommen von {path}"
+
+#: umbrielmod/widgets.py:205
+msgid "Not set – Umbriel decides"
+msgstr "Nicht gesetzt – Umbriel entscheidet"
+
+#: umbrielmod/window.py:19
+msgid "Outputs"
+msgstr "Ausgaben"
+
+#: umbrielmod/window.py:32
+msgid "Raw editor"
+msgstr "Roh-Editor"
+
+#: umbrielmod/window.py:93
+msgid "Reload"
+msgstr "Neu laden"
+
+#: umbrielmod/window.py:94
+msgid "Update schema and descriptions"
+msgstr "Schema und Beschreibungen aktualisieren"
+
+#: umbrielmod/window.py:96
+msgid "System default"
+msgstr "Systemvorgabe"
+
+#: umbrielmod/window.py:99
+msgid "Language"
+msgstr "Sprache"
+
+#: umbrielmod/window.py:100
+msgid "About UmbrielMod"
+msgstr "Über UmbrielMod"
+
+#: umbrielmod/window.py:262
+msgid "Fetching the Umbriel documentation for the installed version…"
+msgstr "Lade Umbriel-Dokumentation für die installierte Version…"
+
+#: umbrielmod/window.py:366
+#: umbrielmod/window.py:118
+#: umbrielmod/window.py:251
+msgid "Discard"
+msgstr "Verwerfen"
+
+#: umbrielmod/window.py:367
+#: umbrielmod/window.py:116
+msgid "Save"
+msgstr "Speichern"
+
+#: umbrielmod/window.py:112
+msgid "Undo (Ctrl+Z)"
+msgstr "Rückgängig (Strg+Z)"
+
+#: umbrielmod/window.py:113
+msgid "Redo (Ctrl+Shift+Z)"
+msgstr "Wiederholen (Strg+Umschalt+Z)"
+
+#: umbrielmod/window.py:117
+msgid "Validate and save (Ctrl+S) – Umbriel reloads automatically"
+msgstr "Prüfen und speichern (Strg+S) – Umbriel lädt automatisch neu"
+
+#: umbrielmod/window.py:124
+msgid "The configuration was changed outside UmbrielMod."
+msgstr "Die Konfiguration wurde außerhalb von UmbrielMod geändert."
+
+#: umbrielmod/window.py:125
+msgid "Reload (discards changes)"
+msgstr "Neu laden (verwirft Änderungen)"
+
+#: umbrielmod/window.py:239
+msgid "Saved – Umbriel applies the changes automatically"
+msgstr "Gespeichert – Umbriel übernimmt die Änderungen automatisch"
+
+#: umbrielmod/window.py:242
+msgid "Invalid configuration – not saved"
+msgstr "Konfiguration ungültig – nicht gespeichert"
+
+#: umbrielmod/window.py:301
+msgid "Graphical configuration for the Umbriel Wayland compositor"
+msgstr "Grafische Konfiguration für den Umbriel-Wayland-Compositor"
+
+#: umbrielmod/window.py:357
+msgid "The configuration changed on disk and was reloaded"
+msgstr "Die Konfiguration wurde extern geändert und neu geladen"
+
+#: umbrielmod/window.py:363
+msgid "Unsaved changes"
+msgstr "Ungespeicherte Änderungen"
+
+#: umbrielmod/window.py:364
+msgid "Save the changes before closing?"
+msgstr "Sollen die Änderungen vor dem Beenden gespeichert werden?"
+
+#: umbrielmod/window.py:101
+msgid "Menu"
+msgstr "Menü"
+
+#: umbrielmod/window.py:248
+msgid "Discard unsaved changes?"
+msgstr "Ungespeicherte Änderungen verwerfen?"
+
+#: umbrielmod/window.py:249
+msgid "The configuration will be reloaded from disk."
+msgstr "Die Konfiguration wird von der Festplatte neu geladen."
+
+#: umbrielmod/window.py:302
+#: umbrielmod/window.py:302
+msgid "translator-credits"
+msgstr "Daniel Quolke"
+
+#: umbrielmod/window.py:222
+msgid "Unsaved: {files}"
+msgstr "Ungespeichert: {files}"
+
+#: umbriel-docs:animation.curve
+msgid "Default easing curve."
+msgstr ""
+
+#: umbriel-docs:animation.duration_ms
+msgid "Default duration for non-spring curves."
+msgstr ""
+
+#: umbriel-docs:animation.enabled
+msgid "Master switch for every transition."
+msgstr ""
+
+#: umbriel-docs:animation.layers
+msgid "Layer-shell surfaces appearing, mapping, closing, moving, resizing, or taking and losing the keyboard"
+msgstr ""
+
+#: umbriel-docs:animation.scratchpad.fullscreen
+msgid "Fullscreen"
+msgstr ""
+
+#: umbriel-docs:appearance.blur.brightness
+msgid "Brightness multiplier from 0.0 to 2.0."
+msgstr ""
+
+#: umbriel-docs:appearance.blur.contrast
+msgid "Contrast multiplier from 0.0 to 2.0."
+msgstr ""
+
+#: umbriel-docs:appearance.blur.enabled
+msgid "Enable blur rendering."
+msgstr ""
+
+#: umbriel-docs:appearance.blur.noise
+msgid "Noise overlay from 0.0 to 1.0."
+msgstr ""
+
+#: umbriel-docs:appearance.blur.optimized
+msgid "Share one cached background blur across surfaces on an output."
+msgstr ""
+
+#: umbriel-docs:appearance.blur.passes
+msgid "Blur passes from 0 to 8."
+msgstr ""
+
+#: umbriel-docs:appearance.blur.radius
+msgid "Blur radius from 0 to 100."
+msgstr ""
+
+#: umbriel-docs:appearance.blur.saturation
+msgid "Saturation multiplier from 0.0 to 2.0."
+msgstr ""
+
+#: umbriel-docs:appearance.border_width
+msgid "Inner border width in logical pixels."
+msgstr ""
+
+#: umbriel-docs:appearance.corner_radius
+msgid "Radius of the complete decorated window."
+msgstr ""
+
+#: umbriel-docs:appearance.drag_opacity
+msgid "Opacity while dragging a window."
+msgstr ""
+
+#: umbriel-docs:appearance.opaque_fullscreen
+msgid "Draw fullscreen windows over the backdrop and ignore window rule `opacity`."
+msgstr ""
+
+#: umbriel-docs:appearance.outer_border_width
+msgid "Outer ring width in logical pixels."
+msgstr ""
+
+#: umbriel-docs:appearance.prefer_no_csd
+msgid "Prefer Umbriel's border-only server decoration."
+msgstr ""
+
+#: umbriel-docs:appearance.shadow.enabled
+msgid "Draw shadows behind tiled and floating windows."
+msgstr ""
+
+#: umbriel-docs:appearance.shadow.offset_x
+msgid "Horizontal offset from -200 to 200."
+msgstr ""
+
+#: umbriel-docs:appearance.shadow.offset_y
+msgid "Vertical offset from -200 to 200."
+msgstr ""
+
+#: umbriel-docs:appearance.shadow.softness
+msgid "Blur softness from 0 to 200."
+msgstr ""
+
+#: umbriel-docs:appearance.tab_bar.corner_radius
+msgid "Slot corner radius; `-1` follows `corner_radius`."
+msgstr ""
+
+#: umbriel-docs:appearance.tab_bar.font
+msgid "Title font as a Pango description, such as `\"Inter Bold 9\"`."
+msgstr ""
+
+#: umbriel-docs:appearance.tab_bar.height
+msgid "Thickness in logical pixels, from 2 to 400: the bar's height on the top or bottom, its width on the left or right. The group reserves the bar and one `gap` beside it. Give a side bar with titles room for them, such as `160`."
+msgstr ""
+
+#: umbriel-docs:appearance.tab_bar.hide_when_single
+msgid "Draw no bar, and reserve no space, while a tab group holds one window. It stays a group, so the next window to join becomes a tab."
+msgstr ""
+
+#: umbriel-docs:appearance.tab_bar.max_tabs
+msgid "Slots the bar shows at once, from 0 to 64; `0` shows every tab."
+msgstr ""
+
+#: umbriel-docs:appearance.tab_bar.overflow
+msgid "What a bar does with more tabs than `max_tabs`. `\"scroll\"` keeps the slots at their size and shows a run of tabs that follows the active one, with a `‹` and a `›` button at the ends that select the previous and next tab. `\"shrink\"` narrows the slots until every tab fits."
+msgstr ""
+
+#: umbriel-docs:appearance.tab_bar.padding
+msgid "Space a title keeps from either end of its slot."
+msgstr ""
+
+#: umbriel-docs:appearance.tab_bar.position
+msgid "The group edge the bar sits on: `\"top\"`, `\"bottom\"`, `\"left\"`, or `\"right\"`. On the top or bottom the slots sit side by side; on the left or right they stack, a vertical tab list whose titles still read across."
+msgstr ""
+
+#: umbriel-docs:appearance.tab_bar.style
+msgid "`\"titles\"` shows each tab's title in its slot. `\"indicator\"` draws the slots alone; pair it with a small `height` for a thin strip."
+msgstr ""
+
+#: umbriel-docs:appearance.tab_bar.tab_gap
+msgid "Space between neighbouring slots."
+msgstr ""
+
+#: umbriel-docs:appearance.tab_bar.title_align
+msgid "`\"left\"`, `\"center\"`, or `\"right\"` within the slot."
+msgstr ""
+
+#: umbriel-docs:appearance.tab_bar.title_format
+msgid "Slot label. `{title}`, `{app_id}`, and `{index}` (from 1) are replaced; a window without a title shows its app id."
+msgstr ""
+
+#: umbriel-docs:appearance.tab_bar.visible
+msgid "Draw bars. `false` hides the bar of every group that has not shown its own with `column-show-tab-bar` or `column-toggle-tab-bar`; the tabs take its space and keep working from the keyboard. Those actions hide or show one group's bar whatever this says."
+msgstr ""
+
+#: umbriel-docs:colors.accent_primary
+msgid "Titles, key chords, and primary emphasis."
+msgstr ""
+
+#: umbriel-docs:colors.accent_secondary
+msgid "Secondary emphasis and group headings."
+msgstr ""
+
+#: umbriel-docs:colors.backdrop
+msgid "Fullscreen background and RGB color of the opaque emergency lock blank."
+msgstr ""
+
+#: umbriel-docs:colors.background
+msgid "Background for Umbriel panels and banners."
+msgstr ""
+
+#: umbriel-docs:colors.error
+msgid "Error text and confirmation borders."
+msgstr ""
+
+#: umbriel-docs:colors.insert_hint
+msgid "Drop-target preview during dragging."
+msgstr ""
+
+#: umbriel-docs:colors.overview.background_tint
+msgid "Tint over the desktop behind the overview."
+msgstr ""
+
+#: umbriel-docs:colors.overview.badge
+msgid "Shortcut badge color."
+msgstr ""
+
+#: umbriel-docs:colors.overview.workspace_background
+msgid "Background behind each workspace preview."
+msgstr ""
+
+#: umbriel-docs:colors.shadow
+msgid "Window shadow color."
+msgstr ""
+
+#: umbriel-docs:colors.tab_bar.active
+msgid "The active tab's slot in the focused column."
+msgstr ""
+
+#: umbriel-docs:colors.tab_bar.active_text
+#: umbriel-docs:colors.tab_bar.active_unfocused_text
+#: umbriel-docs:colors.tab_bar.urgent_text
+msgid "Its title."
+msgstr ""
+
+#: umbriel-docs:colors.tab_bar.active_unfocused
+msgid "The active tab's slot in any other column."
+msgstr ""
+
+#: umbriel-docs:colors.tab_bar.background
+msgid "Slots of tabs that are neither active nor urgent."
+msgstr ""
+
+#: umbriel-docs:colors.tab_bar.text
+msgid "Their titles."
+msgstr ""
+
+#: umbriel-docs:colors.tab_bar.urgent
+msgid "The slot of a hidden tab that asks for attention."
+msgstr ""
+
+#: umbriel-docs:colors.text_muted
+msgid "Secondary help and status text."
+msgstr ""
+
+#: umbriel-docs:colors.text_primary
+msgid "Primary text."
+msgstr ""
+
+#: umbriel-docs:colors.warning
+msgid "Warning text and borders."
+msgstr ""
+
+#: umbriel-docs:drm.ignored_devices
+msgid "Absolute card or render-node paths. Prefer stable `/dev/dri/by-path` links."
+msgstr ""
+
+#: umbriel-docs:drm.ignored_pci_addresses
+msgid "PCI addresses in `domain:bus:slot.function` form."
+msgstr ""
+
+#: umbriel-docs:effects.border
+msgid "Border preset or pool for the focused window."
+msgstr ""
+
+#: umbriel-docs:effects.cursor
+msgid "Cursor preset or pool, shared across outputs."
+msgstr ""
+
+#: umbriel-docs:effects.in_capture
+msgid "Include window, screen, and cursor effects in screencopy and image-copy captures. Border effects always appear, and an export-dmabuf capture always sees the same frame as the display, regardless of this setting."
+msgstr ""
+
+#: umbriel-docs:effects.max_fps
+msgid "Cap, 0 to 240, for frames drawn only because an effect animates. `0` follows each output's refresh rate."
+msgstr ""
+
+#: umbriel-docs:effects.pool.<name>.choose
+msgid "Ordered names of presets of that kind."
+msgstr ""
+
+#: umbriel-docs:effects.pool.<name>.kind
+msgid "`border`, `window`, `screen`, or `cursor`."
+msgstr ""
+
+#: umbriel-docs:effects.pool.<name>.selection
+msgid "`unused_first`, `round_robin`, or `random`."
+msgstr ""
+
+#: umbriel-docs:effects.preset.<name>.animated
+msgid "`false` freezes `umbriel_time` at zero."
+msgstr ""
+
+#: umbriel-docs:effects.preset.<name>.light.intensity
+msgid "Light gain, 0 to 4."
+msgstr ""
+
+#: umbriel-docs:effects.preset.<name>.light.spread
+msgid "How far light from the ring spills, 1 to 256 logical pixels. Defining `[effects.preset.<name>.light]` enables light."
+msgstr ""
+
+#: umbriel-docs:effects.preset.<name>.light.threshold
+msgid "Brightness a ring pixel needs before it emits, 0 to 1."
+msgstr ""
+
+#: umbriel-docs:effects.preset.<name>.overlay
+msgid "A window preset drawn on the window while the border effect applies."
+msgstr ""
+
+#: umbriel-docs:effects.preset.<name>.palette
+msgid "Supply `[colors]` accent and status colors to the program."
+msgstr ""
+
+#: umbriel-docs:effects.preset.<name>.shader
+msgid "Path to the GLSL source, at most 256 KiB. Without it the preset is inert."
+msgstr ""
+
+#: umbriel-docs:effects.preset.<name>.speed
+msgid "Multiplier on `umbriel_time`, 0 to 10. `0` holds `umbriel_time` at zero."
+msgstr ""
+
+#: umbriel-docs:effects.screen
+msgid "Screen preset or pool applied to every output."
+msgstr ""
+
+#: umbriel-docs:effects.window
+msgid "Window preset or pool applied to every window."
+msgstr ""
+
+#: umbriel-docs:general.autostart
+msgid "Commands started once with the session. Changes require a restart."
+msgstr ""
+
+#: umbriel-docs:general.focus_on_activate
+msgid "Let application activation requests focus and reveal their target."
+msgstr ""
+
+#: umbriel-docs:general.honor_restored_maximize
+msgid "Honor maximize requests an application makes while its window opens, until it acknowledges its opening layout."
+msgstr ""
+
+#: umbriel-docs:general.mod_key
+msgid "Modifier represented by `Mod` in keybinds."
+msgstr ""
+
+#: umbriel-docs:general.show_cheatsheet
+msgid "Show the keybind cheatsheet when Umbriel starts."
+msgstr ""
+
+#: umbriel-docs:general.xwayland
+msgid "Start Xwayland lazily for X11 applications. Changes require a restart."
+msgstr ""
+
+#: umbriel-docs:general.xwayland_native_resolution
+msgid "Show outputs to X11 applications at their physical resolution, so they render sharp on scaled outputs. Changes require a restart."
+msgstr ""
+
+#: umbriel-docs:general.xwayland_xsettings
+msgid "Announce the interface scale and cursor theme to X11 applications through XSETTINGS. Turn it off to run your own XSETTINGS manager, such as `xsettingsd`. Changes require a restart."
+msgstr ""
+
+#: umbriel-docs:hot_corners.top_left.action
+msgid "Any action accepted by a keybind."
+msgstr ""
+
+#: umbriel-docs:hot_corners.top_left.delay_ms
+msgid "Delay from 0 to 10000 milliseconds."
+msgstr ""
+
+#: umbriel-docs:hot_corners.top_left.enabled
+msgid "Enable this corner."
+msgstr ""
+
+#: umbriel-docs:input.cursor.follows_focus
+msgid "Follow keyboard-driven window focus."
+msgstr ""
+
+#: umbriel-docs:input.cursor.hardware_cursor
+msgid "Use a hardware cursor plane when available."
+msgstr ""
+
+#: umbriel-docs:input.cursor.hide_timeout_ms
+msgid "Hide after inactivity; `0` disables the timeout."
+msgstr ""
+
+#: umbriel-docs:input.cursor.hide_when_typing
+msgid "Hide after a non-modifier key press."
+msgstr ""
+
+#: umbriel-docs:input.cursor.size
+msgid "Cursor size in logical pixels."
+msgstr ""
+
+#: umbriel-docs:input.cursor.theme
+msgid "Xcursor theme; empty uses the environment default."
+msgstr ""
+
+#: umbriel-docs:input.drag_edge_scroll.delay_ms
+msgid "Time inside the zone before scrolling starts."
+msgstr ""
+
+#: umbriel-docs:input.drag_edge_scroll.enabled
+msgid "Enable edge scrolling during a data drag or a tiled window move."
+msgstr ""
+
+#: umbriel-docs:input.drag_edge_scroll.max_speed
+msgid "Peak scroll speed in logical pixels per second."
+msgstr ""
+
+#: umbriel-docs:input.drag_edge_scroll.trigger_zone
+msgid "Width of the zone at each end, in logical pixels."
+msgstr ""
+
+#: umbriel-docs:input.keyboard.numlock_toggle
+msgid "Enable NumLock when a keyboard connects."
+msgstr ""
+
+#: umbriel-docs:input.keyboard.repeat_delay
+msgid "Delay before a held key repeats."
+msgstr ""
+
+#: umbriel-docs:input.keyboard.repeat_rate
+msgid "Key repeats per second; `0` disables repeat."
+msgstr ""
+
+#: umbriel-docs:input.keyboard.track_layout
+msgid "Choose session-wide or per-window layout tracking."
+msgstr ""
+
+#: umbriel-docs:input.tablet.calibration_matrix
+msgid "Pass a six-number calibration matrix to libinput."
+msgstr ""
+
+#: umbriel-docs:input.tablet.enabled
+msgid "Enable tablet and pad input."
+msgstr ""
+
+#: umbriel-docs:input.tablet.left_handed
+msgid "Flip the tablet orientation."
+msgstr ""
+
+#: umbriel-docs:input.tablet.map_to_focused_output
+msgid "Follow the output holding keyboard focus."
+msgstr ""
+
+#: umbriel-docs:input.tablet.map_to_focused_window
+msgid "Map the tablet area to the focused window."
+msgstr ""
+
+#: umbriel-docs:input.tablet.map_to_output
+msgid "Confine the tablet to a connector or monitor name."
+msgstr ""
+
+#: umbriel-docs:input.touch.enabled
+msgid "Enable or disable touch input."
+msgstr ""
+
+#: umbriel-docs:input.touch.map_to_output
+msgid "Confine touch input to a connector or monitor name."
+msgstr ""
+
+#: umbriel-docs:input.touchpad.accel_profile
+msgid "Use `\"flat\"`, `\"adaptive\"`, or a custom acceleration curve."
+msgstr ""
+
+#: umbriel-docs:input.touchpad.click_method
+msgid "Use `\"button_areas\"` or `\"clickfinger\"`."
+msgstr ""
+
+#: umbriel-docs:input.touchpad.disable_on_external_mouse
+msgid "Disable the touchpad while an external mouse is connected."
+msgstr ""
+
+#: umbriel-docs:input.touchpad.disable_while_typing
+msgid "Disable the touchpad during keyboard input."
+msgstr ""
+
+#: umbriel-docs:input.touchpad.left_handed
+msgid "Swap the primary and secondary buttons."
+msgstr ""
+
+#: umbriel-docs:input.touchpad.natural_scroll
+msgid "Reverse scrolling and three-finger gesture direction."
+msgstr ""
+
+#: umbriel-docs:input.touchpad.scroll_factor
+msgid "Application scroll multiplier from 0.1 to 10.0."
+msgstr ""
+
+#: umbriel-docs:input.touchpad.scroll_factor.horizontal
+msgid "Lanes run top to bottom; windows sit left to right."
+msgstr ""
+
+#: umbriel-docs:input.touchpad.scroll_factor.vertical
+msgid "Columns run left to right; windows stack top to bottom."
+msgstr ""
+
+#: umbriel-docs:input.touchpad.sensitivity
+msgid "Pointer speed from -1.0 to 1.0."
+msgstr ""
+
+#: umbriel-docs:input.touchpad.tap
+msgid "Enable tap-to-click."
+msgstr ""
+
+#: umbriel-docs:input.touchpad.tap_button_map
+msgid "Buttons for one-, two-, and three-finger taps: `\"left_right_middle\"` or `\"left_middle_right\"`."
+msgstr ""
+
+#: umbriel-docs:keybinds.<name>.submap
+msgid "Active keybind submap"
+msgstr ""
+
+#: umbriel-docs:layer_rule[].blur
+msgid "Enable/disable blur for the layer surface."
+msgstr ""
+
+#: umbriel-docs:layer_rule[].blur_ignore_alpha
+#: umbriel-docs:window_rule[].blur_ignore_alpha
+msgid "Skip blur below an alpha threshold."
+msgstr ""
+
+#: umbriel-docs:layer_rule[].blur_optimized
+#: umbriel-docs:window_rule[].blur_optimized
+msgid "Override the global optimized-blur choice."
+msgstr ""
+
+#: umbriel-docs:layer_rule[].blur_popups
+msgid "Enable/disable blur for descendant XDG popups."
+msgstr ""
+
+#: umbriel-docs:layer_rule[].match.at_startup
+#: umbriel-docs:window_rule[].match.at_startup
+msgid "Match during or after the first 60 seconds."
+msgstr ""
+
+#: umbriel-docs:layer_rule[].match.layer
+msgid "Match `\"background\"`, `\"bottom\"`, `\"top\"`, or `\"overlay\"`."
+msgstr ""
+
+#: umbriel-docs:layer_rule[].match.namespace
+msgid "Match the layer surface namespace."
+msgstr ""
+
+#: umbriel-docs:layout.client_maximize
+msgid "What a tiled window's own maximize button does: `\"column\"` fills the column like `window-toggle-maximize`, `\"edges\"` fills the usable area without struts, gaps, or borders like `window-toggle-maximize-to-edges`. See Maximize and fullscreen."
+msgstr ""
+
+#: umbriel-docs:layout.dwindle.new_toward_cursor
+msgid "Place a new window on the half of the focused tile nearer the pointer."
+msgstr ""
+
+#: umbriel-docs:layout.dwindle.preserve_split
+msgid "Keep each split direction fixed after creation."
+msgstr ""
+
+#: umbriel-docs:layout.extent_presets
+msgid "Fractions used by primary and secondary extent cycle actions, in any order; cycling steps by size."
+msgstr ""
+
+#: umbriel-docs:layout.gap
+msgid "Gap between windows in logical pixels."
+msgstr ""
+
+#: umbriel-docs:layout.master.default_width_fraction
+msgid "Initial master-area fraction."
+msgstr ""
+
+#: umbriel-docs:layout.master.new_becomes_master
+msgid "Give the master slot to each new window."
+msgstr ""
+
+#: umbriel-docs:layout.master.new_on_top
+msgid "Put new stack windows at the top."
+msgstr ""
+
+#: umbriel-docs:layout.master.position
+msgid "Use `\"left\"`, `\"right\"`, or `\"center\"`."
+msgstr ""
+
+#: umbriel-docs:layout.new_exits_fullscreen
+msgid "Kinds of arriving window that make a fullscreen window on the workspace leave fullscreen. See Leaving fullscreen."
+msgstr ""
+
+#: umbriel-docs:layout.scrolling.center_focused
+msgid "Use `\"never\"`, `\"always\"`, or `\"on_overflow\"` to control focus centering."
+msgstr ""
+
+#: umbriel-docs:layout.scrolling.center_underfull_strip
+msgid "Center a strip narrower than the viewport."
+msgstr ""
+
+#: umbriel-docs:layout.scrolling.default_extent_fraction
+msgid "Initial column extent from 0.1 to 1.0. The packaged config uses `0.5`."
+msgstr ""
+
+#: umbriel-docs:layout.tabs.default_display
+msgid "How new columns and master areas show their windows: `\"normal\"`, or `\"tabbed\"` to start each as a tab group."
+msgstr ""
+
+#: umbriel-docs:layout.tabs.middle_click_closes
+msgid "Close a tab with a middle click on its slot."
+msgstr ""
+
+#: umbriel-docs:layout.tabs.new_tab_position
+msgid "Where a consumed, pulled, or dropped window joins a tab group: `\"end\"`, or `\"after_active\"` beside the active tab."
+msgstr ""
+
+#: umbriel-docs:layout.tabs.scroll_switches_tabs
+msgid "Step through tabs with the wheel over the bar."
+msgstr ""
+
+#: umbriel-docs:layout.tabs.wrap_focus
+msgid "Wrap `column-focus-tab-next` and `column-focus-tab-previous` at the ends."
+msgstr ""
+
+#: umbriel-docs:output.<name>.bit_depth
+msgid "Render bit depth for SDR output: `8` or `10`."
+msgstr ""
+
+#: umbriel-docs:output.<name>.cyclic_workspaces
+msgid "Wrap a workspace step around the ends of the inventory."
+msgstr ""
+
+#: umbriel-docs:output.<name>.direct_scanout
+msgid "Allow eligible fullscreen buffers to bypass composition."
+msgstr ""
+
+#: umbriel-docs:output.<name>.enabled
+msgid "Turn the monitor on or off."
+msgstr ""
+
+#: umbriel-docs:output.<name>.focus_at_startup
+msgid "Move the mouse cursor to this monitor on startup."
+msgstr ""
+
+#: umbriel-docs:output.<name>.hdr
+msgid "HDR activation policy."
+msgstr ""
+
+#: umbriel-docs:output.<name>.layout.scrolling.default_extent_fraction
+msgid "Initial scrolling-column extent on this output."
+msgstr ""
+
+#: umbriel-docs:output.<name>.min_workspaces
+msgid "Minimum count for a dynamic output."
+msgstr ""
+
+#: umbriel-docs:output.<name>.mode
+msgid "Resolution and optional refresh rate, such as `\"2560x1440@165\"`."
+msgstr ""
+
+#: umbriel-docs:output.<name>.position
+msgid "Top-left position in logical coordinates."
+msgstr ""
+
+#: umbriel-docs:output.<name>.scale
+msgid "Output scale from 0.25 to 4.0."
+msgstr ""
+
+#: umbriel-docs:output.<name>.screen_effect
+msgid "Replace `effects.screen` with a screen preset or pool, or `\"off\"` to disable it on this output."
+msgstr ""
+
+#: umbriel-docs:output.<name>.sdr_transfer
+msgid "Transfer curve for untagged SDR on HDR outputs: `\"gamma22\"` or `\"srgb\"`."
+msgstr ""
+
+#: umbriel-docs:output.<name>.sdr_white
+msgid "SDR reference white in cd/m² while HDR is active."
+msgstr ""
+
+#: umbriel-docs:output.<name>.tearing
+msgid "Allow eligible fullscreen windows to use asynchronous page flips."
+msgstr ""
+
+#: umbriel-docs:output.<name>.transform
+msgid "Rotation or reflection."
+msgstr ""
+
+#: umbriel-docs:output.<name>.vrr
+msgid "Variable refresh rate policy."
+msgstr ""
+
+#: umbriel-docs:output.<name>.workspace_axis
+msgid "Workspace arrangement axis."
+msgstr ""
+
+#: umbriel-docs:output.<name>.workspaces
+msgid "Workspace inventory for this output."
+msgstr ""
+
+#: umbriel-docs:overview.background_blur
+msgid "Blur the desktop behind the overview."
+msgstr ""
+
+#: umbriel-docs:overview.scroll_factor_horizontal
+msgid "Horizontal gesture and wheel sensitivity."
+msgstr ""
+
+#: umbriel-docs:overview.scroll_factor_vertical
+msgid "Vertical gesture and wheel sensitivity."
+msgstr ""
+
+#: umbriel-docs:overview.shortcut_keys
+msgid "Preferred keys for shortcut badges."
+msgstr ""
+
+#: umbriel-docs:overview.shortcuts
+msgid "Show and accept keyboard shortcut badges."
+msgstr ""
+
+#: umbriel-docs:overview.workspace_wallpaper
+msgid "Show each output's background inside its workspace previews."
+msgstr ""
+
+#: umbriel-docs:overview.zoom
+msgid "Workspace preview scale from 0.1 to 0.75."
+msgstr ""
+
+#: umbriel-docs:screencast
+msgid "Manual target and focus-following screencast commands"
+msgstr ""
+
+#: umbriel-docs:screencast.disable_dynamic_confirmation
+msgid "Apply set and follow actions immediately without first confirming them. This can expose another window or output after an accidental key press."
+msgstr ""
+
+#: umbriel-docs:security_context_rule[].match.app_id
+msgid "Exact regular-expression match against the application ID."
+msgstr ""
+
+#: umbriel-docs:security_context_rule[].match.sandbox_engine
+msgid "Exact regular-expression match against the sandbox engine."
+msgstr ""
+
+#: umbriel-docs:window_rule[].background_render
+msgid "Keep this window drawing while hidden (default `false`). See Background rendering."
+msgstr ""
+
+#: umbriel-docs:window_rule[].blur
+msgid "Enable or disable window blur."
+msgstr ""
+
+#: umbriel-docs:window_rule[].blur_popups
+msgid "Apply blur to descendant XDG popups."
+msgstr ""
+
+#: umbriel-docs:window_rule[].border_color_focused
+msgid "Override `colors.border.focused`."
+msgstr ""
+
+#: umbriel-docs:window_rule[].border_color_outer
+msgid "Override `colors.border.outer`."
+msgstr ""
+
+#: umbriel-docs:window_rule[].border_color_unfocused
+msgid "Override `colors.border.unfocused`."
+msgstr ""
+
+#: umbriel-docs:window_rule[].border_effect
+msgid "Replace `effects.border` with a border preset or pool, or `\"off\"` to disable it."
+msgstr ""
+
+#: umbriel-docs:window_rule[].border_width
+msgid "Override `appearance.border_width`, 0 to 100."
+msgstr ""
+
+#: umbriel-docs:window_rule[].confine_pointer
+msgid "Keep the pointer inside this window while it has keyboard focus (default `false`)."
+msgstr ""
+
+#: umbriel-docs:window_rule[].corner_radius
+msgid "Override `appearance.corner_radius`, 0 to 100."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_column_display
+msgid "Show the column the window opens in as `\"tabbed\"` or `\"normal\"`."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_floating
+msgid "Force floating or tiling."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_floating_size
+msgid "Fraction of the output usable area."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_floating_size_px
+msgid "Logical-pixel size, such as `{ width = 800, height = 600 }`."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_focused
+msgid "Choose whether the new window takes focus."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_fullscreen
+msgid "Open fullscreen."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_maximize
+msgid "Open maximized within normal layout bounds."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_maximize_to_edges
+msgid "Open maximized without gaps, struts, or borders."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_output
+msgid "Open on a connector or monitor name."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_pinned
+msgid "Open pinned above normal windows."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_position
+msgid "Position from a named anchor."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_scratchpad
+msgid "Store in the implicit or a configured scratchpad."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_scrolling_column
+msgid "Join matching windows into one named scrolling column."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_scrolling_column_order
+msgid "Set order inside a named scrolling column."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_scrolling_extent
+msgid "Initial fractional extent along the strip."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_scrolling_extent_px
+msgid "Initial logical-pixel extent along the strip."
+msgstr ""
+
+#: umbriel-docs:window_rule[].default_workspace
+msgid "Open on a one-based position or exact workspace name."
+msgstr ""
+
+#: umbriel-docs:window_rule[].focus_on_activate
+msgid "Override activation focus for this window."
+msgstr ""
+
+#: umbriel-docs:window_rule[].hdr
+msgid "Override the focused output's HDR policy."
+msgstr ""
+
+#: umbriel-docs:window_rule[].match.app_id
+msgid "Match the application ID with a regular expression."
+msgstr ""
+
+#: umbriel-docs:window_rule[].match.content_type
+msgid "Match `\"none\"`, `\"photo\"`, `\"video\"`, or `\"game\"`."
+msgstr ""
+
+#: umbriel-docs:window_rule[].match.is_alone
+msgid "Match whether this is the only tiled window."
+msgstr ""
+
+#: umbriel-docs:window_rule[].match.is_floating
+msgid "Match current floating state."
+msgstr ""
+
+#: umbriel-docs:window_rule[].match.is_focused
+msgid "Match current focus state."
+msgstr ""
+
+#: umbriel-docs:window_rule[].match.is_only_window
+msgid "Match whether this is the only window on its workspace, floating ones included."
+msgstr ""
+
+#: umbriel-docs:window_rule[].match.is_pinned
+msgid "Match current pinned state."
+msgstr ""
+
+#: umbriel-docs:window_rule[].match.is_scratchpad
+msgid "Match current scratchpad state."
+msgstr ""
+
+#: umbriel-docs:window_rule[].match.title
+msgid "Match the window title."
+msgstr ""
+
+#: umbriel-docs:window_rule[].match.xdg_tag
+msgid "Match a client-defined XDG toplevel tag."
+msgstr ""
+
+#: umbriel-docs:window_rule[].opacity
+msgid "Surface opacity from 0.0 to 1.0."
+msgstr ""
+
+#: umbriel-docs:window_rule[].outer_border_width
+msgid "Override `appearance.outer_border_width`, 0 to 100."
+msgstr ""
+
+#: umbriel-docs:window_rule[].shadow
+msgid "Override `appearance.shadow.enabled`."
+msgstr ""
+
+#: umbriel-docs:window_rule[].tearing
+msgid "Request or veto asynchronous presentation."
+msgstr ""
+
+#: umbriel-docs:window_rule[].vrr
+msgid "Override the focused output's VRR policy."
+msgstr ""
+
+#: umbriel-docs:window_rule[].window_effect
+msgid "Replace `effects.window` with a window preset or pool, or `\"off\"` to disable it."
+msgstr ""
+
+#: umbriel-docs:workspace[].index
+msgid "Select a current one-based position from 1 to 64."
+msgstr ""
+
+#: umbriel-docs:workspace[].layout.client_maximize
+msgid "Choose `\"column\"` or `\"edges\"` for a tiled window's own maximize request; see Maximize and fullscreen."
+msgstr ""
+
+#: umbriel-docs:workspace[].layout.dwindle.new_toward_cursor
+msgid "Open new windows on the pointer's side of the split."
+msgstr ""
+
+#: umbriel-docs:workspace[].layout.dwindle.preserve_split
+msgid "Keep split directions fixed."
+msgstr ""
+
+#: umbriel-docs:workspace[].layout.extent_presets
+msgid "Set extent-cycle fractions."
+msgstr ""
+
+#: umbriel-docs:workspace[].layout.gap
+msgid "Set the window gap."
+msgstr ""
+
+#: umbriel-docs:workspace[].layout.master.default_width_fraction
+msgid "Set the master-area fraction."
+msgstr ""
+
+#: umbriel-docs:workspace[].layout.master.new_becomes_master
+msgid "Give the master slot to new windows."
+msgstr ""
+
+#: umbriel-docs:workspace[].layout.master.new_on_top
+msgid "Place new stack windows at the top or bottom."
+msgstr ""
+
+#: umbriel-docs:workspace[].layout.master.position
+msgid "Place the master area left, right, or center."
+msgstr ""
+
+#: umbriel-docs:workspace[].layout.mode
+msgid "Use `\"scrolling\"`, `\"dwindle\"`, or `\"master\"`."
+msgstr ""
+
+#: umbriel-docs:workspace[].layout.new_exits_fullscreen
+msgid "Choose which arriving windows exit fullscreen; see Leaving fullscreen."
+msgstr ""
+
+#: umbriel-docs:workspace[].layout.scrolling.center_focused
+msgid "Control when focus changes center a column."
+msgstr ""
+
+#: umbriel-docs:workspace[].layout.scrolling.center_underfull_strip
+msgid "Center or start-align an underfull strip."
+msgstr ""
+
+#: umbriel-docs:workspace[].layout.scrolling.default_extent_fraction
+msgid "Set the initial scrolling-column extent."
+msgstr ""
+
+#: umbriel-docs:workspace[].name
+msgid "Select an exact name and create it on matching dynamic outputs."
+msgstr ""
+
+#: umbriel-docs:workspace[].output
+msgid "Restrict the rule to a connector or monitor name."
+msgstr ""
+
+#: umbriel-docs:workspaces.back_and_forth
+msgid "Selecting the active workspace returns to the previous one on that output."
+msgstr ""
+
+#: umbriel-docs:workspaces.empty_above
+msgid "Keep a leading empty workspace on dynamic outputs."
+msgstr ""
+
+#: umbriel-docs:[animation.border]
+msgid "Focus-border color"
+msgstr ""
+
+#: umbriel-docs:[animation.dim_unfocused]
+msgid "Unfocused-window opacity"
+msgstr ""
+
+#: umbriel-docs:[animation.layers]
+msgid "Layer-shell map and unmap"
+msgstr ""
+
+#: umbriel-docs:[animation.overview]
+msgid "Overview opening, closing, and filmstrip movement"
+msgstr ""
+
+#: umbriel-docs:[animation.scratchpad]
+msgid "Scratchpad windows and backdrop"
+msgstr ""
+
+#: umbriel-docs:[animation.windows_drag]
+msgid "Drag physics"
+msgstr ""
+
+#: umbriel-docs:[animation.windows_in]
+msgid "Window opening"
+msgstr ""
+
+#: umbriel-docs:[animation.windows_move]
+msgid "Position during moves, reflow, maximize, and restore"
+msgstr ""
+
+#: umbriel-docs:[animation.windows_out]
+msgid "Window closing"
+msgstr ""
+
+#: umbriel-docs:[animation.windows_resize]
+msgid "Size during the same changes"
+msgstr ""
+
+#: umbriel-docs:[animation.workspaces]
+msgid "Workspace switching"
+msgstr ""
+
+#: umbriel-docs:[skip-confirmation]
+msgid "`session-quit` only: quit without the on-screen confirmation"
+msgstr ""
+
+#: umbriel-docs:actions
+msgid "Actions are the compositor's verbs. Bind one under `[keybinds]`, attach it to a hot corner, or run it with `umbriel msg <action>`. `umbriel msg --help` prints this same list, with the same wording and the same grouping. See Keybinds for chord syntax and IPC for the socket behind `umbriel msg`, including the event stream that reports what an action changed."
+msgstr ""
+
+#: umbriel-docs:animation
+msgid "Animation settings live under `[animation]`. The top-level values provide defaults, and each event can override them."
+msgstr ""
+
+#: umbriel-docs:appearance
+msgid "Configure Umbriel's colors, window decorations, blur, and shadows."
+msgstr ""
+
+#: umbriel-docs:configuration
+msgid "The packaged starting configuration is `examples/config.toml`. Copy it before making local changes:"
+msgstr ""
+
+#: umbriel-docs:effects
+msgid "Effects are GLSL programs Umbriel runs on animation events, on the focused window's border, on windows, on whole outputs, and around the pointer. Every effect is off until you select one. Umbriel ships a small set; each is a preset you include and then name where it should apply."
+msgstr ""
+
+#: umbriel-docs:index
+msgid "Umbriel is a Wayland compositor with scrolling and tiling layouts, independent workspaces per monitor, and configurable visual effects. It works on its own or with Noctalia, a desktop shell designed to integrate with Umbriel."
+msgstr ""
+
+#: umbriel-docs:input
+msgid "Configure keyboard, pointer, touchpad, tablet, cursor, and focus behavior under `[input]`."
+msgstr ""
+
+#: umbriel-docs:installation
+msgid "Umbriel is packaged for several Linux distributions. Prefer a distribution package when one is available; it provides the simplest installation and upgrade path."
+msgstr ""
+
+#: umbriel-docs:ipc
+msgid "Umbriel exposes a local UNIX socket for queries, actions, and event subscriptions. Most users should use the `umbriel` command rather than connect to the socket directly."
+msgstr ""
+
+#: umbriel-docs:keybinds
+msgid "Configure bindings under `[keybinds]`. See Actions for the complete action list."
+msgstr ""
+
+#: umbriel-docs:layer-rules
+msgid "Layer rules apply visual effects to layer-shell surfaces such as bars, launchers, and notifications. Run `umbriel layers` to list active namespaces."
+msgstr ""
+
+#: umbriel-docs:layout
+msgid "Choose one layout mode for each workspace. Configure the default globally, then use workspace rules for exceptions."
+msgstr ""
+
+#: umbriel-docs:outputs
+msgid "Output sections configure monitors by connector name, such as `DP-1`, or by monitor identity:"
+msgstr ""
+
+#: umbriel-docs:scratchpad
+msgid "A scratchpad stores windows outside normal workspaces so they can be shown or hidden quickly. Its windows float and appear together."
+msgstr ""
+
+#: umbriel-docs:security
+msgid "Umbriel keeps the current desktop visible while an `ext-session-lock-v1` client prepares a mapped lock surface for every active output. The client has up to three seconds to provide those surfaces. Umbriel then switches every output to the lock scene and reports the session as locked only after each active output has presented a secure frame."
+msgstr ""
+
+#: umbriel-docs:streaming
+msgid "Sunshine streams a desktop to Moonlight clients. Pointed at a virtual output, it streams a monitor that exists only for the session, at the client's resolution and frame rate, while the physical monitors keep their layout."
+msgstr ""
+
+#: umbriel-docs:window-rules
+msgid "Window rules apply settings to matching applications. Every matching rule contributes its values; when two set the same field, the later rule wins."
+msgstr ""
+
+#: umbriel-docs:workspaces
+msgid "Each output has its own workspaces. Choose a dynamic or fixed model, then use workspace rules to customize individual entries."
+msgstr ""
+
+#: umbriel-docs:workspaces-overview
+msgid "The overview displays every workspace and lets you navigate, focus, close, and move windows."
+msgstr ""

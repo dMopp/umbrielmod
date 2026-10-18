@@ -8,7 +8,8 @@ from gi.repository import Adw, GLib, Gtk
 
 from .. import umbriel
 from ..context import AppContext
-from ..widgets import esc, option_row
+from ..i18n import _
+from ..widgets import doc_button, esc, option_row
 from .schema_page import config_path
 
 SNAP = 40  # logical pixels
@@ -124,7 +125,7 @@ class Arrangement(Gtk.DrawingArea):
         if not name:
             return
         # normalise so the top-left output sits at 0,0
-        x0, y0, *_ = self._bounds()
+        x0, y0, *_rest = self._bounds()
         for r in self.rects.values():
             r[0], r[1] = r[0] - x0, r[1] - y0
         self.queue_draw()
@@ -154,8 +155,8 @@ class OutputsPage(Adw.PreferencesPage):
         tf = self.ctx.cfg.main
 
         arr_group = Adw.PreferencesGroup(
-            title="Anordnung",
-            description="Ziehen zum Verschieben; Kanten rasten ein. Positionen sind logische Pixel (nach Skalierung).",
+            title=_("Arrangement"),
+            description=_("Drag to move; edges snap together. Positions are logical pixels (after scaling)."),
         )
         self.arrangement = Arrangement(self._moved)
         frame = Gtk.Frame(child=self.arrangement)
@@ -177,7 +178,7 @@ class OutputsPage(Adw.PreferencesPage):
             labels[out.name] = f"{math.floor(mw / scale)}×{math.floor(mh / scale)} @ {scale:g}"
         self.arrangement.set_outputs(rects, labels)
         if len(live) < 2:
-            arr_group.set_description(arr_group.get_description() + " Nur ein Bildschirm angeschlossen.")
+            arr_group.set_description(arr_group.get_description() + " " + _("Only one monitor connected."))
 
         leaves = [o for o in self.ctx.schema.leaves("output.<name>", stop_at_collections=False)]
         handled = set()
@@ -195,7 +196,7 @@ class OutputsPage(Adw.PreferencesPage):
         for key in (tf.get(("output",)) or {}):
             if key in handled:
                 continue
-            g = Adw.PreferencesGroup(title=esc(key), description="Nicht angeschlossen – Einstellungen bleiben erhalten.")
+            g = Adw.PreferencesGroup(title=esc(key), description=_("Not connected – settings are kept."))
             for opt in leaves:
                 g.add(option_row(self.ctx, opt, config_path("output.<name>", ("output", key), opt)))
             self._push(g)
@@ -205,12 +206,13 @@ class OutputsPage(Adw.PreferencesPage):
         path = ("output", key, "mode")
         current = tf.get(path)
         values = [None] + [m.config_string() for m in out.modes]
-        labels = ["Automatisch (bevorzugter Modus)"] + [m.label() for m in out.modes]
+        labels = [_("Automatic (preferred mode)")] + [m.label() for m in out.modes]
         if current and current not in values:
             values.append(current)
-            labels.append(f"{current} (aus Config)")
-        row = Adw.ComboRow(title="Modus", model=Gtk.StringList.new(labels), use_markup=True)
-        row.set_subtitle(esc(self.ctx.docs.describe("output.<name>.mode") or "Auflösung und Bildwiederholrate"))
+            labels.append(_("{mode} (from config)").format(mode=current))
+        row = Adw.ComboRow(title=_("Mode"), model=Gtk.StringList.new(labels), use_markup=True)
+        row.set_subtitle(esc(self.ctx.docs.describe("output.<name>.mode") or _("Resolution and refresh rate")))
+        row.add_suffix(doc_button(self.ctx, self.ctx.docs.url("output.<name>.mode"), "mode"))
         row.set_subtitle_lines(2)
         row.set_selected(values.index(current) if current in values else 0)
 
@@ -233,7 +235,7 @@ class OutputsPage(Adw.PreferencesPage):
                 tf.set(("output", self._keys.get(name, name), "position"), [x, y])
 
         self.ctx.edit(tf, do)
-        self.ctx.toast("Positionen aktualisiert – noch nicht gespeichert")
+        self.ctx.toast(_("Positions updated – not saved yet"))
         GLib.idle_add(lambda: self.refresh() and False)
 
     def _push(self, g):

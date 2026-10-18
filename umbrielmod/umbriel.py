@@ -111,7 +111,9 @@ class Mode:
         return f"{self.width}x{self.height}@{hz}"
 
     def label(self) -> str:
-        tags = [t for t, on in (("aktuell", self.current), ("bevorzugt", self.preferred)) if on]
+        from .i18n import _
+
+        tags = [t for t, on in ((_("current"), self.current), (_("preferred"), self.preferred)) if on]
         extra = f"  ({', '.join(tags)})" if tags else ""
         return f"{self.width}×{self.height} @ {self.refresh:.3f} Hz{extra}"
 
@@ -149,7 +151,7 @@ def parse_outputs(text: str) -> list[Output]:
     cur: Output | None = None
     for line in text.splitlines():
         if line and not line.startswith(" "):
-            name, _, desc = line.partition(" ")
+            name, _sep, desc = line.partition(" ")
             cur = Output(name=name, description=desc.strip().strip('"'))
             outputs.append(cur)
             continue
@@ -167,7 +169,7 @@ def parse_outputs(text: str) -> list[Output]:
         elif s.startswith("Enabled:"):
             cur.enabled = s.endswith("yes")
         elif s.startswith("Position:"):
-            x, _, y = s.split(":", 1)[1].strip().partition(",")
+            x, _sep, y = s.split(":", 1)[1].strip().partition(",")
             cur.position = (int(x), int(y))
         elif s.startswith("Scale:"):
             cur.scale = float(s.split(":", 1)[1])
@@ -198,7 +200,7 @@ def windows() -> list[dict]:
     try:
         import select
 
-        ready, _, _ = select.select([proc.stdout], [], [], 2.0)
+        ready, _w, _x = select.select([proc.stdout], [], [], 2.0)
         line = proc.stdout.readline() if ready else ""
     finally:
         proc.kill()

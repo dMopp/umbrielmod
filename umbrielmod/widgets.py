@@ -16,6 +16,7 @@ gi.require_version("Adw", "1")
 from gi.repository import Adw, Gdk, GLib, Gtk, Pango  # noqa: E402
 
 from . import shaders  # noqa: E402
+from .i18n import _  # noqa: E402
 from .config import TomlFile, parse_literal, toml_literal  # noqa: E402
 from .context import AppContext  # noqa: E402
 from .schema import Option, humanize  # noqa: E402
@@ -32,6 +33,22 @@ def esc(text: str) -> str:
 # --------------------------------------------------------------------------- small widgets
 
 
+def doc_button(ctx: AppContext, url: str | None, what: str = "") -> Gtk.Button:
+    """The round (?) button that opens the Umbriel documentation."""
+    btn = Gtk.Button(label="?", valign=Gtk.Align.CENTER, css_classes=["doc-link"])
+    if url:
+        btn.set_tooltip_text(_("Open the Umbriel documentation") + (f" – {what}" if what else "") + f"\n{url}")
+        btn.connect("clicked", lambda *_: ctx.open_uri(url))
+    else:
+        btn.add_css_class("missing")
+        btn.set_sensitive(False)
+    return btn
+
+
+def option_doc_url(ctx: AppContext, opt: Option) -> str:
+    return ctx.docs.url(opt.path) or ctx.docs.page_url(opt.path)
+
+
 def icon_button(icon: str, tooltip: str, callback: Callable, *, flat: bool = True) -> Gtk.Button:
     btn = Gtk.Button(icon_name=icon, tooltip_text=tooltip, valign=Gtk.Align.CENTER)
     if flat:
@@ -44,13 +61,13 @@ class SuggestButton(Gtk.MenuButton):
     """A drop-down button offering values (with optional descriptions)."""
 
     def __init__(self, items: Callable[[], list[tuple[str, str]]], on_pick: Callable[[str], None]):
-        super().__init__(icon_name="pan-down-symbolic", valign=Gtk.Align.CENTER, tooltip_text="Vorschläge")
+        super().__init__(icon_name="pan-down-symbolic", valign=Gtk.Align.CENTER, tooltip_text=_("Suggestions"))
         self.add_css_class("flat")
         self._items = items
         self._on_pick = on_pick
         pop = Gtk.Popover()
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        self._search = Gtk.SearchEntry(placeholder_text="Suchen…")
+        self._search = Gtk.SearchEntry(placeholder_text=_("Search…"))
         self._list = Gtk.ListBox(selection_mode=Gtk.SelectionMode.NONE)
         self._list.add_css_class("navigation-sidebar")
         self._list.connect("row-activated", self._activated)
@@ -117,14 +134,14 @@ def suggestions(ctx: AppContext, opt: Option) -> list[tuple[str, str]] | None:
         kind, pools, off = shaders.kind_for_option(opt.path)
         names = shaders.suggestions_for(ctx.cfg, kind, pools=pools, off=off)
         kinds = {**shaders.preset_names(ctx.cfg), **shaders.pool_names(ctx.cfg)}
-        return [(n, "unterdrücken" if n == "off" else kinds.get(n, "")) for n in names]
+        return [(n, _("suppress") if n == "off" else kinds.get(n, "")) for n in names]
     if fmt == "curve":
-        out = [(c, "eingebaut") for c in BUILTIN_CURVES]
+        out = [(c, _("built-in")) for c in BUILTIN_CURVES]
         for f in ctx.cfg.files:
-            out += [(n, "Bézier") for n in (f.get(("animation", "beziers")) or {})]
-            out += [(n, "Feder") for n in (f.get(("animation", "springs")) or {})]
-        out.append(("spring:1.0,800", "Feder: Dämpfung, Steifigkeit"))
-        out.append(("0.05,0.9,0.1,1.0", "Bézier-Kurve"))
+            out += [(n, _("Bézier")) for n in (f.get(("animation", "beziers")) or {})]
+            out += [(n, _("Spring")) for n in (f.get(("animation", "springs")) or {})]
+        out.append(("spring:1.0,800", _("Spring: damping, stiffness")))
+        out.append(("0.05,0.9,0.1,1.0", _("Bézier curve")))
         return out
     if fmt == "action":
         return [(a.name + (":" if a.takes_arg else ""), a.description) for a in ctx.actions]
@@ -180,12 +197,12 @@ def _subtitle(ctx: AppContext, b: OptionBinding) -> str:
     if desc:
         parts.append(esc(desc))
     if b.foreign is not None:
-        parts.append(f"<i>Festgelegt in {esc(b.foreign.path.name)}</i>")
+        parts.append("<i>" + esc(_("Set in {file}").format(file=b.foreign.path.name)) + "</i>")
     elif not b.is_set:
         if b.opt.has_default and b.opt.default not in ("", [], None):
-            parts.append(f"<small>Standard: {esc(_fmt(b.opt.default))}</small>")
+            parts.append("<small>" + esc(_("Default: {value}").format(value=_fmt(b.opt.default))) + "</small>")
         elif not b.opt.has_default and b.opt.type in ("int", "float", "bool"):
-            parts.append("<small>Nicht gesetzt – Umbriel entscheidet</small>")
+            parts.append("<small>" + esc(_("Not set – Umbriel decides")) + "</small>")
     return "\n".join(parts)
 
 
@@ -198,12 +215,12 @@ def _fmt(value) -> str:
 def _tooltip(ctx: AppContext, b: OptionBinding) -> str:
     lines = [f"<tt>{esc('.'.join(str(p) for p in b.path))}</tt>  ({esc(b.opt.type)})"]
     if b.opt.min is not None or b.opt.max is not None:
-        lines.append(f"Bereich: {b.opt.min} – {b.opt.max}")
+        lines.append(_("Range: {min} – {max}").format(min=b.opt.min, max=b.opt.max))
     if b.opt.has_default:
-        lines.append(f"Standard: {esc(_fmt(b.opt.default))}")
+        lines.append(esc(_("Default: {value}").format(value=_fmt(b.opt.default))))
     info = ctx.docs.options.get(b.opt.path, {})
     if info.get("inherited"):
-        lines.append(f"<i>Beschreibung übernommen von {esc(info['inherited'])}</i>")
+        lines.append("<i>" + esc(_("Description taken from {path}").format(path=info["inherited"])) + "</i>")
     return "\n".join(lines)
 
 
@@ -215,11 +232,9 @@ def _decorate(ctx: AppContext, row: Adw.PreferencesRow, b: OptionBinding, refres
         row.set_subtitle(sub)
         row.set_subtitle_lines(3)
         row.set_use_markup(True)
-    reset = icon_button("edit-undo-symbolic", "Auf Standard zurücksetzen (Schlüssel entfernen)", lambda: (b.reset(), refresh()))
+    reset = icon_button("edit-undo-symbolic", _("Reset to default (removes the key)"), lambda: (b.reset(), refresh()))
     reset.set_visible(b.is_set)
-    url = ctx.docs.url(b.opt.path) or ctx.docs.page_url(b.opt.path)
-    docs = icon_button("help-browser-symbolic", "Dokumentation öffnen", lambda: ctx.open_uri(url))
-    docs.add_css_class("dim-label")
+    docs = doc_button(ctx, option_doc_url(ctx, b.opt), b.opt.key)
     if isinstance(row, (Adw.ActionRow, Adw.ExpanderRow)):
         row.add_suffix(reset)
         row.add_suffix(docs)
@@ -301,13 +316,13 @@ def _make_row(ctx: AppContext, b: OptionBinding, title: str, rebuild: Callable[[
 
     if t == "enum":
         default = opt.default if opt.has_default else None
-        first = f"Standard ({default})" if default is not None else "Nicht gesetzt"
+        first = _("Default ({value})").format(value=default) if default is not None else _("Not set")
         items = [first, *opt.values]
         row = Adw.ComboRow(title=esc(title), model=Gtk.StringList.new(items), use_markup=True)
         cur = b.tf.get(b.path) if b.is_set else (b.value() if b.foreign else None)
         row.set_selected(items.index(cur) if cur in items[1:] else 0)
         reset = _decorate(ctx, row, b, refresh)
-        reset.set_visible(False)  # "Standard" entry replaces the reset button
+        reset.set_visible(False)  # the "Default" entry replaces the reset button
 
         def on_enum(*_):
             idx = row.get_selected()
@@ -353,7 +368,7 @@ def _make_row(ctx: AppContext, b: OptionBinding, title: str, rebuild: Callable[[
         entry.set_placeholder_text(_fmt(opt.default) if not literal else toml_literal(opt.default))
     if literal:
         entry.add_css_class("monospace")
-        entry.set_tooltip_text("TOML-Wert, z. B. \"text\", 1.5, [1, 2] oder { a = 1 }")
+        entry.set_tooltip_text(_("TOML value, e.g. \"text\", 1.5, [1, 2] or { a = 1 }"))
     row.add_suffix(entry)
     sugg = suggestions(ctx, opt)
     if sugg is not None:
@@ -395,23 +410,24 @@ def _make_row(ctx: AppContext, b: OptionBinding, title: str, rebuild: Callable[[
 def _string_list_row(ctx: AppContext, b: OptionBinding, title: str, refresh) -> Adw.PreferencesRow:
     row = Adw.ExpanderRow(title=esc(title))
     values = list(b.value([]) or [])
-    row.set_subtitle(esc(", ".join(values)) if values else (esc(ctx.docs.describe(b.opt.path)) or "leer"))
+    row.set_subtitle(esc(", ".join(values)) if values else (esc(ctx.docs.describe(b.opt.path)) or _("empty")))
     row.set_subtitle_lines(2)
     row.set_tooltip_markup(_tooltip(ctx, b))
-    reset = icon_button("edit-undo-symbolic", "Auf Standard zurücksetzen", lambda: (b.reset(), refresh()))
+    reset = icon_button("edit-undo-symbolic", _("Reset to default (removes the key)"), lambda: (b.reset(), refresh()))
     reset.set_visible(b.is_set)
     row.add_suffix(reset)
+    row.add_suffix(doc_button(ctx, option_doc_url(ctx, b.opt), b.opt.key))
     if b.foreign is not None:
         row.set_sensitive(False)
     sugg = suggestions(ctx, b.opt)
 
     def commit():
         b.set([v for v in values])
-        row.set_subtitle(esc(", ".join(values)) or "leer")
+        row.set_subtitle(esc(", ".join(values)) or _("empty"))
         reset.set_visible(True)
 
     def add_item_row(i: int):
-        er = Adw.EntryRow(title=f"Eintrag {i + 1}")
+        er = Adw.EntryRow(title=_("Entry {n}").format(n=i + 1))
         er.set_text(values[i])
 
         def changed(*_):
@@ -425,13 +441,13 @@ def _string_list_row(ctx: AppContext, b: OptionBinding, title: str, refresh) -> 
             commit()
             refresh()
 
-        er.add_suffix(icon_button("list-remove-symbolic", "Entfernen", remove))
+        er.add_suffix(icon_button("list-remove-symbolic", _("Remove"), remove))
         row.add_row(er)
 
     for i in range(len(values)):
         add_item_row(i)
 
-    add = Adw.ActionRow(title="Eintrag hinzufügen", activatable=True)
+    add = Adw.ActionRow(title=_("Add entry"), activatable=True)
     add.add_prefix(Gtk.Image(icon_name="list-add-symbolic"))
 
     def add_item(value: str = ""):
@@ -466,7 +482,7 @@ def zero_value(opt: Option):
 
 
 def add_option_button(ctx: AppContext, options: list[Option], on_pick: Callable[[Option], None],
-                      label: str = "Option hinzufügen") -> Gtk.MenuButton:
+                      label: str | None = None) -> Gtk.MenuButton:
     by_path = {o.path: o for o in options}
 
     def items():
@@ -480,5 +496,5 @@ def add_option_button(ctx: AppContext, options: list[Option], on_pick: Callable[
 
     btn = SuggestButton(items, pick)
     btn.set_icon_name("")
-    btn.set_child(Adw.ButtonContent(icon_name="list-add-symbolic", label=label))
+    btn.set_child(Adw.ButtonContent(icon_name="list-add-symbolic", label=label or _("Add option")))
     return btn

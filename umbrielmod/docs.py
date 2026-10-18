@@ -23,6 +23,16 @@ REPO_URL = "https://github.com/noctalia-dev/umbriel"
 BUNDLED = Path(__file__).parent / "data" / "docs.json"
 
 
+def action_url(group: str) -> str:
+    """Docs section for an action group from `umbriel msg --help`."""
+    return f"{DOCS_SITE}/actions/?section={_anchor(group)}#{_anchor(group)}"
+
+
+def section_url(page: str, heading: str) -> str:
+    a = _anchor(heading)
+    return f"{DOCS_SITE}/{page}/?section={a}#{a}"
+
+
 def cache_dir() -> Path:
     base = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
     return base / "umbrielmod"
@@ -51,8 +61,9 @@ def _split_key_path(text: str) -> list[str]:
 
 
 def _anchor(heading: str) -> str:
-    slug = re.sub(r"[^\w\s-]", "", heading.lower()).strip()
-    return re.sub(r"[\s]+", "-", slug)
+    """GitHub-style slug as used by the docs site ("Move & size" → "move--size")."""
+    slug = re.sub(r"[^\w\s-]", "", heading.strip().lower())
+    return re.sub(r"\s", "-", slug)
 
 
 def _clean(cell: str) -> str:
@@ -106,6 +117,9 @@ class _Matcher:
                 return scoped
         return candidates if len(candidates) == 1 else []
 
+
+# Markdown file → page slug on docs.noctalia.dev where they differ
+SITE_PAGES = {"scratchpad": "scratchpads"}
 
 PAGE_SECTIONS = {
     "outputs": ["output._"],
@@ -201,9 +215,86 @@ def extract(repo: Path, schema_paths: list[str]) -> dict:
         pages[page] = {"title": _title(lines) or page, "intro": intro}
     _from_example(repo / "examples" / "config.toml", matcher, options)
     _inherit(schema_paths, options)
+    sections = {md.stem: _sections(md.read_text().splitlines()) for md in docs}
+    _deep_links(schema_paths, options, sections)
     for v in options.values():
         v.pop("scoped", None)
     return {"options": options, "pages": pages, "tables": tables}
+
+
+def _sections(lines: list[str]) -> list[tuple[str, str, str]]:
+    """(anchor, heading, body) for every heading outside code fences."""
+    out: list[list] = []
+    in_code = False
+    for line in lines:
+        if line.startswith("```"):
+            in_code = not in_code
+        elif not in_code and line.startswith("#"):
+            if line.startswith("# "):  # page title: too broad to link to
+                out.append(["", "", ""])
+                continue
+            heading = line.lstrip("#").strip()
+            out.append([_anchor(heading), heading, ""])
+            continue
+        if out:
+            out[-1][2] += line + "\n"
+    return [tuple(x) for x in out]
+
+
+def _pages_for(schema_path: str) -> list[str]:
+    section = schema_path.split(".", 1)[0].removesuffix("[]")
+    pages = [p for p, secs in PAGE_SECTIONS.items() if section in secs or f"{section}._" in secs]
+    pages.append(section.replace("_", "-") + ("s" if section.endswith("rule") else ""))
+    pages.append(section.replace("_", "-"))
+    return list(dict.fromkeys(pages))
+
+
+def _best_anchor(secs: list[tuple[str, str, str]], key: str, table_anchor: str) -> str:
+    """Most specific heading for ``key`` (document order):
+
+    1. a heading named after the key (``tearing`` → ``#tearing``)
+    2. a heading containing the key as a word whose text uses it
+    3. the section holding the key table
+    4. without a table: the first section that uses the key
+    """
+    slug = key.replace("_", "-")
+
+    def mentions(body: str) -> bool:
+        return f"`{key}`" in body or f"\n{key} =" in body or f"`{key} =" in body or f"{key} = " in body
+
+    secs = [s for s in secs if s[0]]
+    for anchor, _h, _b in secs:
+        if anchor == slug or "".join(w[0] for w in anchor.split("-") if w) == slug:  # vrr → variable-refresh-rate
+            return anchor
+    words = set(slug.split("-"))
+    for anchor, _h, body in secs:
+        if words <= set(anchor.split("-")) and mentions(body):
+            return anchor
+    return table_anchor or next((a for a, _h, b in secs if mentions(b)), "")
+
+
+def _deep_links(schema_paths: list[str], options: dict, sections: dict) -> None:
+    for path in schema_paths:
+        key = path.rsplit(".", 1)[-1].removesuffix("[]")
+        if key == "<name>":
+            continue
+        entry = options.get(path)
+        if entry and entry.get("doc"):
+            page, _, anchor = entry["doc"].partition("/#")
+            page = page.rstrip("/")
+        else:
+            page = next((p for p in _pages_for(path) if p in sections), "")
+            anchor = ""
+            if not page:
+                continue
+        secs = sections.get(page, [])
+        best = _best_anchor(secs, key, anchor) if secs else anchor
+        site = SITE_PAGES.get(page, page)
+        doc = f"{site}/?section={best}#{best}" if best else f"{site}/"
+        if entry:
+            entry["doc"] = doc
+        else:
+            options[path] = {"desc": "", "default_text": "", "doc": doc}
 
 
 def _from_example(path: Path, matcher: "_Matcher", options: dict) -> None:
@@ -277,7 +368,23 @@ class Docs:
         self.tables: dict[str, str] = data.get("tables", {})
 
     def describe(self, schema_path: str) -> str:
-        return self.options.get(schema_path, {}).get("desc", "")
+        """Description from Umbriel's docs, translated when a catalogue has it."""
+        from .i18n import _
+
+        desc = self.options.get(schema_path, {}).get("desc", "")
+        return _(desc) if desc else ""
+
+    def table(self, table_path: str) -> str:
+        from .i18n import _
+
+        desc = self.tables.get(table_path, "")
+        return _(desc) if desc else ""
+
+    def intro(self, page: str) -> str:
+        from .i18n import _
+
+        intro = self.pages.get(page, {}).get("intro", "")
+        return _(intro) if intro else ""
 
     def url(self, schema_path: str) -> str | None:
         doc = self.options.get(schema_path, {}).get("doc")
@@ -291,7 +398,7 @@ class Docs:
                 return f"{DOCS_SITE}/{page}/"
         page = section.replace("_", "-")
         if page in self.pages:
-            return f"{DOCS_SITE}/{page}/"
+            return f"{DOCS_SITE}/{SITE_PAGES.get(page, page)}/"
         if section in ("hot_corners",):
             return f"{DOCS_SITE}/workspaces-overview/"
         if section == "colors":
@@ -357,12 +464,14 @@ def main(argv: list[str]) -> int:
     data["revision"] = rev
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(data, indent=1, ensure_ascii=False, sort_keys=True))
-    covered = [p for p in leaf_paths if p in data["options"]]
-    print(f"{out}: {len(covered)}/{len(leaf_paths)} leaf options documented (revision {rev})")
+    covered = [p for p in leaf_paths if data["options"].get(p, {}).get("desc")]
+    linked = [p for p in leaf_paths if "#" in data["options"].get(p, {}).get("doc", "")]
+    print(f"{out}: {len(covered)}/{len(leaf_paths)} leaf options described, "
+          f"{len(linked)}/{len(leaf_paths)} with a section link (revision {rev})")
     if "-v" in argv:
         for p in leaf_paths:
-            if p not in data["options"]:
-                print("  missing:", p)
+            if p not in covered:
+                print("  no description:", p, "->", data["options"].get(p, {}).get("doc", "-"))
     return 0
 
 

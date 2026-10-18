@@ -7,6 +7,7 @@ from gi.repository import Adw, GLib, Gtk, Pango
 
 from .. import config as cfgmod
 from ..context import AppContext
+from ..i18n import _
 from ..widgets import esc
 
 
@@ -24,9 +25,9 @@ class RawPage(Gtk.Box):
         self.status = Gtk.Label(xalign=0, hexpand=True, ellipsize=Pango.EllipsizeMode.END)
         self.status.add_css_class("dim-label")
         bar.append(self.status)
-        check = Gtk.Button(label="Prüfen")
+        check = Gtk.Button(label=_("Validate"))
         check.connect("clicked", lambda *_: self.check())
-        apply = Gtk.Button(label="Übernehmen", css_classes=["suggested-action"])
+        apply = Gtk.Button(label=_("Apply"), css_classes=["suggested-action"])
         apply.connect("clicked", lambda *_: self.apply())
         bar.append(check)
         bar.append(apply)
@@ -67,7 +68,7 @@ class RawPage(Gtk.Box):
     def _changed(self, *_):
         if not self._loading:
             self._edited = True
-            self.status.set_label("Bearbeitet – „Übernehmen“ überträgt den Text in die Oberfläche")
+            self.status.set_label(_("Edited – “Apply” loads the text into the editor"))
 
     def _text(self) -> str:
         start, end = self.buffer.get_bounds()
@@ -79,14 +80,14 @@ class RawPage(Gtk.Box):
         try:
             tomlkit.parse(text)
         except Exception as exc:
-            self.status.set_label(f"TOML-Fehler: {exc}")
+            self.status.set_label(_("TOML error: {error}").format(error=exc))
             return
         overrides = {f.real_path: f.as_string() for f in self.ctx.cfg.dirty_files()}
         overrides[tf.real_path] = text
         ok, msg = self.ctx.cfg.validate(overrides)
         self.status.set_label(("✓ " if ok else "✗ ") + msg.splitlines()[-1] if msg else "")
         if not ok:
-            self.ctx.toast(msg.splitlines()[0] if msg else "Ungültig")
+            self.ctx.toast(msg.splitlines()[0] if msg else _("Invalid"))
 
     def apply(self):
         tf = self._current()
@@ -94,13 +95,13 @@ class RawPage(Gtk.Box):
             self.ctx.cfg.checkpoint(tf)
             tf.set_text(self._text())
         except ValueError as exc:
-            self.status.set_label(f"TOML-Fehler: {exc}")
+            self.status.set_label(_("TOML error: {error}").format(error=exc))
             return
         if tf is self.ctx.cfg.main:
             self.ctx.cfg.resolve_includes()
         self._edited = False
         self.ctx.changed()
-        self.ctx.toast("Text übernommen – noch nicht gespeichert")
+        self.ctx.toast(_("Text applied – not saved yet"))
 
 
 class BackupsPage(Adw.PreferencesPage):
@@ -109,8 +110,9 @@ class BackupsPage(Adw.PreferencesPage):
         self.ctx = ctx
         self.on_restored = on_restored
         self.group = Adw.PreferencesGroup(
-            title="Sicherungen",
-            description=esc(f"Vor jedem Speichern wird eine Kopie in {cfgmod.backup_dir()} abgelegt (je Datei die letzten 50)."),
+            title=_("Backups"),
+            description=esc(_("Before every save a copy is stored in {dir} (the last 50 per file).").format(
+                dir=cfgmod.backup_dir())),
         )
         self.add(self.group)
         self._rows = []
@@ -124,13 +126,13 @@ class BackupsPage(Adw.PreferencesPage):
         for when, path, original in backups[:200]:
             row = Adw.ActionRow(title=when.strftime("%d.%m.%Y %H:%M:%S"),
                                 subtitle=esc(str(original).replace(str(cfgmod.config_dir()) + "/", "")))
-            btn = Gtk.Button(label="Wiederherstellen", valign=Gtk.Align.CENTER)
+            btn = Gtk.Button(label=_("Restore"), valign=Gtk.Align.CENTER)
             btn.connect("clicked", lambda *_, p=path, o=original: self.restore(p, o))
             row.add_suffix(btn)
             self.group.add(row)
             self._rows.append(row)
         if not backups:
-            row = Adw.ActionRow(title="Noch keine Sicherungen")
+            row = Adw.ActionRow(title=_("No backups yet"))
             self.group.add(row)
             self._rows.append(row)
 
@@ -138,7 +140,7 @@ class BackupsPage(Adw.PreferencesPage):
         text = backup.read_text()
         tf = self.ctx.cfg.file_for(original)
         if tf is None:
-            self.ctx.toast("Datei gehört nicht mehr zur Konfiguration")
+            self.ctx.toast(_("This file is no longer part of the configuration"))
             return
         self.ctx.cfg.checkpoint(tf)
         tf.set_text(text)
@@ -146,4 +148,4 @@ class BackupsPage(Adw.PreferencesPage):
             self.ctx.cfg.resolve_includes()
         self.ctx.changed()
         GLib.idle_add(lambda: self.on_restored() and False)
-        self.ctx.toast("Sicherung geladen – mit „Speichern“ übernehmen")
+        self.ctx.toast(_("Backup loaded – press “Save” to keep it"))

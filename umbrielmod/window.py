@@ -7,28 +7,30 @@ from typing import Callable
 
 from gi.repository import Adw, Gio, GLib, Gtk
 
-from . import __version__
+from . import __version__, i18n, settings, theme
 from . import docs as docsmod
 from .context import AppContext
+from .i18n import N_, _
 from .pages.schema_page import SchemaPage
-from .widgets import esc
+from .widgets import doc_button, esc
 
-# (id, title, icon, sections or factory name)
-PAGES: list[tuple[str, str, str, object]] = [
-    ("outputs", "Ausgaben", "video-display-symbolic", "outputs"),
-    ("input", "Eingabe", "input-keyboard-symbolic", ["input"]),
-    ("keybinds", "Tastenkürzel", "preferences-desktop-keyboard-shortcuts-symbolic", "keybinds"),
-    ("appearance", "Darstellung", "preferences-desktop-appearance-symbolic", ["appearance", "colors"]),
-    ("layout", "Layout", "view-grid-symbolic", ["layout"]),
-    ("workspaces", "Arbeitsbereiche", "view-paged-symbolic", ["workspaces", "workspace", "overview", "hot_corners", "scratchpad"]),
-    ("animation", "Animationen", "media-playback-start-symbolic", ["animation"]),
-    ("window_rule", "Fensterregeln", "window-new-symbolic", "rules"),
-    ("layer_rule", "Layer-Regeln", "view-list-symbolic", ["layer_rule"]),
-    ("shaders", "Effekte & Shader", "applications-graphics-symbolic", "shaders"),
-    ("general", "Allgemein", "preferences-system-symbolic",
-     ["general", "environment", "events", "screencast", "include", "drm", "security_context_rule"]),
-    ("raw", "Roh-Editor", "text-x-generic-symbolic", "raw"),
-    ("backups", "Sicherungen", "document-open-recent-symbolic", "backups"),
+# (id, title, Tabler icon, sections or factory name, docs page)
+PAGES: list[tuple[str, str, str, object, str]] = [
+    ("outputs", N_("Outputs"), "device-desktop", "outputs", "outputs"),
+    ("input", N_("Input"), "keyboard", ["input"], "input"),
+    ("keybinds", N_("Keybinds"), "command", "keybinds", "keybinds"),
+    ("appearance", N_("Appearance"), "palette", ["appearance", "colors"], "appearance"),
+    ("layout", N_("Layout"), "layout-columns", ["layout"], "layout"),
+    ("workspaces", N_("Workspaces"), "stack-2",
+     ["workspaces", "workspace", "overview", "hot_corners", "scratchpad"], "workspaces"),
+    ("animation", N_("Animations"), "player-play", ["animation"], "animation"),
+    ("window_rule", N_("Window rules"), "app-window", "rules", "window-rules"),
+    ("layer_rule", N_("Layer rules"), "layers-subtract", ["layer_rule"], "layer-rules"),
+    ("shaders", N_("Effects & shaders"), "sparkles", "shaders", "effects"),
+    ("general", N_("General"), "settings",
+     ["general", "environment", "events", "screencast", "include", "drm", "security_context_rule"], "configuration"),
+    ("raw", N_("Raw editor"), "code", "raw", "configuration"),
+    ("backups", N_("Backups"), "history", "backups", ""),
 ]
 
 CUSTOM_SECTIONS = {"output", "keybinds", "effects", "window_rule"}
@@ -52,7 +54,7 @@ class MainWindow(Adw.ApplicationWindow):
         if missing:
             for i, page in enumerate(PAGES):
                 if page[0] == "general":
-                    PAGES[i] = (page[0], page[1], page[2], list(page[3]) + missing)
+                    PAGES[i] = (page[0], page[1], page[2], list(page[3]) + missing, page[4])
 
         self.toasts = Adw.ToastOverlay()
         split = Adw.NavigationSplitView(min_sidebar_width=210, max_sidebar_width=260)
@@ -76,22 +78,27 @@ class MainWindow(Adw.ApplicationWindow):
 
     def _sidebar(self) -> Adw.NavigationPage:
         self.sidebar = Gtk.ListBox(css_classes=["navigation-sidebar"])
-        for pid, title, icon, _ in PAGES:
+        for pid, title, icon, *_rest in PAGES:
             row = Gtk.ListBoxRow()
             row.page_id = pid
-            box = Gtk.Box(spacing=12, margin_top=6, margin_bottom=6, margin_start=6)
-            box.append(Gtk.Image(icon_name=icon))
-            box.append(Gtk.Label(label=title, xalign=0))
+            box = Gtk.Box(spacing=12, margin_top=4, margin_bottom=4, margin_start=4)
+            box.append(theme.icon(icon))
+            box.append(Gtk.Label(label=_(title), xalign=0))
             row.set_child(box)
             self.sidebar.append(row)
         self.sidebar.connect("row-selected", self._on_row)
         tv = Adw.ToolbarView()
         header = Adw.HeaderBar()
         menu = Gio.Menu()
-        menu.append("Neu laden", "win.reload")
-        menu.append("Schema/Beschreibungen aktualisieren", "win.refresh-docs")
-        menu.append("Über UmbrielMod", "win.about")
-        header.pack_end(Gtk.MenuButton(icon_name="open-menu-symbolic", menu_model=menu, tooltip_text="Menü"))
+        menu.append(_("Reload"), "win.reload")
+        menu.append(_("Update schema and descriptions"), "win.refresh-docs")
+        langs = Gio.Menu()
+        langs.append(_("System default"), "win.language('')")
+        for code, name in i18n.available_languages().items():
+            langs.append(name, f"win.language('{code}')")
+        menu.append_submenu(_("Language"), langs)
+        menu.append(_("About UmbrielMod"), "win.about")
+        header.pack_end(Gtk.MenuButton(icon_name="open-menu-symbolic", menu_model=menu, tooltip_text=_("Menu")))
         tv.add_top_bar(header)
         tv.set_content(Gtk.ScrolledWindow(child=self.sidebar, hscrollbar_policy=Gtk.PolicyType.NEVER))
         return Adw.NavigationPage(title="UmbrielMod", child=tv)
@@ -102,18 +109,20 @@ class MainWindow(Adw.ApplicationWindow):
         header = Adw.HeaderBar()
         self.title = Adw.WindowTitle(title="", subtitle=str(self.ctx.cfg.main.path))
         header.set_title_widget(self.title)
-        self.undo_btn = Gtk.Button(icon_name="edit-undo-symbolic", tooltip_text="Rückgängig (Strg+Z)", action_name="win.undo")
-        self.redo_btn = Gtk.Button(icon_name="edit-redo-symbolic", tooltip_text="Wiederholen (Strg+Umschalt+Z)", action_name="win.redo")
+        self.undo_btn = Gtk.Button(icon_name="edit-undo-symbolic", tooltip_text=_("Undo (Ctrl+Z)"), action_name="win.undo")
+        self.redo_btn = Gtk.Button(icon_name="edit-redo-symbolic", tooltip_text=_("Redo (Ctrl+Shift+Z)"), action_name="win.redo")
         header.pack_start(self.undo_btn)
         header.pack_start(self.redo_btn)
-        self.save_btn = Gtk.Button(label="Speichern", css_classes=["suggested-action"], action_name="win.save",
-                                   tooltip_text="Prüfen und speichern (Strg+S) – Umbriel lädt automatisch neu")
-        self.discard_btn = Gtk.Button(label="Verwerfen", action_name="win.discard")
+        self.save_btn = Gtk.Button(label=_("Save"), css_classes=["suggested-action"], action_name="win.save",
+                                   tooltip_text=_("Validate and save (Ctrl+S) – Umbriel reloads automatically"))
+        self.discard_btn = Gtk.Button(label=_("Discard"), action_name="win.discard")
         header.pack_end(self.save_btn)
         header.pack_end(self.discard_btn)
+        self.page_doc = Gtk.Box()
+        header.pack_end(self.page_doc)
         tv.add_top_bar(header)
-        self.banner = Adw.Banner(title="Die Konfiguration wurde außerhalb von UmbrielMod geändert.",
-                                 button_label="Neu laden (verwirft Änderungen)")
+        self.banner = Adw.Banner(title=_("The configuration was changed outside UmbrielMod."),
+                                 button_label=_("Reload (discards changes)"))
         self.banner.connect("button-clicked", lambda *_: self.reload(force=True))
         tv.add_top_bar(self.banner)
         tv.set_content(self.stack)
@@ -148,7 +157,12 @@ class MainWindow(Adw.ApplicationWindow):
         if row is None:
             return
         pid = row.page_id
-        title, spec = next((t, s) for p, t, _i, s in PAGES if p == pid)
+        title, spec, docpage = next((_(t), s, d) for p, t, _i, s, d in PAGES if p == pid)
+        child = self.page_doc.get_first_child()
+        if child is not None:
+            self.page_doc.remove(child)
+        if docpage:
+            self.page_doc.append(doc_button(self.ctx, f"{docsmod.DOCS_SITE}/{docpage}/", title))
         if pid not in self._pages:
             page = self._make_page(pid, spec)
             self._pages[pid] = page
@@ -192,6 +206,10 @@ class MainWindow(Adw.ApplicationWindow):
         add("reload", lambda: self.reload(force=False), ["<Control>r"])
         add("refresh-docs", self.refresh_docs)
         add("about", self.about)
+        lang = Gio.SimpleAction.new_stateful("language", GLib.VariantType.new("s"),
+                                             GLib.Variant("s", settings.get("language", "") or ""))
+        lang.connect("activate", lambda a, v: self.set_language(a, v.get_string()))
+        self.add_action(lang)
 
     def _update_state(self):
         dirty = self.ctx.cfg.dirty
@@ -201,7 +219,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.act_redo.set_enabled(bool(self.ctx.cfg.redo_stack))
         names = ", ".join([f.path.name for f in self.ctx.cfg.dirty_files()] +
                           [p.name for p in self.ctx.cfg.dirty_raw()])
-        self.title.set_subtitle(f"Ungespeichert: {names}" if dirty else str(self.ctx.cfg.main.path))
+        self.title.set_subtitle(_("Unsaved: {files}").format(files=names) if dirty else str(self.ctx.cfg.main.path))
 
     def undo(self):
         if self.ctx.cfg.undo():
@@ -218,19 +236,19 @@ class MainWindow(Adw.ApplicationWindow):
         self._ignore_monitor_until = GLib.get_monotonic_time() + 2_000_000
         ok, message = cfg.save()
         if ok:
-            self.toast("Gespeichert – Umbriel übernimmt die Änderungen automatisch")
+            self.toast(_("Saved – Umbriel applies the changes automatically"))
             self._watch_files()
         else:
-            self.error_dialog("Konfiguration ungültig – nicht gespeichert", message)
+            self.error_dialog(_("Invalid configuration – not saved"), message)
         self._update_state()
         return ok
 
     def reload(self, force: bool):
         if self.ctx.cfg.dirty and not force:
-            dlg = Adw.AlertDialog(heading="Ungespeicherte Änderungen verwerfen?",
-                                  body="Die Konfiguration wird von der Festplatte neu geladen.")
-            dlg.add_response("cancel", "Abbrechen")
-            dlg.add_response("discard", "Verwerfen")
+            dlg = Adw.AlertDialog(heading=_("Discard unsaved changes?"),
+                                  body=_("The configuration will be reloaded from disk."))
+            dlg.add_response("cancel", _("Cancel"))
+            dlg.add_response("discard", _("Discard"))
             dlg.set_response_appearance("discard", Adw.ResponseAppearance.DESTRUCTIVE)
             dlg.connect("response", lambda _d, r: r == "discard" and self.reload(force=True))
             dlg.present(self)
@@ -241,7 +259,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.refresh_all()
 
     def refresh_docs(self):
-        self.toast("Lade Umbriel-Dokumentation für die installierte Version…")
+        self.toast(_("Fetching the Umbriel documentation for the installed version…"))
         schema = self.ctx.schema
         revision = schema.revision
 
@@ -253,21 +271,42 @@ class MainWindow(Adw.ApplicationWindow):
             if ok:
                 self.ctx.docs = docsmod.Docs.load(revision)
                 self.refresh_all()
-            self.toast(msg if ok else f"Fehler: {msg}")
+            self.toast(msg if ok else _("Error: {message}").format(message=msg))
 
         threading.Thread(target=work, daemon=True).start()
+
+    def set_language(self, action: Gio.SimpleAction, code: str):
+        action.set_state(GLib.Variant("s", code))
+        settings.set("language", code or None)
+        i18n.load(code or None)
+        # rebuild the window in the new language; config state lives in ctx
+        app, ctx = self.get_application(), self.ctx
+        ctx._listeners.clear()
+        new = MainWindow(app, ctx)
+        new.set_default_size(self.get_width(), self.get_height())
+        new.present()
+        self._monitors_cancel()
+        self.destroy()
+
+    def _monitors_cancel(self):
+        for m in self._monitors:
+            m.cancel()
+        self._monitors = []
 
     def about(self):
         about = Adw.AboutDialog(
             application_name="UmbrielMod",
             application_icon="io.github.umbrielmod",
             version=__version__,
-            comments="Grafische Konfiguration für den Umbriel-Wayland-Compositor",
+            comments=_("Graphical configuration for the Umbriel Wayland compositor"),
+            translator_credits=_("translator-credits") if _("translator-credits") != "translator-credits" else "",
             license_type=Gtk.License.MIT_X11,
             website="https://github.com/dMopp/umbrielmod",
             developer_name="Daniel Quolke",
-            debug_info=f"Umbriel-Schema: {self.ctx.schema.version} ({self.ctx.schema.revision})\n"
-                       f"Beschreibungen: Revision {self.ctx.docs.revision or '—'}",
+            debug_info=f"Umbriel schema: {self.ctx.schema.version} ({self.ctx.schema.revision})\n"
+                       f"Descriptions: revision {self.ctx.docs.revision or '—'}\n"
+                       f"Language: {i18n.current_language()} (locale dirs: "
+                       f"{', '.join(str(d) for d in i18n.search_dirs())})",
         )
         about.present(self)
 
@@ -315,17 +354,17 @@ class MainWindow(Adw.ApplicationWindow):
             self.ctx.cfg.reload()
             self._watch_files()
             self.refresh_all()
-            self.toast("Konfiguration wurde extern geändert und neu geladen")
+            self.toast(_("The configuration changed on disk and was reloaded"))
         return False
 
     def _on_close(self, *_):
         if not self.ctx.cfg.dirty:
             return False
-        dlg = Adw.AlertDialog(heading="Ungespeicherte Änderungen",
-                              body="Sollen die Änderungen vor dem Beenden gespeichert werden?")
-        dlg.add_response("cancel", "Abbrechen")
-        dlg.add_response("discard", "Verwerfen")
-        dlg.add_response("save", "Speichern")
+        dlg = Adw.AlertDialog(heading=_("Unsaved changes"),
+                              body=_("Save the changes before closing?"))
+        dlg.add_response("cancel", _("Cancel"))
+        dlg.add_response("discard", _("Discard"))
+        dlg.add_response("save", _("Save"))
         dlg.set_response_appearance("discard", Adw.ResponseAppearance.DESTRUCTIVE)
         dlg.set_response_appearance("save", Adw.ResponseAppearance.SUGGESTED)
 

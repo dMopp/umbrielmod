@@ -471,7 +471,7 @@ class Config:
         dirty = self.dirty_files()
         raw = self.dirty_raw()
         if not dirty and not raw:
-            return True, "Keine Änderungen"
+            return True, "No changes"
         ok, message = self.validate()
         if not ok:
             return False, message

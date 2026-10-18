@@ -7,39 +7,40 @@ from gi.repository import Adw, GLib, Gtk
 from ..config import TomlFile
 from ..context import AppContext
 from ..schema import Option, humanize
-from ..widgets import add_option_button, esc, icon_button, option_row, zero_value
+from ..i18n import N_, _
+from ..widgets import add_option_button, doc_button, esc, icon_button, option_doc_url, option_row, zero_value
 
 SECTION_TITLES = {
-    "general": "Allgemein",
-    "environment": "Umgebungsvariablen",
-    "events": "Ereignisse",
-    "screencast": "Bildschirmfreigabe",
-    "include": "Eingebundene Dateien",
-    "drm": "DRM / Grafikkarten",
-    "input": "Eingabe",
-    "appearance": "Darstellung",
-    "colors": "Farben",
-    "layout": "Layout",
-    "workspaces": "Arbeitsbereiche",
-    "workspace": "Arbeitsbereich-Regeln",
-    "overview": "Übersicht",
-    "hot_corners": "Aktive Ecken",
-    "scratchpad": "Scratchpads",
-    "animation": "Animationen",
-    "window_rule": "Fensterregeln",
-    "layer_rule": "Layer-Regeln",
-    "security_context_rule": "Sicherheitskontext-Regeln",
-    "effects": "Effekte",
-    "input.device": "Geräte-spezifische Einstellungen",
-    "animation.beziers": "Bézier-Kurven",
-    "animation.springs": "Federkurven",
-    "effects.pool": "Effekt-Pools",
+    "general": N_("General"),
+    "environment": N_("Environment variables"),
+    "events": N_("Events"),
+    "screencast": N_("Screen sharing"),
+    "include": N_("Included files"),
+    "drm": N_("DRM / graphics cards"),
+    "input": N_("Input"),
+    "appearance": N_("Appearance"),
+    "colors": N_("Colours"),
+    "layout": N_("Layout"),
+    "workspaces": N_("Workspaces"),
+    "workspace": N_("Workspace rules"),
+    "overview": N_("Overview"),
+    "hot_corners": N_("Hot corners"),
+    "scratchpad": N_("Scratchpads"),
+    "animation": N_("Animations"),
+    "window_rule": N_("Window rules"),
+    "layer_rule": N_("Layer rules"),
+    "security_context_rule": N_("Security context rules"),
+    "effects": N_("Effects"),
+    "input.device": N_("Per-device settings"),
+    "animation.beziers": N_("Bézier curves"),
+    "animation.springs": N_("Spring curves"),
+    "effects.pool": N_("Effect pools"),
 }
 
 
 def section_title(schema_path: str) -> str:
     if schema_path in SECTION_TITLES:
-        return SECTION_TITLES[schema_path]
+        return _(SECTION_TITLES[schema_path])
     return " › ".join(humanize(p.removesuffix("[]")) for p in schema_path.split("."))
 
 
@@ -75,9 +76,11 @@ def leaf_groups(ctx: AppContext, schema_prefix: str, config_prefix: tuple, *,
             rel = parent[len(schema_prefix) + 1:] if schema_prefix else parent
             g.set_title(esc(section_title(parent) if parent in SECTION_TITLES else
                             " › ".join(humanize(p) for p in rel.split("."))))
-        table_desc = ctx.docs.tables.get(parent.replace("[]", ""))
+        table_desc = ctx.docs.table(parent.replace("[]", ""))
         if table_desc:
             g.set_description(esc(table_desc))
+        first = by_parent[parent][0]
+        g.set_header_suffix(doc_button(ctx, option_doc_url(ctx, first), g.get_title()))
         for opt in by_parent[parent]:
             g.add(option_row(ctx, opt, config_path(schema_prefix, config_prefix, opt), tf))
         groups.append(g)
@@ -99,15 +102,19 @@ class MapGroup(Adw.PreferencesGroup):
         desc = ctx.docs.describe(schema_path) or ctx.docs.describe(f"{schema_path}.<name>")
         if desc:
             self.set_description(esc(desc))
-        self.set_header_suffix(self._add_button())
+        box = Gtk.Box(spacing=6)
+        box.append(self._add_button())
+        box.append(doc_button(ctx, ctx.docs.url(f"{schema_path}.<name>") or ctx.docs.page_url(schema_path),
+                              section_title(schema_path)))
+        self.set_header_suffix(box)
         self._rows: list[Gtk.Widget] = []
         self.refresh()
 
     def _add_button(self) -> Gtk.MenuButton:
         pop = Gtk.Popover()
         box = Gtk.Box(spacing=6, margin_top=6, margin_bottom=6, margin_start=6, margin_end=6)
-        entry = Gtk.Entry(placeholder_text="Name")
-        ok = Gtk.Button(label="Anlegen", css_classes=["suggested-action"])
+        entry = Gtk.Entry(placeholder_text=_("Name"))
+        ok = Gtk.Button(label=_("Create"), css_classes=["suggested-action"])
         box.append(entry)
         box.append(ok)
         pop.set_child(box)
@@ -123,7 +130,7 @@ class MapGroup(Adw.PreferencesGroup):
         ok.connect("clicked", create)
         entry.connect("activate", create)
         btn = Gtk.MenuButton(popover=pop, valign=Gtk.Align.CENTER, css_classes=["flat"])
-        btn.set_child(Adw.ButtonContent(icon_name="list-add-symbolic", label="Hinzufügen"))
+        btn.set_child(Adw.ButtonContent(icon_name="list-add-symbolic", label=_("Add")))
         return btn
 
     def _create(self, name: str):
@@ -158,11 +165,11 @@ class MapGroup(Adw.PreferencesGroup):
         for name, f in foreign.items():
             if name in entries:
                 continue
-            row = Adw.ActionRow(title=esc(name), subtitle=f"Aus {esc(f.path.name)} (schreibgeschützt)")
+            row = Adw.ActionRow(title=esc(name), subtitle=esc(_("From {file} (read-only)").format(file=f.path.name)))
             row.set_sensitive(False)
             self._add_row(row)
         if not entries and not foreign:
-            self._add_row(Adw.ActionRow(title="Keine Einträge", css_classes=["dim-label"]))
+            self._add_row(Adw.ActionRow(title=_("No entries"), css_classes=["dim-label"]))
 
     def _add_row(self, row):
         self.add(row)
@@ -181,7 +188,7 @@ class MapGroup(Adw.PreferencesGroup):
             self.ctx.delete(self.tf, path, prune=False)
             self.refresh()
 
-        exp.add_suffix(icon_button("user-trash-symbolic", "Eintrag löschen", delete))
+        exp.add_suffix(icon_button("user-trash-symbolic", _("Delete entry"), delete))
         for f in self.fields:
             rel = f.path.split("<name>.", 1)[1].split(".")
             exp.add_row(option_row(self.ctx, f, path + tuple(rel), self.tf))
@@ -207,11 +214,11 @@ def entry_summary(schema_path: str, entry: dict) -> tuple[str, str]:
     elif "name" in entry:
         title = str(entry["name"])
     elif schema_path.startswith("window_rule"):
-        title = "Alle Fenster"
+        title = _("All windows")
     elif schema_path.startswith("layer_rule"):
-        title = "Alle Layer"
+        title = _("All layers")
     else:
-        title = "Eintrag"
+        title = _("Entry")
     rest = [f"{k} = {_short(v)}" for k, v in entry.items() if k not in ("match", "name") and not isinstance(v, dict)]
     rest += [f"{k} = {{…}}" for k, v in entry.items() if k != "match" and isinstance(v, dict)]
     return title, ", ".join(rest)
@@ -232,16 +239,17 @@ class AoTGroup(Adw.PreferencesGroup):
         self.template = template or {}
         self.fields = ctx.schema.leaves(f"{schema_path}[]", stop_at_collections=False)
         self.expanded: set[int] = set()
-        desc = ctx.docs.pages.get(schema_path.replace("_", "-") + "s", {}).get("intro")
+        desc = ctx.docs.intro(schema_path.replace("_", "-") + "s")
         if desc:
             self.set_description(esc(desc))
         header = Gtk.Box(spacing=6)
         if extra_header is not None:
             header.append(extra_header)
         add = Gtk.Button(css_classes=["flat"], valign=Gtk.Align.CENTER)
-        add.set_child(Adw.ButtonContent(icon_name="list-add-symbolic", label="Neu"))
+        add.set_child(Adw.ButtonContent(icon_name="list-add-symbolic", label=_("New")))
         add.connect("clicked", lambda *_: self.add_entry(dict(self.template)))
         header.append(add)
+        header.append(doc_button(ctx, ctx.docs.page_url(schema_path), section_title(schema_path)))
         self.set_header_suffix(header)
         self._rows: list[Gtk.Widget] = []
         self.refresh()
@@ -268,11 +276,12 @@ class AoTGroup(Adw.PreferencesGroup):
         for f in self.ctx.cfg.includes():
             for entry in f.get(self.path) or []:
                 title, sub = entry_summary(self.schema_path, entry)
-                row = Adw.ActionRow(title=esc(title), subtitle=esc(f"{sub}\n(aus {f.path.name}, schreibgeschützt)"))
+                row = Adw.ActionRow(title=esc(title),
+                                    subtitle=esc(sub + "\n" + _("(from {file}, read-only)").format(file=f.path.name)))
                 row.set_sensitive(False)
                 self._add(row)
         if not entries:
-            self._add(Adw.ActionRow(title="Noch keine Einträge", css_classes=["dim-label"]))
+            self._add(Adw.ActionRow(title=_("No entries yet"), css_classes=["dim-label"]))
 
     def _add(self, row):
         self.add(row)
@@ -301,12 +310,12 @@ class AoTGroup(Adw.PreferencesGroup):
         def duplicate():
             self.add_entry(dict(entry))
 
-        up = icon_button("go-up-symbolic", "Nach oben (frühere Regeln werden überschrieben)", lambda: move(-1))
+        up = icon_button("go-up-symbolic", _("Move up (later entries override earlier ones)"), lambda: move(-1))
         up.set_sensitive(i > 0)
-        down = icon_button("go-down-symbolic", "Nach unten", lambda: move(1))
+        down = icon_button("go-down-symbolic", _("Move down"), lambda: move(1))
         down.set_sensitive(i < count - 1)
-        for w in (up, down, icon_button("edit-copy-symbolic", "Duplizieren", duplicate),
-                  icon_button("user-trash-symbolic", "Löschen", delete)):
+        for w in (up, down, icon_button("edit-copy-symbolic", _("Duplicate"), duplicate),
+                  icon_button("user-trash-symbolic", _("Delete"), delete)):
             exp.add_suffix(w)
 
         set_fields, unset = [], []
@@ -323,8 +332,8 @@ class AoTGroup(Adw.PreferencesGroup):
             self.expanded.add(i)
             GLib.idle_add(lambda: self.refresh() and False)
 
-        add_row = Adw.ActionRow(title="Weitere Option…")
-        add_row.add_suffix(add_option_button(self.ctx, [f for f, _ in unset], pick, label="Hinzufügen"))
+        add_row = Adw.ActionRow(title=_("More options…"))
+        add_row.add_suffix(add_option_button(self.ctx, [f for f, _rel in unset], pick, label=_("Add")))
         exp.add_row(add_row)
         return exp
 

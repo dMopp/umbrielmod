@@ -22,17 +22,19 @@ from pathlib import Path
 import tomlkit
 
 from . import config as cfgmod
+from .i18n import N_
 
 REPO_SLUG = "noctalia-dev/community-umbriel-shaders"
 REPO_URL = f"https://github.com/{REPO_SLUG}"
 
 KINDS = ("border", "window", "screen", "cursor", "animation")
+# display names (translate with i18n._ when shown)
 KIND_LABELS = {
-    "border": "Rahmen",
-    "window": "Fenster",
-    "screen": "Bildschirm",
-    "cursor": "Cursor",
-    "animation": "Animation",
+    "border": N_("Border"),
+    "window": N_("Window"),
+    "screen": N_("Screen"),
+    "cursor": N_("Cursor"),
+    "animation": N_("Animation"),
 }
 SLOT_KINDS = ("border", "window", "screen", "cursor")
 

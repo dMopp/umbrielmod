@@ -6,6 +6,7 @@ from gi.repository import Adw, Gtk
 
 from .. import umbriel
 from ..context import AppContext
+from ..i18n import _
 from ..widgets import SuggestButton
 from .schema_page import AoTGroup
 
@@ -28,15 +29,15 @@ class WindowRulesPage(Adw.PreferencesPage):
         def pick(app_id: str):
             win = next((w for w in self._windows if w.get("app_id") == app_id), {})
             self.group.add_entry({"match": {"app_id": _regex(app_id)}})
-            ctx.toast(f"Regel für {app_id} angelegt" + (f" ({win.get('title')})" if win.get("title") else ""))
+            ctx.toast(_("Rule for {app} created").format(app=app_id) + (f" ({win.get('title')})" if win.get("title") else ""))
 
         picker = SuggestButton(items, pick)
         picker.set_icon_name("")
-        picker.set_child(Adw.ButtonContent(icon_name="find-location-symbolic", label="Aus offenem Fenster"))
-        picker.set_tooltip_text("Neue Regel mit der App-ID eines geöffneten Fensters")
+        picker.set_child(Adw.ButtonContent(icon_name="find-location-symbolic", label=_("From open window")))
+        picker.set_tooltip_text(_("New rule matching the app ID of an open window"))
         intro = Adw.PreferencesGroup(
-            description="Regeln werden der Reihe nach angewendet; spätere Regeln überschreiben frühere. "
-                        "Jede Regel zeigt nur die gesetzten Schlüssel – weitere über „Hinzufügen“."
+            description=_("Rules apply in order; later rules override earlier ones. "
+                          "Each rule only lists the keys it sets – add more with “Add”.")
         )
         self.add(intro)
         self.group = AoTGroup(ctx, "window_rule", ("window_rule",), extra_header=picker)

@@ -1,1368 +1,2218 @@
 {
  "options": {
+  "animation": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=custom-effects#custom-effects"
+  },
+  "animation.beziers": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/"
+  },
+  "animation.border": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=targets#targets"
+  },
+  "animation.border.curve": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.border.duration_ms": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.border.effect": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.border.enabled": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
   "animation.curve": {
    "default_text": "`\"easeout\"`",
    "desc": "Default easing curve.",
-   "doc": "animation/#defaults"
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.dim_unfocused": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=targets#targets"
+  },
+  "animation.dim_unfocused.curve": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.dim_unfocused.dim": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.dim_unfocused.duration_ms": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.dim_unfocused.effect": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.dim_unfocused.enabled": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
   },
   "animation.duration_ms": {
    "default_text": "`250`",
    "desc": "Default duration for non-spring curves.",
-   "doc": "animation/#defaults"
+   "doc": "animation/?section=defaults#defaults"
   },
   "animation.enabled": {
    "default_text": "`true`",
    "desc": "Master switch for every transition.",
-   "doc": "animation/#defaults"
+   "doc": "animation/?section=defaults#defaults"
   },
   "animation.layers": {
    "default_text": "",
    "desc": "Layer-shell surfaces appearing, mapping, closing, moving, resizing, or taking and losing the keyboard",
-   "doc": "ipc/#event-stream"
+   "doc": "ipc/?section=event-stream#event-stream"
+  },
+  "animation.layers.curve": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.layers.duration_ms": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.layers.effect": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.layers.enabled": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.overview": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=targets#targets"
+  },
+  "animation.overview.curve": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.overview.duration_ms": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.overview.effect": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.overview.enabled": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.overview.workspace_curve": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.scratchpad": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=targets#targets"
+  },
+  "animation.scratchpad.blur": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.scratchpad.curve": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.scratchpad.dim": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.scratchpad.duration_ms": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.scratchpad.effect": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.scratchpad.enabled": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
   },
   "animation.scratchpad.fullscreen": {
    "default_text": "",
    "desc": "Fullscreen",
-   "doc": "ipc/#queries"
+   "doc": "ipc/?section=queries#queries"
+  },
+  "animation.scratchpad.maximize": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.scratchpad.scale": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.springs": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/"
+  },
+  "animation.springs.<name>.damping": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=curves#curves"
+  },
+  "animation.springs.<name>.stiffness": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=curves#curves"
+  },
+  "animation.windows_drag": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.windows_drag.physics": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=drag-physics#drag-physics"
+  },
+  "animation.windows_in": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.windows_in.curve": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.windows_in.duration_ms": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.windows_in.effect": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.windows_in.enabled": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.windows_in.scale": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.windows_in.style": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.windows_move": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.windows_move.curve": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.windows_move.duration_ms": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.windows_move.effect": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.windows_move.enabled": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.windows_out": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.windows_out.curve": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.windows_out.duration_ms": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.windows_out.effect": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.windows_out.enabled": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.windows_out.scale": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.windows_out.style": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.windows_resize": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.windows_resize.curve": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.windows_resize.duration_ms": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.windows_resize.enabled": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.workspaces": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.workspaces.curve": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.workspaces.duration_ms": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.workspaces.effect": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "animation.workspaces.enabled": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=defaults#defaults"
+  },
+  "animation.workspaces.style": {
+   "default_text": "",
+   "desc": "",
+   "doc": "animation/?section=event-tables#event-tables"
+  },
+  "appearance": {
+   "default_text": "",
+   "desc": "",
+   "doc": "appearance/"
+  },
+  "appearance.blur": {
+   "default_text": "",
+   "desc": "",
+   "doc": "appearance/?section=blur#blur"
   },
   "appearance.blur.brightness": {
    "default_text": "`0.9`",
    "desc": "Brightness multiplier from 0.0 to 2.0.",
-   "doc": "appearance/#blur"
+   "doc": "appearance/?section=blur#blur"
   },
   "appearance.blur.contrast": {
    "default_text": "`0.9`",
    "desc": "Contrast multiplier from 0.0 to 2.0.",
-   "doc": "appearance/#blur"
+   "doc": "appearance/?section=blur#blur"
   },
   "appearance.blur.enabled": {
    "default_text": "`true`",
    "desc": "Enable blur rendering.",
-   "doc": "appearance/#blur"
+   "doc": "appearance/?section=blur#blur"
   },
   "appearance.blur.noise": {
    "default_text": "`0.02`",
    "desc": "Noise overlay from 0.0 to 1.0.",
-   "doc": "appearance/#blur"
+   "doc": "appearance/?section=blur#blur"
   },
   "appearance.blur.optimized": {
    "default_text": "`true`",
    "desc": "Share one cached background blur across surfaces on an output.",
-   "doc": "appearance/#blur"
+   "doc": "appearance/?section=blur#blur"
   },
   "appearance.blur.passes": {
    "default_text": "`3`",
    "desc": "Blur passes from 0 to 8.",
-   "doc": "appearance/#blur"
+   "doc": "appearance/?section=blur#blur"
   },
   "appearance.blur.radius": {
    "default_text": "`5`",
    "desc": "Blur radius from 0 to 100.",
-   "doc": "appearance/#blur"
+   "doc": "appearance/?section=blur#blur"
   },
   "appearance.blur.saturation": {
    "default_text": "`1.1`",
    "desc": "Saturation multiplier from 0.0 to 2.0.",
-   "doc": "appearance/#blur"
+   "doc": "appearance/?section=blur#blur"
   },
   "appearance.border_width": {
    "default_text": "`2`",
    "desc": "Inner border width in logical pixels.",
-   "doc": "appearance/#window-appearance"
+   "doc": "appearance/?section=window-appearance#window-appearance"
   },
   "appearance.corner_radius": {
    "default_text": "`10`",
    "desc": "Radius of the complete decorated window.",
-   "doc": "appearance/#window-appearance"
+   "doc": "appearance/?section=window-appearance#window-appearance"
   },
   "appearance.drag_opacity": {
    "default_text": "`0.75`",
    "desc": "Opacity while dragging a window.",
-   "doc": "appearance/#window-appearance"
+   "doc": "appearance/?section=window-appearance#window-appearance"
   },
   "appearance.opaque_fullscreen": {
    "default_text": "`true`",
    "desc": "Draw fullscreen windows over the backdrop and ignore window rule `opacity`.",
-   "doc": "appearance/#window-appearance"
+   "doc": "appearance/?section=window-appearance#window-appearance"
   },
   "appearance.outer_border_width": {
    "default_text": "`0`",
    "desc": "Outer ring width in logical pixels.",
-   "doc": "appearance/#window-appearance"
+   "doc": "appearance/?section=window-appearance#window-appearance"
   },
   "appearance.prefer_no_csd": {
    "default_text": "`true`",
    "desc": "Prefer Umbriel's border-only server decoration.",
-   "doc": "appearance/#window-appearance"
+   "doc": "appearance/?section=window-appearance#window-appearance"
+  },
+  "appearance.shadow": {
+   "default_text": "",
+   "desc": "",
+   "doc": "appearance/?section=shadow#shadow"
   },
   "appearance.shadow.enabled": {
    "default_text": "`true`",
    "desc": "Draw shadows behind tiled and floating windows.",
-   "doc": "appearance/#shadow"
+   "doc": "appearance/?section=shadow#shadow"
   },
   "appearance.shadow.offset_x": {
    "default_text": "`2`",
    "desc": "Horizontal offset from -200 to 200.",
-   "doc": "appearance/#shadow"
+   "doc": "appearance/?section=shadow#shadow"
   },
   "appearance.shadow.offset_y": {
    "default_text": "`2`",
    "desc": "Vertical offset from -200 to 200.",
-   "doc": "appearance/#shadow"
+   "doc": "appearance/?section=shadow#shadow"
   },
   "appearance.shadow.softness": {
    "default_text": "`10`",
    "desc": "Blur softness from 0 to 200.",
-   "doc": "appearance/#shadow"
+   "doc": "appearance/?section=shadow#shadow"
+  },
+  "appearance.tab_bar": {
+   "default_text": "",
+   "desc": "",
+   "doc": "appearance/?section=tab-bar#tab-bar"
   },
   "appearance.tab_bar.corner_radius": {
    "default_text": "`-1`",
    "desc": "Slot corner radius; `-1` follows `corner_radius`.",
-   "doc": "appearance/#tab-bar"
+   "doc": "appearance/?section=tab-bar#tab-bar"
   },
   "appearance.tab_bar.font": {
    "default_text": "`\"sans 10\"`",
    "desc": "Title font as a Pango description, such as `\"Inter Bold 9\"`.",
-   "doc": "appearance/#tab-bar"
+   "doc": "appearance/?section=tab-bar#tab-bar"
   },
   "appearance.tab_bar.height": {
    "default_text": "`24`",
    "desc": "Thickness in logical pixels, from 2 to 400: the bar's height on the top or bottom, its width on the left or right. The group reserves the bar and one `gap` beside it. Give a side bar with titles room for them, such as `160`.",
-   "doc": "appearance/#tab-bar"
+   "doc": "appearance/?section=tab-bar#tab-bar"
   },
   "appearance.tab_bar.hide_when_single": {
    "default_text": "`false`",
    "desc": "Draw no bar, and reserve no space, while a tab group holds one window. It stays a group, so the next window to join becomes a tab.",
-   "doc": "appearance/#tab-bar"
+   "doc": "appearance/?section=tab-bar#tab-bar"
   },
   "appearance.tab_bar.max_tabs": {
    "default_text": "`0`",
    "desc": "Slots the bar shows at once, from 0 to 64; `0` shows every tab.",
-   "doc": "appearance/#tab-bar"
+   "doc": "appearance/?section=tab-bar#tab-bar"
   },
   "appearance.tab_bar.overflow": {
    "default_text": "`\"scroll\"`",
    "desc": "What a bar does with more tabs than `max_tabs`. `\"scroll\"` keeps the slots at their size and shows a run of tabs that follows the active one, with a `‹` and a `›` button at the ends that select the previous and next tab. `\"shrink\"` narrows the slots until every tab fits.",
-   "doc": "appearance/#tab-bar"
+   "doc": "appearance/?section=tab-bar#tab-bar"
   },
   "appearance.tab_bar.padding": {
    "default_text": "`8`",
    "desc": "Space a title keeps from either end of its slot.",
-   "doc": "appearance/#tab-bar"
+   "doc": "appearance/?section=tab-bar#tab-bar"
   },
   "appearance.tab_bar.position": {
    "default_text": "`\"top\"`",
    "desc": "The group edge the bar sits on: `\"top\"`, `\"bottom\"`, `\"left\"`, or `\"right\"`. On the top or bottom the slots sit side by side; on the left or right they stack, a vertical tab list whose titles still read across.",
-   "doc": "appearance/#tab-bar"
+   "doc": "appearance/?section=tab-bar#tab-bar"
   },
   "appearance.tab_bar.style": {
    "default_text": "`\"titles\"`",
    "desc": "`\"titles\"` shows each tab's title in its slot. `\"indicator\"` draws the slots alone; pair it with a small `height` for a thin strip.",
-   "doc": "appearance/#tab-bar"
+   "doc": "appearance/?section=tab-bar#tab-bar"
   },
   "appearance.tab_bar.tab_gap": {
    "default_text": "`2`",
    "desc": "Space between neighbouring slots.",
-   "doc": "appearance/#tab-bar"
+   "doc": "appearance/?section=tab-bar#tab-bar"
   },
   "appearance.tab_bar.title_align": {
    "default_text": "`\"center\"`",
    "desc": "`\"left\"`, `\"center\"`, or `\"right\"` within the slot.",
-   "doc": "appearance/#tab-bar"
+   "doc": "appearance/?section=tab-bar#tab-bar"
   },
   "appearance.tab_bar.title_format": {
    "default_text": "`\"{title}\"`",
    "desc": "Slot label. `{title}`, `{app_id}`, and `{index}` (from 1) are replaced; a window without a title shows its app id.",
-   "doc": "appearance/#tab-bar"
+   "doc": "appearance/?section=tab-bar#tab-bar"
   },
   "appearance.tab_bar.visible": {
    "default_text": "`true`",
    "desc": "Draw bars. `false` hides the bar of every group that has not shown its own with `column-show-tab-bar` or `column-toggle-tab-bar`; the tabs take its space and keep working from the keyboard. Those actions hide or show one group's bar whatever this says.",
-   "doc": "appearance/#tab-bar"
+   "doc": "appearance/?section=tab-bar#tab-bar"
   },
   "colors.accent_primary": {
    "default_text": "",
    "desc": "Titles, key chords, and primary emphasis.",
-   "doc": "appearance/#colors"
+   "doc": "appearance/?section=colors#colors"
   },
   "colors.accent_secondary": {
    "default_text": "",
    "desc": "Secondary emphasis and group headings.",
-   "doc": "appearance/#colors"
+   "doc": "appearance/?section=colors#colors"
   },
   "colors.backdrop": {
    "default_text": "",
    "desc": "Fullscreen background and RGB color of the opaque emergency lock blank.",
-   "doc": "appearance/#colors"
+   "doc": "appearance/?section=colors#colors"
   },
   "colors.background": {
    "default_text": "",
    "desc": "Background for Umbriel panels and banners.",
-   "doc": "appearance/#colors"
+   "doc": "appearance/?section=colors#colors"
   },
   "colors.error": {
    "default_text": "",
    "desc": "Error text and confirmation borders.",
-   "doc": "appearance/#colors"
+   "doc": "appearance/?section=colors#colors"
   },
   "colors.insert_hint": {
    "default_text": "",
    "desc": "Drop-target preview during dragging.",
-   "doc": "appearance/#colors"
+   "doc": "appearance/?section=colors#colors"
   },
   "colors.overview.background_tint": {
    "default_text": "",
    "desc": "Tint over the desktop behind the overview.",
-   "doc": "appearance/#overview-colors"
+   "doc": "appearance/?section=overview-colors#overview-colors"
   },
   "colors.overview.badge": {
    "default_text": "",
    "desc": "Shortcut badge color.",
-   "doc": "appearance/#overview-colors"
+   "doc": "appearance/?section=overview-colors#overview-colors"
   },
   "colors.overview.workspace_background": {
    "default_text": "",
    "desc": "Background behind each workspace preview.",
-   "doc": "appearance/#overview-colors"
+   "doc": "appearance/?section=overview-colors#overview-colors"
   },
   "colors.shadow": {
    "default_text": "",
    "desc": "Window shadow color.",
-   "doc": "appearance/#colors"
+   "doc": "appearance/?section=shadow#shadow"
   },
   "colors.tab_bar.active": {
    "default_text": "",
    "desc": "The active tab's slot in the focused column.",
-   "doc": "appearance/#tab-bar-colors"
+   "doc": "appearance/?section=tab-bar-colors#tab-bar-colors"
   },
   "colors.tab_bar.active_text": {
    "default_text": "",
    "desc": "Its title.",
-   "doc": "appearance/#tab-bar-colors"
+   "doc": "appearance/?section=tab-bar-colors#tab-bar-colors"
   },
   "colors.tab_bar.active_unfocused": {
    "default_text": "",
    "desc": "The active tab's slot in any other column.",
-   "doc": "appearance/#tab-bar-colors"
+   "doc": "appearance/?section=tab-bar-colors#tab-bar-colors"
   },
   "colors.tab_bar.active_unfocused_text": {
    "default_text": "",
    "desc": "Its title.",
-   "doc": "appearance/#tab-bar-colors"
+   "doc": "appearance/?section=tab-bar-colors#tab-bar-colors"
   },
   "colors.tab_bar.background": {
    "default_text": "",
    "desc": "Slots of tabs that are neither active nor urgent.",
-   "doc": "appearance/#tab-bar-colors"
+   "doc": "appearance/?section=tab-bar-colors#tab-bar-colors"
   },
   "colors.tab_bar.text": {
    "default_text": "",
    "desc": "Their titles.",
-   "doc": "appearance/#tab-bar-colors"
+   "doc": "appearance/?section=tab-bar-colors#tab-bar-colors"
   },
   "colors.tab_bar.urgent": {
    "default_text": "",
    "desc": "The slot of a hidden tab that asks for attention.",
-   "doc": "appearance/#tab-bar-colors"
+   "doc": "appearance/?section=tab-bar-colors#tab-bar-colors"
   },
   "colors.tab_bar.urgent_text": {
    "default_text": "",
    "desc": "Its title.",
-   "doc": "appearance/#tab-bar-colors"
+   "doc": "appearance/?section=tab-bar-colors#tab-bar-colors"
   },
   "colors.text_muted": {
    "default_text": "",
    "desc": "Secondary help and status text.",
-   "doc": "appearance/#colors"
+   "doc": "appearance/?section=colors#colors"
   },
   "colors.text_primary": {
    "default_text": "",
    "desc": "Primary text.",
-   "doc": "appearance/#colors"
+   "doc": "appearance/?section=colors#colors"
   },
   "colors.warning": {
    "default_text": "",
    "desc": "Warning text and borders.",
-   "doc": "appearance/#colors"
+   "doc": "appearance/?section=colors#colors"
+  },
+  "drm": {
+   "default_text": "",
+   "desc": "",
+   "doc": "configuration/?section=limits#limits"
   },
   "drm.ignored_devices": {
    "default_text": "`[]`",
    "desc": "Absolute card or render-node paths. Prefer stable `/dev/dri/by-path` links.",
-   "doc": "configuration/#drm-devices"
+   "doc": "configuration/?section=drm-devices#drm-devices"
   },
   "drm.ignored_pci_addresses": {
    "default_text": "`[]`",
    "desc": "PCI addresses in `domain:bus:slot.function` form.",
-   "doc": "configuration/#drm-devices"
+   "doc": "configuration/?section=drm-devices#drm-devices"
+  },
+  "effects": {
+   "default_text": "",
+   "desc": "",
+   "doc": "effects/?section=inspect-selections#inspect-selections"
   },
   "effects.border": {
    "default_text": "`\"\"`",
    "desc": "Border preset or pool for the focused window.",
-   "doc": "effects/#settings"
+   "doc": "effects/?section=settings#settings"
   },
   "effects.cursor": {
    "default_text": "`\"\"`",
    "desc": "Cursor preset or pool, shared across outputs.",
-   "doc": "effects/#settings"
+   "doc": "effects/?section=settings#settings"
   },
   "effects.in_capture": {
    "default_text": "`false`",
    "desc": "Include window, screen, and cursor effects in screencopy and image-copy captures. Border effects always appear, and an export-dmabuf capture always sees the same frame as the display, regardless of this setting.",
-   "doc": "effects/#settings"
+   "doc": "effects/?section=settings#settings"
   },
   "effects.max_fps": {
    "default_text": "`0`",
    "desc": "Cap, 0 to 240, for frames drawn only because an effect animates. `0` follows each output's refresh rate.",
-   "doc": "effects/#settings"
+   "doc": "effects/?section=settings#settings"
+  },
+  "effects.pool": {
+   "default_text": "",
+   "desc": "",
+   "doc": "effects/?section=inspect-selections#inspect-selections"
   },
   "effects.pool.<name>.choose": {
    "default_text": "",
    "desc": "Ordered names of presets of that kind.",
-   "doc": "effects/#pools"
+   "doc": "effects/?section=pools#pools"
   },
   "effects.pool.<name>.kind": {
    "default_text": "",
    "desc": "`border`, `window`, `screen`, or `cursor`.",
-   "doc": "effects/#pools"
+   "doc": "effects/?section=pools#pools"
   },
   "effects.pool.<name>.selection": {
    "default_text": "",
    "desc": "`unused_first`, `round_robin`, or `random`.",
-   "doc": "effects/#pools"
+   "doc": "effects/?section=pools#pools"
+  },
+  "effects.preset": {
+   "default_text": "",
+   "desc": "",
+   "doc": "effects/"
   },
   "effects.preset.<name>.animated": {
    "default_text": "`true`",
    "desc": "`false` freezes `umbriel_time` at zero.",
-   "doc": "effects/#define-a-preset"
+   "doc": "effects/?section=define-a-preset#define-a-preset"
   },
   "effects.preset.<name>.kind": {
    "default_text": "",
    "desc": "`border`, `window`, `screen`, or `cursor`.",
-   "doc": "effects/#pools",
+   "doc": "effects/?section=pools#pools",
    "inherited": "effects.pool.<name>.kind"
+  },
+  "effects.preset.<name>.light": {
+   "default_text": "",
+   "desc": "",
+   "doc": "effects/"
   },
   "effects.preset.<name>.light.intensity": {
    "default_text": "`1.0`",
    "desc": "Light gain, 0 to 4.",
-   "doc": "effects/#define-a-preset"
+   "doc": "effects/?section=define-a-preset#define-a-preset"
   },
   "effects.preset.<name>.light.spread": {
    "default_text": "`80`",
    "desc": "How far light from the ring spills, 1 to 256 logical pixels. Defining `[effects.preset.<name>.light]` enables light.",
-   "doc": "effects/#define-a-preset"
+   "doc": "effects/?section=define-a-preset#define-a-preset"
   },
   "effects.preset.<name>.light.threshold": {
    "default_text": "`0.5`",
    "desc": "Brightness a ring pixel needs before it emits, 0 to 1.",
-   "doc": "effects/#define-a-preset"
+   "doc": "effects/?section=define-a-preset#define-a-preset"
   },
   "effects.preset.<name>.overlay": {
    "default_text": "`\"\"`",
    "desc": "A window preset drawn on the window while the border effect applies.",
-   "doc": "effects/#define-a-preset"
+   "doc": "effects/?section=define-a-preset#define-a-preset"
+  },
+  "effects.preset.<name>.padding": {
+   "default_text": "",
+   "desc": "",
+   "doc": "effects/?section=settings#settings"
   },
   "effects.preset.<name>.palette": {
    "default_text": "`false`",
    "desc": "Supply `[colors]` accent and status colors to the program.",
-   "doc": "effects/#define-a-preset"
+   "doc": "effects/?section=define-a-preset#define-a-preset"
+  },
+  "effects.preset.<name>.radius": {
+   "default_text": "",
+   "desc": "",
+   "doc": "effects/?section=settings#settings"
   },
   "effects.preset.<name>.shader": {
    "default_text": "none",
    "desc": "Path to the GLSL source, at most 256 KiB. Without it the preset is inert.",
-   "doc": "effects/#define-a-preset"
+   "doc": "effects/?section=define-a-preset#define-a-preset"
   },
   "effects.preset.<name>.speed": {
    "default_text": "`1.0`",
    "desc": "Multiplier on `umbriel_time`, 0 to 10. `0` holds `umbriel_time` at zero.",
-   "doc": "effects/#define-a-preset"
+   "doc": "effects/?section=define-a-preset#define-a-preset"
   },
   "effects.screen": {
    "default_text": "`\"\"`",
    "desc": "Screen preset or pool applied to every output.",
-   "doc": "effects/#settings"
+   "doc": "effects/?section=settings#settings"
   },
   "effects.window": {
    "default_text": "`\"\"`",
    "desc": "Window preset or pool applied to every window.",
-   "doc": "effects/#settings"
+   "doc": "effects/?section=settings#settings"
+  },
+  "environment": {
+   "default_text": "",
+   "desc": "",
+   "doc": "configuration/?section=environment#environment"
+  },
+  "events": {
+   "default_text": "",
+   "desc": "",
+   "doc": "configuration/?section=events#events"
+  },
+  "events.lid_close": {
+   "default_text": "",
+   "desc": "",
+   "doc": "configuration/?section=events#events"
+  },
+  "events.lid_open": {
+   "default_text": "",
+   "desc": "",
+   "doc": "configuration/?section=events#events"
+  },
+  "general": {
+   "default_text": "",
+   "desc": "",
+   "doc": "configuration/?section=general#general"
   },
   "general.autostart": {
    "default_text": "`[]`",
    "desc": "Commands started once with the session. Changes require a restart.",
-   "doc": "configuration/#general"
+   "doc": "configuration/?section=general#general"
   },
   "general.focus_on_activate": {
    "default_text": "`false`",
    "desc": "Let application activation requests focus and reveal their target.",
-   "doc": "configuration/#general"
+   "doc": "configuration/?section=general#general"
   },
   "general.honor_restored_maximize": {
    "default_text": "`false`",
    "desc": "Honor maximize requests an application makes while its window opens, until it acknowledges its opening layout.",
-   "doc": "configuration/#general"
+   "doc": "configuration/?section=general#general"
   },
   "general.mod_key": {
    "default_text": "Super, or Alt when nested",
    "desc": "Modifier represented by `Mod` in keybinds.",
-   "doc": "configuration/#general"
+   "doc": "configuration/?section=general#general"
   },
   "general.show_cheatsheet": {
    "default_text": "`true`",
    "desc": "Show the keybind cheatsheet when Umbriel starts.",
-   "doc": "configuration/#general"
+   "doc": "configuration/?section=general#general"
   },
   "general.xwayland": {
    "default_text": "`true`",
    "desc": "Start Xwayland lazily for X11 applications. Changes require a restart.",
-   "doc": "configuration/#general"
+   "doc": "configuration/?section=general#general"
   },
   "general.xwayland_native_resolution": {
    "default_text": "`false`",
    "desc": "Show outputs to X11 applications at their physical resolution, so they render sharp on scaled outputs. Changes require a restart.",
-   "doc": "configuration/#general"
+   "doc": "configuration/?section=general#general"
   },
   "general.xwayland_xsettings": {
    "default_text": "`true`",
    "desc": "Announce the interface scale and cursor theme to X11 applications through XSETTINGS. Turn it off to run your own XSETTINGS manager, such as `xsettingsd`. Changes require a restart.",
-   "doc": "configuration/#general"
+   "doc": "configuration/?section=general#general"
   },
   "hot_corners.bottom_left.action": {
    "default_text": "",
    "desc": "Any action accepted by a keybind.",
-   "doc": "keybinds/#hot-corners",
+   "doc": "keybinds/?section=hot-corners#hot-corners",
    "inherited": "hot_corners.top_left.action"
   },
   "hot_corners.bottom_left.delay_ms": {
    "default_text": "",
    "desc": "Delay from 0 to 10000 milliseconds.",
-   "doc": "keybinds/#hot-corners",
+   "doc": "keybinds/?section=hot-corners#hot-corners",
    "inherited": "hot_corners.top_left.delay_ms"
   },
   "hot_corners.bottom_left.enabled": {
    "default_text": "",
    "desc": "Enable this corner.",
-   "doc": "keybinds/#hot-corners",
+   "doc": "keybinds/?section=hot-corners#hot-corners",
    "inherited": "hot_corners.top_left.enabled"
   },
   "hot_corners.bottom_right.action": {
    "default_text": "",
    "desc": "Any action accepted by a keybind.",
-   "doc": "keybinds/#hot-corners",
+   "doc": "keybinds/?section=hot-corners#hot-corners",
    "inherited": "hot_corners.top_left.action"
   },
   "hot_corners.bottom_right.delay_ms": {
    "default_text": "",
    "desc": "Delay from 0 to 10000 milliseconds.",
-   "doc": "keybinds/#hot-corners",
+   "doc": "keybinds/?section=hot-corners#hot-corners",
    "inherited": "hot_corners.top_left.delay_ms"
   },
   "hot_corners.bottom_right.enabled": {
    "default_text": "",
    "desc": "Enable this corner.",
-   "doc": "keybinds/#hot-corners",
+   "doc": "keybinds/?section=hot-corners#hot-corners",
    "inherited": "hot_corners.top_left.enabled"
   },
   "hot_corners.top_left.action": {
    "default_text": "unset",
    "desc": "Any action accepted by a keybind.",
-   "doc": "keybinds/#hot-corners"
+   "doc": "keybinds/?section=hot-corners#hot-corners"
   },
   "hot_corners.top_left.delay_ms": {
    "default_text": "`500`",
    "desc": "Delay from 0 to 10000 milliseconds.",
-   "doc": "keybinds/#hot-corners"
+   "doc": "keybinds/?section=hot-corners#hot-corners"
   },
   "hot_corners.top_left.enabled": {
    "default_text": "`false`",
    "desc": "Enable this corner.",
-   "doc": "keybinds/#hot-corners"
+   "doc": "keybinds/?section=hot-corners#hot-corners"
   },
   "hot_corners.top_right.action": {
    "default_text": "",
    "desc": "Any action accepted by a keybind.",
-   "doc": "keybinds/#hot-corners",
+   "doc": "keybinds/?section=hot-corners#hot-corners",
    "inherited": "hot_corners.top_left.action"
   },
   "hot_corners.top_right.delay_ms": {
    "default_text": "",
    "desc": "Delay from 0 to 10000 milliseconds.",
-   "doc": "keybinds/#hot-corners",
+   "doc": "keybinds/?section=hot-corners#hot-corners",
    "inherited": "hot_corners.top_left.delay_ms"
   },
   "hot_corners.top_right.enabled": {
    "default_text": "",
    "desc": "Enable this corner.",
-   "doc": "keybinds/#hot-corners",
+   "doc": "keybinds/?section=hot-corners#hot-corners",
    "inherited": "hot_corners.top_left.enabled"
+  },
+  "include": {
+   "default_text": "",
+   "desc": "",
+   "doc": "configuration/?section=include#include"
+  },
+  "include.files": {
+   "default_text": "",
+   "desc": "",
+   "doc": "configuration/?section=include#include"
+  },
+  "include.optional": {
+   "default_text": "",
+   "desc": "",
+   "doc": "configuration/"
+  },
+  "include.optional.files": {
+   "default_text": "",
+   "desc": "",
+   "doc": "configuration/?section=include#include"
+  },
+  "input": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/"
+  },
+  "input.client_window_drag": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=settings#settings"
+  },
+  "input.cursor": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=cursor#cursor"
   },
   "input.cursor.follows_focus": {
    "default_text": "",
    "desc": "Follow keyboard-driven window focus.",
-   "doc": "input/#cursor"
+   "doc": "input/?section=cursor#cursor"
   },
   "input.cursor.hardware_cursor": {
    "default_text": "",
    "desc": "Use a hardware cursor plane when available.",
-   "doc": "input/#cursor"
+   "doc": "input/?section=cursor#cursor"
   },
   "input.cursor.hide_timeout_ms": {
    "default_text": "",
    "desc": "Hide after inactivity; `0` disables the timeout.",
-   "doc": "input/#cursor"
+   "doc": "input/?section=cursor#cursor"
   },
   "input.cursor.hide_when_typing": {
    "default_text": "",
    "desc": "Hide after a non-modifier key press.",
-   "doc": "input/#cursor"
+   "doc": "input/?section=cursor#cursor"
   },
   "input.cursor.size": {
    "default_text": "",
    "desc": "Cursor size in logical pixels.",
-   "doc": "input/#cursor"
+   "doc": "input/?section=cursor#cursor"
   },
   "input.cursor.theme": {
    "default_text": "",
    "desc": "Xcursor theme; empty uses the environment default.",
-   "doc": "input/#cursor"
+   "doc": "input/?section=cursor#cursor"
+  },
+  "input.device": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/"
   },
   "input.device[].accel_profile": {
    "default_text": "",
    "desc": "Use `\"flat\"`, `\"adaptive\"`, or a custom acceleration curve.",
-   "doc": "input/#touchpad",
+   "doc": "input/?section=touchpad#touchpad",
    "inherited": "input.touchpad.accel_profile"
   },
   "input.device[].click_method": {
    "default_text": "",
    "desc": "Use `\"button_areas\"` or `\"clickfinger\"`.",
-   "doc": "input/#touchpad",
+   "doc": "input/?section=touchpad#touchpad",
    "inherited": "input.touchpad.click_method"
   },
   "input.device[].disable_while_typing": {
    "default_text": "",
    "desc": "Disable the touchpad during keyboard input.",
-   "doc": "input/#touchpad",
+   "doc": "input/?section=touchpad#touchpad",
    "inherited": "input.touchpad.disable_while_typing"
+  },
+  "input.device[].layout": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=keyboard#keyboard"
   },
   "input.device[].left_handed": {
    "default_text": "",
    "desc": "Swap the primary and secondary buttons.",
-   "doc": "input/#touchpad",
+   "doc": "input/?section=touchpad#touchpad",
    "inherited": "input.touchpad.left_handed"
+  },
+  "input.device[].model": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=keyboard#keyboard"
+  },
+  "input.device[].name": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=per-device-overrides#per-device-overrides"
   },
   "input.device[].natural_scroll": {
    "default_text": "",
    "desc": "Reverse scrolling and three-finger gesture direction.",
-   "doc": "input/#touchpad",
+   "doc": "input/?section=touchpad#touchpad",
    "inherited": "input.touchpad.natural_scroll"
+  },
+  "input.device[].options": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=keyboard#keyboard"
   },
   "input.device[].repeat_delay": {
    "default_text": "",
    "desc": "Delay before a held key repeats.",
-   "doc": "input/#keyboard",
+   "doc": "input/?section=keyboard#keyboard",
    "inherited": "input.keyboard.repeat_delay"
   },
   "input.device[].repeat_rate": {
    "default_text": "",
    "desc": "Key repeats per second; `0` disables repeat.",
-   "doc": "input/#keyboard",
+   "doc": "input/?section=keyboard#keyboard",
    "inherited": "input.keyboard.repeat_rate"
+  },
+  "input.device[].scroll_button": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=mouse#mouse"
+  },
+  "input.device[].scroll_button_lock": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=mouse#mouse"
   },
   "input.device[].sensitivity": {
    "default_text": "",
    "desc": "Pointer speed from -1.0 to 1.0.",
-   "doc": "input/#touchpad",
+   "doc": "input/?section=touchpad#touchpad",
    "inherited": "input.touchpad.sensitivity"
   },
   "input.device[].tap": {
    "default_text": "",
    "desc": "Enable tap-to-click.",
-   "doc": "input/#touchpad",
+   "doc": "input/?section=touchpad#touchpad",
    "inherited": "input.touchpad.tap"
   },
   "input.device[].tap_button_map": {
    "default_text": "",
    "desc": "Buttons for one-, two-, and three-finger taps: `\"left_right_middle\"` or `\"left_middle_right\"`.",
-   "doc": "input/#touchpad",
+   "doc": "input/?section=touchpad#touchpad",
    "inherited": "input.touchpad.tap_button_map"
+  },
+  "input.device[].variant": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=keyboard#keyboard"
+  },
+  "input.drag_edge_scroll": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=drag-edge-scroll#drag-edge-scroll"
   },
   "input.drag_edge_scroll.delay_ms": {
    "default_text": "",
    "desc": "Time inside the zone before scrolling starts.",
-   "doc": "input/#drag-edge-scroll"
+   "doc": "input/?section=drag-edge-scroll#drag-edge-scroll"
   },
   "input.drag_edge_scroll.enabled": {
    "default_text": "",
    "desc": "Enable edge scrolling during a data drag or a tiled window move.",
-   "doc": "input/#drag-edge-scroll"
+   "doc": "input/?section=drag-edge-scroll#drag-edge-scroll"
   },
   "input.drag_edge_scroll.max_speed": {
    "default_text": "",
    "desc": "Peak scroll speed in logical pixels per second.",
-   "doc": "input/#drag-edge-scroll"
+   "doc": "input/?section=drag-edge-scroll#drag-edge-scroll"
   },
   "input.drag_edge_scroll.trigger_zone": {
    "default_text": "",
    "desc": "Width of the zone at each end, in logical pixels.",
-   "doc": "input/#drag-edge-scroll"
+   "doc": "input/?section=drag-edge-scroll#drag-edge-scroll"
+  },
+  "input.focus": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=focus#focus"
+  },
+  "input.focus.follows_mouse": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=focus#focus"
+  },
+  "input.focus.follows_mouse_max_scroll": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=focus#focus"
+  },
+  "input.keyboard": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=keyboard#keyboard"
+  },
+  "input.keyboard.layout": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=keyboard#keyboard"
+  },
+  "input.keyboard.model": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=keyboard#keyboard"
   },
   "input.keyboard.numlock_toggle": {
    "default_text": "",
    "desc": "Enable NumLock when a keyboard connects.",
-   "doc": "input/#keyboard"
+   "doc": "input/?section=keyboard#keyboard"
+  },
+  "input.keyboard.options": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=keyboard#keyboard"
   },
   "input.keyboard.repeat_delay": {
    "default_text": "",
    "desc": "Delay before a held key repeats.",
-   "doc": "input/#keyboard"
+   "doc": "input/?section=keyboard#keyboard"
   },
   "input.keyboard.repeat_rate": {
    "default_text": "",
    "desc": "Key repeats per second; `0` disables repeat.",
-   "doc": "input/#keyboard"
+   "doc": "input/?section=keyboard#keyboard"
   },
   "input.keyboard.track_layout": {
    "default_text": "",
    "desc": "Choose session-wide or per-window layout tracking.",
-   "doc": "input/#keyboard"
+   "doc": "input/?section=keyboard#keyboard"
+  },
+  "input.keyboard.variant": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=keyboard#keyboard"
+  },
+  "input.middle_click_paste": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=settings#settings"
+  },
+  "input.mouse": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=mouse#mouse"
   },
   "input.mouse.accel_profile": {
    "default_text": "",
    "desc": "Use `\"flat\"`, `\"adaptive\"`, or a custom acceleration curve.",
-   "doc": "input/#touchpad",
+   "doc": "input/?section=touchpad#touchpad",
    "inherited": "input.touchpad.accel_profile"
   },
   "input.mouse.left_handed": {
    "default_text": "",
    "desc": "Swap the primary and secondary buttons.",
-   "doc": "input/#touchpad",
+   "doc": "input/?section=touchpad#touchpad",
    "inherited": "input.touchpad.left_handed"
   },
   "input.mouse.natural_scroll": {
    "default_text": "",
    "desc": "Reverse scrolling and three-finger gesture direction.",
-   "doc": "input/#touchpad",
+   "doc": "input/?section=touchpad#touchpad",
    "inherited": "input.touchpad.natural_scroll"
+  },
+  "input.mouse.scroll_button": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=mouse#mouse"
+  },
+  "input.mouse.scroll_button_lock": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=mouse#mouse"
+  },
+  "input.mouse.scroll_wheel_step": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=mouse#mouse"
   },
   "input.mouse.sensitivity": {
    "default_text": "",
    "desc": "Pointer speed from -1.0 to 1.0.",
-   "doc": "input/#touchpad",
+   "doc": "input/?section=touchpad#touchpad",
    "inherited": "input.touchpad.sensitivity"
+  },
+  "input.tablet": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=tablet#tablet"
   },
   "input.tablet.calibration_matrix": {
    "default_text": "",
    "desc": "Pass a six-number calibration matrix to libinput.",
-   "doc": "input/#tablet"
+   "doc": "input/?section=tablet#tablet"
   },
   "input.tablet.enabled": {
    "default_text": "",
    "desc": "Enable tablet and pad input.",
-   "doc": "input/#tablet"
+   "doc": "input/?section=tablet#tablet"
   },
   "input.tablet.left_handed": {
    "default_text": "",
    "desc": "Flip the tablet orientation.",
-   "doc": "input/#tablet"
+   "doc": "input/?section=tablet#tablet"
   },
   "input.tablet.map_to_focused_output": {
    "default_text": "",
    "desc": "Follow the output holding keyboard focus.",
-   "doc": "input/#tablet"
+   "doc": "input/?section=tablet#tablet"
   },
   "input.tablet.map_to_focused_window": {
    "default_text": "",
    "desc": "Map the tablet area to the focused window.",
-   "doc": "input/#tablet"
+   "doc": "input/?section=tablet#tablet"
   },
   "input.tablet.map_to_output": {
    "default_text": "",
    "desc": "Confine the tablet to a connector or monitor name.",
-   "doc": "input/#tablet"
+   "doc": "input/?section=tablet#tablet"
+  },
+  "input.touch": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=touch#touch"
   },
   "input.touch.enabled": {
    "default_text": "",
    "desc": "Enable or disable touch input.",
-   "doc": "input/#touch"
+   "doc": "input/?section=touch#touch"
   },
   "input.touch.map_to_output": {
    "default_text": "",
    "desc": "Confine touch input to a connector or monitor name.",
-   "doc": "input/#touch"
+   "doc": "input/?section=touch#touch"
+  },
+  "input.touchpad": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=touchpad#touchpad"
   },
   "input.touchpad.accel_profile": {
    "default_text": "",
    "desc": "Use `\"flat\"`, `\"adaptive\"`, or a custom acceleration curve.",
-   "doc": "input/#touchpad"
+   "doc": "input/?section=touchpad#touchpad"
   },
   "input.touchpad.click_method": {
    "default_text": "",
    "desc": "Use `\"button_areas\"` or `\"clickfinger\"`.",
-   "doc": "input/#touchpad"
+   "doc": "input/?section=touchpad#touchpad"
   },
   "input.touchpad.disable_on_external_mouse": {
    "default_text": "",
    "desc": "Disable the touchpad while an external mouse is connected.",
-   "doc": "input/#touchpad"
+   "doc": "input/?section=touchpad#touchpad"
   },
   "input.touchpad.disable_while_typing": {
    "default_text": "",
    "desc": "Disable the touchpad during keyboard input.",
-   "doc": "input/#touchpad"
+   "doc": "input/?section=touchpad#touchpad"
   },
   "input.touchpad.left_handed": {
    "default_text": "",
    "desc": "Swap the primary and secondary buttons.",
-   "doc": "input/#touchpad"
+   "doc": "input/?section=touchpad#touchpad"
   },
   "input.touchpad.natural_scroll": {
    "default_text": "",
    "desc": "Reverse scrolling and three-finger gesture direction.",
-   "doc": "input/#touchpad"
+   "doc": "input/?section=touchpad#touchpad"
   },
   "input.touchpad.scroll_factor": {
    "default_text": "",
    "desc": "Application scroll multiplier from 0.1 to 10.0.",
-   "doc": "input/#touchpad"
+   "doc": "input/?section=touchpad#touchpad"
   },
   "input.touchpad.scroll_factor.horizontal": {
    "default_text": "",
    "desc": "Lanes run top to bottom; windows sit left to right.",
-   "doc": "layout/#horizontal-and-vertical-scrolling"
+   "doc": "layout/?section=horizontal-and-vertical-scrolling#horizontal-and-vertical-scrolling"
   },
   "input.touchpad.scroll_factor.vertical": {
    "default_text": "",
    "desc": "Columns run left to right; windows stack top to bottom.",
-   "doc": "layout/#horizontal-and-vertical-scrolling"
+   "doc": "layout/?section=horizontal-and-vertical-scrolling#horizontal-and-vertical-scrolling"
   },
   "input.touchpad.sensitivity": {
    "default_text": "",
    "desc": "Pointer speed from -1.0 to 1.0.",
-   "doc": "input/#touchpad"
+   "doc": "input/?section=touchpad#touchpad"
   },
   "input.touchpad.tap": {
    "default_text": "",
    "desc": "Enable tap-to-click.",
-   "doc": "input/#touchpad"
+   "doc": "input/?section=touchpad#touchpad"
   },
   "input.touchpad.tap_button_map": {
    "default_text": "",
    "desc": "Buttons for one-, two-, and three-finger taps: `\"left_right_middle\"` or `\"left_middle_right\"`.",
-   "doc": "input/#touchpad"
+   "doc": "input/?section=touchpad#touchpad"
+  },
+  "input.window_drag_toggle": {
+   "default_text": "",
+   "desc": "",
+   "doc": "input/?section=settings#settings"
+  },
+  "keybinds": {
+   "default_text": "",
+   "desc": "",
+   "doc": "keybinds/"
+  },
+  "keybinds.<name>.action": {
+   "default_text": "",
+   "desc": "",
+   "doc": "keybinds/?section=repeat#repeat"
+  },
+  "keybinds.<name>.allow_when_inhibited": {
+   "default_text": "",
+   "desc": "",
+   "doc": "keybinds/?section=keyboard-shortcuts-inhibition#keyboard-shortcuts-inhibition"
+  },
+  "keybinds.<name>.allow_when_locked": {
+   "default_text": "",
+   "desc": "",
+   "doc": "keybinds/?section=allow-when-locked#allow-when-locked"
+  },
+  "keybinds.<name>.cooldown_ms": {
+   "default_text": "",
+   "desc": "",
+   "doc": "keybinds/?section=cooldown#cooldown"
+  },
+  "keybinds.<name>.repeat": {
+   "default_text": "",
+   "desc": "",
+   "doc": "keybinds/?section=repeat#repeat"
   },
   "keybinds.<name>.submap": {
    "default_text": "",
    "desc": "Active keybind submap",
-   "doc": "ipc/#event-stream"
+   "doc": "ipc/?section=event-stream#event-stream"
+  },
+  "layer_rule": {
+   "default_text": "",
+   "desc": "",
+   "doc": "layer-rules/"
   },
   "layer_rule[].blur": {
    "default_text": "",
    "desc": "Enable/disable blur for the layer surface.",
-   "doc": "layer-rules/#effects"
+   "doc": "layer-rules/?section=effects#effects"
   },
   "layer_rule[].blur_ignore_alpha": {
    "default_text": "",
    "desc": "Skip blur below an alpha threshold.",
-   "doc": "layer-rules/#effects"
+   "doc": "layer-rules/?section=effects#effects"
   },
   "layer_rule[].blur_optimized": {
    "default_text": "",
    "desc": "Override the global optimized-blur choice.",
-   "doc": "layer-rules/#effects"
+   "doc": "layer-rules/?section=effects#effects"
   },
   "layer_rule[].blur_popups": {
    "default_text": "",
    "desc": "Enable/disable blur for descendant XDG popups.",
-   "doc": "layer-rules/#effects"
+   "doc": "layer-rules/?section=effects#effects"
+  },
+  "layer_rule[].match": {
+   "default_text": "",
+   "desc": "",
+   "doc": "layer-rules/"
   },
   "layer_rule[].match.at_startup": {
    "default_text": "",
    "desc": "Match during or after the first 60 seconds.",
-   "doc": "layer-rules/#matching"
+   "doc": "layer-rules/?section=matching#matching"
   },
   "layer_rule[].match.layer": {
    "default_text": "",
    "desc": "Match `\"background\"`, `\"bottom\"`, `\"top\"`, or `\"overlay\"`.",
-   "doc": "layer-rules/#matching"
+   "doc": "layer-rules/?section=matching#matching"
   },
   "layer_rule[].match.namespace": {
    "default_text": "",
    "desc": "Match the layer surface namespace.",
-   "doc": "layer-rules/#matching"
+   "doc": "layer-rules/?section=matching#matching"
+  },
+  "layout": {
+   "default_text": "",
+   "desc": "",
+   "doc": "layout/"
   },
   "layout.client_maximize": {
    "default_text": "`\"column\"`",
    "desc": "What a tiled window's own maximize button does: `\"column\"` fills the column like `window-toggle-maximize`, `\"edges\"` fills the usable area without struts, gaps, or borders like `window-toggle-maximize-to-edges`. See Maximize and fullscreen.",
-   "doc": "layout/#shared-settings"
+   "doc": "layout/?section=shared-settings#shared-settings"
+  },
+  "layout.dwindle": {
+   "default_text": "",
+   "desc": "",
+   "doc": "layout/?section=choose-a-layout#choose-a-layout"
   },
   "layout.dwindle.new_toward_cursor": {
    "default_text": "`false`",
    "desc": "Place a new window on the half of the focused tile nearer the pointer.",
-   "doc": "layout/#settings"
+   "doc": "layout/?section=settings#settings"
   },
   "layout.dwindle.preserve_split": {
    "default_text": "`false`",
    "desc": "Keep each split direction fixed after creation.",
-   "doc": "layout/#settings"
+   "doc": "layout/?section=settings#settings"
   },
   "layout.extent_presets": {
    "default_text": "`[0.333, 0.5, 0.667]`",
    "desc": "Fractions used by primary and secondary extent cycle actions, in any order; cycling steps by size.",
-   "doc": "layout/#shared-settings"
+   "doc": "layout/?section=shared-settings#shared-settings"
   },
   "layout.gap": {
    "default_text": "`8`",
    "desc": "Gap between windows in logical pixels.",
-   "doc": "layout/#shared-settings"
+   "doc": "layout/?section=shared-settings#shared-settings"
+  },
+  "layout.master": {
+   "default_text": "",
+   "desc": "",
+   "doc": "layout/?section=choose-a-layout#choose-a-layout"
   },
   "layout.master.default_width_fraction": {
    "default_text": "`0.55`",
    "desc": "Initial master-area fraction.",
-   "doc": "layout/#settings"
+   "doc": "layout/?section=settings#settings"
   },
   "layout.master.new_becomes_master": {
    "default_text": "`false`",
    "desc": "Give the master slot to each new window.",
-   "doc": "layout/#settings"
+   "doc": "layout/?section=settings#settings"
   },
   "layout.master.new_on_top": {
    "default_text": "`true`",
    "desc": "Put new stack windows at the top.",
-   "doc": "layout/#settings"
+   "doc": "layout/?section=settings#settings"
   },
   "layout.master.position": {
    "default_text": "`\"left\"`",
    "desc": "Use `\"left\"`, `\"right\"`, or `\"center\"`.",
-   "doc": "layout/#settings"
+   "doc": "layout/?section=settings#settings"
+  },
+  "layout.mode": {
+   "default_text": "",
+   "desc": "",
+   "doc": "layout/?section=choose-a-layout#choose-a-layout"
   },
   "layout.new_exits_fullscreen": {
    "default_text": "`[]`",
    "desc": "Kinds of arriving window that make a fullscreen window on the workspace leave fullscreen. See Leaving fullscreen.",
-   "doc": "layout/#shared-settings"
+   "doc": "layout/?section=shared-settings#shared-settings"
+  },
+  "layout.scrolling": {
+   "default_text": "",
+   "desc": "",
+   "doc": "layout/?section=choose-a-layout#choose-a-layout"
   },
   "layout.scrolling.center_focused": {
    "default_text": "`\"never\"`",
    "desc": "Use `\"never\"`, `\"always\"`, or `\"on_overflow\"` to control focus centering.",
-   "doc": "layout/#settings"
+   "doc": "layout/?section=settings#settings"
   },
   "layout.scrolling.center_underfull_strip": {
    "default_text": "`true`",
    "desc": "Center a strip narrower than the viewport.",
-   "doc": "layout/#settings"
+   "doc": "layout/?section=settings#settings"
   },
   "layout.scrolling.default_extent_fraction": {
    "default_text": "unset",
    "desc": "Initial column extent from 0.1 to 1.0. The packaged config uses `0.5`.",
-   "doc": "layout/#settings"
+   "doc": "layout/?section=settings#settings"
+  },
+  "layout.struts": {
+   "default_text": "",
+   "desc": "",
+   "doc": "layout/?section=struts#struts"
+  },
+  "layout.struts.bottom": {
+   "default_text": "",
+   "desc": "",
+   "doc": "layout/?section=struts#struts"
+  },
+  "layout.struts.left": {
+   "default_text": "",
+   "desc": "",
+   "doc": "layout/?section=struts#struts"
+  },
+  "layout.struts.right": {
+   "default_text": "",
+   "desc": "",
+   "doc": "layout/?section=struts#struts"
+  },
+  "layout.struts.top": {
+   "default_text": "",
+   "desc": "",
+   "doc": "layout/?section=struts#struts"
+  },
+  "layout.tabs": {
+   "default_text": "",
+   "desc": "",
+   "doc": "layout/?section=tab-groups#tab-groups"
   },
   "layout.tabs.default_display": {
    "default_text": "`\"normal\"`",
    "desc": "How new columns and master areas show their windows: `\"normal\"`, or `\"tabbed\"` to start each as a tab group.",
-   "doc": "layout/#tab-groups"
+   "doc": "layout/?section=tab-groups#tab-groups"
   },
   "layout.tabs.middle_click_closes": {
    "default_text": "`false`",
    "desc": "Close a tab with a middle click on its slot.",
-   "doc": "layout/#tab-groups"
+   "doc": "layout/?section=tab-groups#tab-groups"
   },
   "layout.tabs.new_tab_position": {
    "default_text": "`\"end\"`",
    "desc": "Where a consumed, pulled, or dropped window joins a tab group: `\"end\"`, or `\"after_active\"` beside the active tab.",
-   "doc": "layout/#tab-groups"
+   "doc": "layout/?section=tab-groups#tab-groups"
   },
   "layout.tabs.scroll_switches_tabs": {
    "default_text": "`true`",
    "desc": "Step through tabs with the wheel over the bar.",
-   "doc": "layout/#tab-groups"
+   "doc": "layout/?section=tab-groups#tab-groups"
   },
   "layout.tabs.wrap_focus": {
    "default_text": "`true`",
    "desc": "Wrap `column-focus-tab-next` and `column-focus-tab-previous` at the ends.",
-   "doc": "layout/#tab-groups"
+   "doc": "layout/?section=tab-groups#tab-groups"
+  },
+  "output": {
+   "default_text": "",
+   "desc": "",
+   "doc": "outputs/"
   },
   "output.<name>.bit_depth": {
    "default_text": "`8`",
    "desc": "Render bit depth for SDR output: `8` or `10`.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=bit-depth#bit-depth"
   },
   "output.<name>.cyclic_workspaces": {
    "default_text": "`false`",
    "desc": "Wrap a workspace step around the ends of the inventory.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=cyclic-workspaces#cyclic-workspaces"
   },
   "output.<name>.direct_scanout": {
    "default_text": "`true`",
    "desc": "Allow eligible fullscreen buffers to bypass composition.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=direct-scanout#direct-scanout"
   },
   "output.<name>.enabled": {
    "default_text": "`true`",
    "desc": "Turn the monitor on or off.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=settings#settings"
   },
   "output.<name>.focus_at_startup": {
    "default_text": "`false`",
    "desc": "Move the mouse cursor to this monitor on startup.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=settings#settings"
   },
   "output.<name>.hdr": {
    "default_text": "`\"off\"`",
    "desc": "HDR activation policy.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=hdr#hdr"
+  },
+  "output.<name>.layout": {
+   "default_text": "",
+   "desc": "",
+   "doc": "outputs/"
+  },
+  "output.<name>.layout.scrolling": {
+   "default_text": "",
+   "desc": "",
+   "doc": "outputs/"
   },
   "output.<name>.layout.scrolling.default_extent_fraction": {
    "default_text": "inherited",
    "desc": "Initial scrolling-column extent on this output.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=settings#settings"
   },
   "output.<name>.min_workspaces": {
    "default_text": "`1`",
    "desc": "Minimum count for a dynamic output.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=settings#settings"
   },
   "output.<name>.mode": {
    "default_text": "preferred",
    "desc": "Resolution and optional refresh rate, such as `\"2560x1440@165\"`.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=settings#settings"
   },
   "output.<name>.position": {
    "default_text": "automatic",
    "desc": "Top-left position in logical coordinates.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=position-and-scale#position-and-scale"
   },
   "output.<name>.scale": {
    "default_text": "`1.0`",
    "desc": "Output scale from 0.25 to 4.0.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=settings#settings"
   },
   "output.<name>.screen_effect": {
    "default_text": "inherited",
    "desc": "Replace `effects.screen` with a screen preset or pool, or `\"off\"` to disable it on this output.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=screen-effect#screen-effect"
   },
   "output.<name>.sdr_transfer": {
    "default_text": "`\"gamma22\"`",
    "desc": "Transfer curve for untagged SDR on HDR outputs: `\"gamma22\"` or `\"srgb\"`.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=settings#settings"
   },
   "output.<name>.sdr_white": {
    "default_text": "`203`",
    "desc": "SDR reference white in cd/m² while HDR is active.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=settings#settings"
   },
   "output.<name>.tearing": {
    "default_text": "`false`",
    "desc": "Allow eligible fullscreen windows to use asynchronous page flips.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=tearing#tearing"
   },
   "output.<name>.transform": {
    "default_text": "`\"normal\"`",
    "desc": "Rotation or reflection.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=settings#settings"
   },
   "output.<name>.vrr": {
    "default_text": "`\"disabled\"`",
    "desc": "Variable refresh rate policy.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=variable-refresh-rate#variable-refresh-rate"
   },
   "output.<name>.workspace_axis": {
    "default_text": "`\"vertical\"`",
    "desc": "Workspace arrangement axis.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=settings#settings"
   },
   "output.<name>.workspaces": {
    "default_text": "`\"dynamic\"`",
    "desc": "Workspace inventory for this output.",
-   "doc": "outputs/#settings"
+   "doc": "outputs/?section=cyclic-workspaces#cyclic-workspaces"
+  },
+  "overview": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces-overview/"
   },
   "overview.background_blur": {
    "default_text": "`true`",
    "desc": "Blur the desktop behind the overview.",
-   "doc": "workspaces-overview/#settings-and-behavior"
+   "doc": "workspaces-overview/?section=settings-and-behavior#settings-and-behavior"
   },
   "overview.scroll_factor_horizontal": {
    "default_text": "`1.0`",
    "desc": "Horizontal gesture and wheel sensitivity.",
-   "doc": "workspaces-overview/#settings-and-behavior"
+   "doc": "workspaces-overview/?section=settings-and-behavior#settings-and-behavior"
   },
   "overview.scroll_factor_vertical": {
    "default_text": "`1.0`",
    "desc": "Vertical gesture and wheel sensitivity.",
-   "doc": "workspaces-overview/#settings-and-behavior"
+   "doc": "workspaces-overview/?section=settings-and-behavior#settings-and-behavior"
   },
   "overview.shortcut_keys": {
    "default_text": "`\"1234567890\"`",
    "desc": "Preferred keys for shortcut badges.",
-   "doc": "workspaces-overview/#settings-and-behavior"
+   "doc": "workspaces-overview/?section=settings-and-behavior#settings-and-behavior"
   },
   "overview.shortcuts": {
    "default_text": "`true`",
    "desc": "Show and accept keyboard shortcut badges.",
-   "doc": "workspaces-overview/#settings-and-behavior"
+   "doc": "workspaces-overview/?section=keyboard-shortcuts#keyboard-shortcuts"
   },
   "overview.workspace_wallpaper": {
    "default_text": "`true`",
    "desc": "Show each output's background inside its workspace previews.",
-   "doc": "workspaces-overview/#settings-and-behavior"
+   "doc": "workspaces-overview/?section=settings-and-behavior#settings-and-behavior"
   },
   "overview.zoom": {
    "default_text": "`0.5`",
    "desc": "Workspace preview scale from 0.1 to 0.75.",
-   "doc": "workspaces-overview/#settings-and-behavior"
+   "doc": "workspaces-overview/?section=settings-and-behavior#settings-and-behavior"
+  },
+  "scratchpad": {
+   "default_text": "",
+   "desc": "",
+   "doc": "scratchpads/?section=assigning-new-windows-automatically#assigning-new-windows-automatically"
+  },
+  "scratchpad[].name": {
+   "default_text": "",
+   "desc": "",
+   "doc": "scratchpads/?section=named-scratchpads#named-scratchpads"
+  },
+  "scratchpad[].spawn_when_empty": {
+   "default_text": "",
+   "desc": "",
+   "doc": "scratchpads/?section=launching-an-application-on-demand#launching-an-application-on-demand"
   },
   "screencast": {
    "default_text": "",
    "desc": "Manual target and focus-following screencast commands",
-   "doc": "ipc/#event-stream"
+   "doc": "ipc/?section=screencast-payload#screencast-payload"
   },
   "screencast.disable_dynamic_confirmation": {
    "default_text": "`false`",
    "desc": "Apply set and follow actions immediately without first confirming them. This can expose another window or output after an accidental key press.",
-   "doc": "configuration/#screencast"
+   "doc": "configuration/?section=screencast#screencast"
+  },
+  "security_context_rule": {
+   "default_text": "",
+   "desc": "",
+   "doc": "security/"
+  },
+  "security_context_rule[].allow_globals": {
+   "default_text": "",
+   "desc": "",
+   "doc": "security/?section=per-application-grants#per-application-grants"
+  },
+  "security_context_rule[].match": {
+   "default_text": "",
+   "desc": "",
+   "doc": "security/"
   },
   "security_context_rule[].match.app_id": {
    "default_text": "",
    "desc": "Exact regular-expression match against the application ID.",
-   "doc": "security/#per-application-grants"
+   "doc": "security/?section=per-application-grants#per-application-grants"
   },
   "security_context_rule[].match.sandbox_engine": {
    "default_text": "",
    "desc": "Exact regular-expression match against the sandbox engine.",
-   "doc": "security/#per-application-grants"
+   "doc": "security/?section=per-application-grants#per-application-grants"
+  },
+  "window_rule": {
+   "default_text": "",
+   "desc": "",
+   "doc": "window-rules/"
   },
   "window_rule[].background_render": {
    "default_text": "",
    "desc": "Keep this window drawing while hidden (default `false`). See Background rendering.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].blur": {
    "default_text": "",
    "desc": "Enable or disable window blur.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].blur_ignore_alpha": {
    "default_text": "",
    "desc": "Skip blur below an alpha threshold.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].blur_optimized": {
    "default_text": "",
    "desc": "Override the global optimized-blur choice.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].blur_popups": {
    "default_text": "",
    "desc": "Apply blur to descendant XDG popups.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].border_color_focused": {
    "default_text": "",
    "desc": "Override `colors.border.focused`.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].border_color_outer": {
    "default_text": "",
    "desc": "Override `colors.border.outer`.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].border_color_unfocused": {
    "default_text": "",
    "desc": "Override `colors.border.unfocused`.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].border_effect": {
    "default_text": "",
    "desc": "Replace `effects.border` with a border preset or pool, or `\"off\"` to disable it.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].border_width": {
    "default_text": "",
    "desc": "Override `appearance.border_width`, 0 to 100.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].confine_pointer": {
    "default_text": "",
    "desc": "Keep the pointer inside this window while it has keyboard focus (default `false`).",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].corner_radius": {
    "default_text": "",
    "desc": "Override `appearance.corner_radius`, 0 to 100.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].default_column_display": {
    "default_text": "",
    "desc": "Show the column the window opens in as `\"tabbed\"` or `\"normal\"`.",
-   "doc": "window-rules/#settings-applied-when-a-window-opens"
+   "doc": "window-rules/?section=settings-applied-when-a-window-opens#settings-applied-when-a-window-opens"
   },
   "window_rule[].default_floating": {
    "default_text": "",
    "desc": "Force floating or tiling.",
-   "doc": "window-rules/#settings-applied-when-a-window-opens"
+   "doc": "window-rules/?section=settings-applied-when-a-window-opens#settings-applied-when-a-window-opens"
   },
   "window_rule[].default_floating_size": {
    "default_text": "",
    "desc": "Fraction of the output usable area.",
-   "doc": "window-rules/#size-and-position-rules"
+   "doc": "window-rules/?section=size-and-position-rules#size-and-position-rules"
+  },
+  "window_rule[].default_floating_size.height": {
+   "default_text": "",
+   "desc": "",
+   "doc": "window-rules/?section=size-and-position-rules#size-and-position-rules"
+  },
+  "window_rule[].default_floating_size.width": {
+   "default_text": "",
+   "desc": "",
+   "doc": "window-rules/?section=size-and-position-rules#size-and-position-rules"
   },
   "window_rule[].default_floating_size_px": {
    "default_text": "",
    "desc": "Logical-pixel size, such as `{ width = 800, height = 600 }`.",
-   "doc": "window-rules/#size-and-position-rules"
+   "doc": "window-rules/?section=size-and-position-rules#size-and-position-rules"
+  },
+  "window_rule[].default_floating_size_px.height": {
+   "default_text": "",
+   "desc": "",
+   "doc": "window-rules/?section=size-and-position-rules#size-and-position-rules"
+  },
+  "window_rule[].default_floating_size_px.width": {
+   "default_text": "",
+   "desc": "",
+   "doc": "window-rules/?section=size-and-position-rules#size-and-position-rules"
   },
   "window_rule[].default_focused": {
    "default_text": "",
    "desc": "Choose whether the new window takes focus.",
-   "doc": "window-rules/#settings-applied-when-a-window-opens"
+   "doc": "window-rules/?section=settings-applied-when-a-window-opens#settings-applied-when-a-window-opens"
   },
   "window_rule[].default_fullscreen": {
    "default_text": "",
    "desc": "Open fullscreen.",
-   "doc": "window-rules/#settings-applied-when-a-window-opens"
+   "doc": "window-rules/?section=settings-applied-when-a-window-opens#settings-applied-when-a-window-opens"
   },
   "window_rule[].default_maximize": {
    "default_text": "",
    "desc": "Open maximized within normal layout bounds.",
-   "doc": "window-rules/#settings-applied-when-a-window-opens"
+   "doc": "window-rules/?section=settings-applied-when-a-window-opens#settings-applied-when-a-window-opens"
   },
   "window_rule[].default_maximize_to_edges": {
    "default_text": "",
    "desc": "Open maximized without gaps, struts, or borders.",
-   "doc": "window-rules/#settings-applied-when-a-window-opens"
+   "doc": "window-rules/?section=settings-applied-when-a-window-opens#settings-applied-when-a-window-opens"
   },
   "window_rule[].default_output": {
    "default_text": "",
    "desc": "Open on a connector or monitor name.",
-   "doc": "window-rules/#settings-applied-when-a-window-opens"
+   "doc": "window-rules/?section=settings-applied-when-a-window-opens#settings-applied-when-a-window-opens"
   },
   "window_rule[].default_pinned": {
    "default_text": "",
    "desc": "Open pinned above normal windows.",
-   "doc": "window-rules/#settings-applied-when-a-window-opens"
+   "doc": "window-rules/?section=settings-applied-when-a-window-opens#settings-applied-when-a-window-opens"
   },
   "window_rule[].default_position": {
    "default_text": "",
    "desc": "Position from a named anchor.",
-   "doc": "window-rules/#size-and-position-rules"
+   "doc": "window-rules/?section=size-and-position-rules#size-and-position-rules"
+  },
+  "window_rule[].default_position.anchor": {
+   "default_text": "",
+   "desc": "",
+   "doc": "window-rules/?section=floating-position#floating-position"
+  },
+  "window_rule[].default_position.x": {
+   "default_text": "",
+   "desc": "",
+   "doc": "window-rules/?section=size-and-position-rules#size-and-position-rules"
+  },
+  "window_rule[].default_position.y": {
+   "default_text": "",
+   "desc": "",
+   "doc": "window-rules/?section=floating-position#floating-position"
   },
   "window_rule[].default_scratchpad": {
    "default_text": "",
    "desc": "Store in the implicit or a configured scratchpad.",
-   "doc": "window-rules/#settings-applied-when-a-window-opens"
+   "doc": "window-rules/?section=settings-applied-when-a-window-opens#settings-applied-when-a-window-opens"
   },
   "window_rule[].default_scrolling_column": {
    "default_text": "",
    "desc": "Join matching windows into one named scrolling column.",
-   "doc": "window-rules/#settings-applied-when-a-window-opens"
+   "doc": "window-rules/?section=settings-applied-when-a-window-opens#settings-applied-when-a-window-opens"
   },
   "window_rule[].default_scrolling_column_order": {
    "default_text": "",
    "desc": "Set order inside a named scrolling column.",
-   "doc": "window-rules/#settings-applied-when-a-window-opens"
+   "doc": "window-rules/?section=settings-applied-when-a-window-opens#settings-applied-when-a-window-opens"
   },
   "window_rule[].default_scrolling_extent": {
    "default_text": "",
    "desc": "Initial fractional extent along the strip.",
-   "doc": "window-rules/#size-and-position-rules"
+   "doc": "window-rules/?section=size-and-position-rules#size-and-position-rules"
   },
   "window_rule[].default_scrolling_extent_px": {
    "default_text": "",
    "desc": "Initial logical-pixel extent along the strip.",
-   "doc": "window-rules/#size-and-position-rules"
+   "doc": "window-rules/?section=size-and-position-rules#size-and-position-rules"
   },
   "window_rule[].default_workspace": {
    "default_text": "",
    "desc": "Open on a one-based position or exact workspace name.",
-   "doc": "window-rules/#settings-applied-when-a-window-opens"
+   "doc": "window-rules/?section=settings-applied-when-a-window-opens#settings-applied-when-a-window-opens"
   },
   "window_rule[].focus_on_activate": {
    "default_text": "",
    "desc": "Override activation focus for this window.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].hdr": {
    "default_text": "",
    "desc": "Override the focused output's HDR policy.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
+  },
+  "window_rule[].match": {
+   "default_text": "",
+   "desc": "",
+   "doc": "window-rules/"
   },
   "window_rule[].match.app_id": {
    "default_text": "",
    "desc": "Match the application ID with a regular expression.",
-   "doc": "window-rules/#matching"
+   "doc": "window-rules/?section=matching#matching"
   },
   "window_rule[].match.at_startup": {
    "default_text": "",
    "desc": "Match during or after the first 60 seconds.",
-   "doc": "window-rules/#matching"
+   "doc": "window-rules/?section=matching#matching"
   },
   "window_rule[].match.content_type": {
    "default_text": "",
    "desc": "Match `\"none\"`, `\"photo\"`, `\"video\"`, or `\"game\"`.",
-   "doc": "window-rules/#matching"
+   "doc": "window-rules/?section=matching#matching"
   },
   "window_rule[].match.is_alone": {
    "default_text": "",
    "desc": "Match whether this is the only tiled window.",
-   "doc": "window-rules/#matching"
+   "doc": "window-rules/?section=matching#matching"
   },
   "window_rule[].match.is_floating": {
    "default_text": "",
    "desc": "Match current floating state.",
-   "doc": "window-rules/#matching"
+   "doc": "window-rules/?section=matching#matching"
   },
   "window_rule[].match.is_focused": {
    "default_text": "",
    "desc": "Match current focus state.",
-   "doc": "window-rules/#matching"
+   "doc": "window-rules/?section=matching#matching"
   },
   "window_rule[].match.is_only_window": {
    "default_text": "",
    "desc": "Match whether this is the only window on its workspace, floating ones included.",
-   "doc": "window-rules/#matching"
+   "doc": "window-rules/?section=matching#matching"
   },
   "window_rule[].match.is_pinned": {
    "default_text": "",
    "desc": "Match current pinned state.",
-   "doc": "window-rules/#matching"
+   "doc": "window-rules/?section=matching#matching"
   },
   "window_rule[].match.is_scratchpad": {
    "default_text": "",
    "desc": "Match current scratchpad state.",
-   "doc": "window-rules/#matching"
+   "doc": "window-rules/?section=matching#matching"
   },
   "window_rule[].match.title": {
    "default_text": "",
    "desc": "Match the window title.",
-   "doc": "window-rules/#matching"
+   "doc": "window-rules/?section=matching#matching"
   },
   "window_rule[].match.xdg_tag": {
    "default_text": "",
    "desc": "Match a client-defined XDG toplevel tag.",
-   "doc": "window-rules/#matching"
+   "doc": "window-rules/?section=matching#matching"
   },
   "window_rule[].opacity": {
    "default_text": "",
    "desc": "Surface opacity from 0.0 to 1.0.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].outer_border_width": {
    "default_text": "",
    "desc": "Override `appearance.outer_border_width`, 0 to 100.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].shadow": {
    "default_text": "",
    "desc": "Override `appearance.shadow.enabled`.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].tearing": {
    "default_text": "",
    "desc": "Request or veto asynchronous presentation.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].vrr": {
    "default_text": "",
    "desc": "Override the focused output's VRR policy.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
   },
   "window_rule[].window_effect": {
    "default_text": "",
    "desc": "Replace `effects.window` with a window preset or pool, or `\"off\"` to disable it.",
-   "doc": "window-rules/#settings-updated-while-a-window-is-open"
+   "doc": "window-rules/?section=settings-updated-while-a-window-is-open#settings-updated-while-a-window-is-open"
+  },
+  "workspace": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/"
   },
   "workspace[].index": {
    "default_text": "",
    "desc": "Select a current one-based position from 1 to 64.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
+  },
+  "workspace[].layout": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/?section=inspect-workspace-state#inspect-workspace-state"
   },
   "workspace[].layout.client_maximize": {
    "default_text": "",
    "desc": "Choose `\"column\"` or `\"edges\"` for a tiled window's own maximize request; see Maximize and fullscreen.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
+  },
+  "workspace[].layout.dwindle": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/"
   },
   "workspace[].layout.dwindle.new_toward_cursor": {
    "default_text": "",
    "desc": "Open new windows on the pointer's side of the split.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
   },
   "workspace[].layout.dwindle.preserve_split": {
    "default_text": "",
    "desc": "Keep split directions fixed.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
   },
   "workspace[].layout.extent_presets": {
    "default_text": "",
    "desc": "Set extent-cycle fractions.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
   },
   "workspace[].layout.gap": {
    "default_text": "",
    "desc": "Set the window gap.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
+  },
+  "workspace[].layout.master": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/"
   },
   "workspace[].layout.master.default_width_fraction": {
    "default_text": "",
    "desc": "Set the master-area fraction.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
   },
   "workspace[].layout.master.new_becomes_master": {
    "default_text": "",
    "desc": "Give the master slot to new windows.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
   },
   "workspace[].layout.master.new_on_top": {
    "default_text": "",
    "desc": "Place new stack windows at the top or bottom.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
   },
   "workspace[].layout.master.position": {
    "default_text": "",
    "desc": "Place the master area left, right, or center.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
   },
   "workspace[].layout.mode": {
    "default_text": "",
    "desc": "Use `\"scrolling\"`, `\"dwindle\"`, or `\"master\"`.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
   },
   "workspace[].layout.new_exits_fullscreen": {
    "default_text": "",
    "desc": "Choose which arriving windows exit fullscreen; see Leaving fullscreen.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
+  },
+  "workspace[].layout.scrolling": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/"
   },
   "workspace[].layout.scrolling.center_focused": {
    "default_text": "",
    "desc": "Control when focus changes center a column.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
   },
   "workspace[].layout.scrolling.center_underfull_strip": {
    "default_text": "",
    "desc": "Center or start-align an underfull strip.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
   },
   "workspace[].layout.scrolling.default_extent_fraction": {
    "default_text": "",
    "desc": "Set the initial scrolling-column extent.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
+  },
+  "workspace[].layout.struts": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/"
+  },
+  "workspace[].layout.struts.bottom": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/"
+  },
+  "workspace[].layout.struts.left": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/"
+  },
+  "workspace[].layout.struts.right": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/"
+  },
+  "workspace[].layout.struts.top": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/?section=examples#examples"
+  },
+  "workspace[].layout.tabs": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/"
+  },
+  "workspace[].layout.tabs.default_display": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/"
+  },
+  "workspace[].layout.tabs.middle_click_closes": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/"
+  },
+  "workspace[].layout.tabs.new_tab_position": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/"
+  },
+  "workspace[].layout.tabs.scroll_switches_tabs": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/"
+  },
+  "workspace[].layout.tabs.wrap_focus": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/"
   },
   "workspace[].name": {
    "default_text": "",
    "desc": "Select an exact name and create it on matching dynamic outputs.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
   },
   "workspace[].output": {
    "default_text": "",
    "desc": "Restrict the rule to a connector or monitor name.",
-   "doc": "workspaces/#available-fields"
+   "doc": "workspaces/?section=available-fields#available-fields"
+  },
+  "workspaces": {
+   "default_text": "",
+   "desc": "",
+   "doc": "workspaces/?section=dynamic-workspaces#dynamic-workspaces"
   },
   "workspaces.back_and_forth": {
    "default_text": "`false`",
    "desc": "Selecting the active workspace returns to the previous one on that output.",
-   "doc": "workspaces/#global-workspace-settings"
+   "doc": "workspaces/?section=global-workspace-settings#global-workspace-settings"
   },
   "workspaces.empty_above": {
    "default_text": "`false`",
    "desc": "Keep a leading empty workspace on dynamic outputs.",
-   "doc": "workspaces/#global-workspace-settings"
+   "doc": "workspaces/?section=global-workspace-settings#global-workspace-settings"
   }
  },
  "pages": {
