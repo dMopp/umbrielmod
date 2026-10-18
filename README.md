@@ -69,7 +69,7 @@ schema/descriptions* fetches the docs for the exact revision you have installed.
 ## Installation
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/dmopp/umbrielmod/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/dMopp/umbrielmod/main/install.sh | bash
 ```
 
 The installer checks for Python 3, PyGObject, GTK 4, libadwaita and git (and
@@ -90,7 +90,7 @@ Run it again to update. Options: `--install` (non-interactive), `--uninstall`,
 ### From source
 
 ```bash
-git clone https://github.com/dmopp/umbrielmod
+git clone https://github.com/dMopp/umbrielmod
 cd umbrielmod
 uv venv --system-site-packages
 uv sync

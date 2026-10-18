@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # UmbrielMod installer
 #
-#   curl -sSL https://raw.githubusercontent.com/dmopp/umbrielmod/main/install.sh | bash
+#   curl -sSL https://raw.githubusercontent.com/dMopp/umbrielmod/main/install.sh | bash
 #
 # Options:
 #   --install     non-interactive install / update
@@ -10,7 +10,7 @@
 #   --branch X    install a different branch (default: main)
 set -euo pipefail
 
-REPO_URL="${UMBRIELMOD_REPO:-https://github.com/dmopp/umbrielmod.git}"
+REPO_URL="${UMBRIELMOD_REPO:-https://github.com/dMopp/umbrielmod.git}"
 BRANCH="main"
 PREFIX="${XDG_DATA_HOME:-$HOME/.local/share}"
 APP_DIR="$PREFIX/umbrielmod"

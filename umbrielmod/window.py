@@ -264,7 +264,7 @@ class MainWindow(Adw.ApplicationWindow):
             version=__version__,
             comments="Grafische Konfiguration für den Umbriel-Wayland-Compositor",
             license_type=Gtk.License.MIT_X11,
-            website="https://github.com/dmopp/umbrielmod",
+            website="https://github.com/dMopp/umbrielmod",
             developer_name="Daniel Quolke",
             debug_info=f"Umbriel-Schema: {self.ctx.schema.version} ({self.ctx.schema.revision})\n"
                        f"Beschreibungen: Revision {self.ctx.docs.revision or '—'}",
