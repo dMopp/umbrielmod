@@ -2,6 +2,7 @@ name: CI
 
 on:
   push:
+    branches: ["**"]   # tags are covered by the commit they point to
   pull_request:
 
 jobs:

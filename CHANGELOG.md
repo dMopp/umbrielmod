@@ -10,6 +10,10 @@ that section into the next version.
 
 ## [Unreleased]
 
+### Changed
+
+- CI runs for branches and pull requests, no longer again for release tags.
+
 ## [0.2.0] - 2026-10-18
 
 ### Added
