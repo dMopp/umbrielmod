@@ -200,3 +200,5 @@ MIT. Shaders installed from the community collection keep their own licences;
 UmbrielMod copies each effect's licence file next to it.
 
 *UmbrielMod is an independent project and not affiliated with the Umbriel or Noctalia teams.*
+
+<sub>Developed with the help of Claude (Anthropic).</sub>
