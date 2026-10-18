@@ -97,6 +97,7 @@ label.tabler.small { font-size: 16px; }
   box-shadow: inset 0 -2px alpha(currentColor, 0.12);
 }
 .effect-card { padding: 8px; border-radius: 12px; }
+button.preview-play { padding: 10px 24px; font-weight: 700; font-size: 15px; }
 .effect-card picture { border-radius: 9px; }
 flowboxchild:hover .effect-card { background-color: alpha(@accent_bg_color, 0.10); }
 .kind-badge {

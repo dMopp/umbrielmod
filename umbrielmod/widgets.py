@@ -498,3 +498,46 @@ def add_option_button(ctx: AppContext, options: list[Option], on_pick: Callable[
     btn.set_icon_name("")
     btn.set_child(Adw.ButtonContent(icon_name="list-add-symbolic", label=label or _("Add option")))
     return btn
+
+
+class AnimatedPicture(Gtk.Picture):
+    """Gtk.Picture that also plays animated GIFs (GTK only shows their first frame)."""
+
+    def __init__(self, path, **kwargs):
+        super().__init__(**kwargs)
+        self._anim_iter = None
+        self._timer = 0
+        try:
+            from gi.repository import GdkPixbuf
+
+            anim = GdkPixbuf.PixbufAnimation.new_from_file(str(path))
+        except (GLib.Error, ImportError):
+            self.set_filename(str(path))
+            return
+        if anim.is_static_image():
+            self.set_paintable(Gdk.Texture.new_for_pixbuf(anim.get_static_image()))
+            return
+        self._anim_iter = anim.get_iter(None)
+        self._show_frame()
+        self.connect("unrealize", lambda *_: self._stop())
+
+    def _show_frame(self):
+        if self._anim_iter is None:
+            return False
+        self.set_paintable(Gdk.Texture.new_for_pixbuf(self._anim_iter.get_pixbuf()))
+        delay = self._anim_iter.get_delay_time()
+        self._timer = GLib.timeout_add(delay if delay > 0 else 100, self._next)
+        return False
+
+    def _next(self):
+        self._timer = 0
+        if self._anim_iter is not None:
+            self._anim_iter.advance(None)
+            self._show_frame()
+        return False
+
+    def _stop(self):
+        if self._timer:
+            GLib.source_remove(self._timer)
+            self._timer = 0
+        self._anim_iter = None

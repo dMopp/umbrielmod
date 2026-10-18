@@ -15,6 +15,7 @@ applied globally on request and reset when the preview closes.
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 
 from . import config as cfgmod
@@ -62,24 +63,28 @@ class PreviewSession:
         return [p[1] for p, _v in shaders.activation_changes(self.effect)
                 if len(p) == 3 and p[0] == "animation" and p[2] == "effect"]
 
-    def start(self) -> tuple[bool, str]:
-        """Make sure Umbriel has the preset loaded (and, for animations,
-        selected). Returns (ok, message)."""
-        needs_include = self.name not in _loaded_presets(self.cfg)
-        needs_activation = self.kind == "animation"
-        if not needs_include and not needs_activation:
-            return True, ""
+    def start(self, windows: list[tuple[str, int, int]] = ()) -> tuple[bool, str]:
+        """Load a temporary copy of the saved config that has the preset (and,
+        for animations, its event selection) plus floating rules for our own
+        preview windows ``(title, width, height)``. Returns (ok, message)."""
         target = preview_path(self.cfg)
         target.write_text(self.cfg.main.real_path.read_text())
         tmp = cfgmod.TomlFile(target)
-        if needs_include:
+        if self.name not in _loaded_presets(self.cfg):
             files = list(tmp.get(("include", "files"), []) or [])
             files.append(str(self.effect.effect_toml))
             tmp.set(("include", "files"), files)
-        if needs_activation:
+        if self.kind == "animation":
             for path, value in shaders.activation_changes(self.effect):
                 if path[0] == "animation":
                     tmp.set(path, value)
+        for title, width, height in windows:
+            idx = tmp.append_table(("window_rule",), {})
+            tmp.set(("window_rule", idx, "match", "title"), "^" + re.escape(title) + "$")
+            tmp.set(("window_rule", idx, "default_floating"), True)
+            tmp.set(("window_rule", idx, "default_floating_size_px"), {"width": width, "height": height})
+            tmp.set(("window_rule", idx, "default_position"), {"anchor": "center", "x": 0, "y": 0})
+            tmp.set(("window_rule", idx, "default_focused"), True)
         target.write_text(tmp.as_string())
         ok, msg = umbriel.validate(str(target))
         if not ok:
@@ -124,9 +129,15 @@ class PreviewSession:
             self.replaced = False
 
 
-def find_window_id(title: str, pid: int | None = None) -> str | None:
+def find_window(title: str, pid: int | None = None) -> dict | None:
+    """Umbriel's record (id, geometry, state) of one of our own windows."""
     pid = pid or os.getpid()
     for w in umbriel.windows():
         if w.get("title") == title and (not w.get("pid") or w.get("pid") == pid):
-            return w.get("id")
+            return w
     return None
+
+
+def find_window_id(title: str, pid: int | None = None) -> str | None:
+    w = find_window(title, pid)
+    return w.get("id") if w else None

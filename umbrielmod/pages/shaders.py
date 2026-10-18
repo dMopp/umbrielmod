@@ -9,11 +9,11 @@ from pathlib import Path
 from gi.repository import Adw, Gdk, GdkPixbuf, GLib, Gtk, Pango
 
 from .. import shaders, umbriel
-from ..config import TomlFile
+from ..config import TomlFile, toml_literal
 from ..context import AppContext
 from ..docs import DOCS_SITE, section_url
 from ..i18n import N_, _
-from ..widgets import doc_button, esc, icon_button, option_doc_url, option_row, rgba_from_string, rgba_to_string
+from ..widgets import AnimatedPicture, doc_button, esc, icon_button, option_doc_url, option_row, rgba_from_string, rgba_to_string
 from .schema_page import MapGroup, leaf_groups
 
 ANIMATION_EVENTS_LABELS = {
@@ -80,13 +80,6 @@ def _with_header(content: Gtk.Widget, end: Gtk.Widget | None = None) -> Gtk.Widg
         header.pack_end(end)
     tv.add_top_bar(header)
     return tv
-
-
-def _preview_button(callback) -> Gtk.Button:
-    btn = Gtk.Button(css_classes=["suggested-action"])
-    btn.set_child(Adw.ButtonContent(icon_name="media-playback-start-symbolic", label=_("Live preview")))
-    btn.connect("clicked", lambda *_: callback())
-    return btn
 
 
 def _active_selections(ctx: AppContext, name: str) -> list[str]:
@@ -297,7 +290,7 @@ class DetailPage(Adw.NavigationPage):
         super().__init__(title=effect.title)
         self.page, self.effect = page, effect
         self.body = Adw.PreferencesPage()
-        self.set_child(_with_header(self.body, _preview_button(lambda: page.preview(self._preview_effect()))))
+        self.set_child(_with_header(self.body))
         self._groups = []
         self.refresh()
 
@@ -315,33 +308,54 @@ class DetailPage(Adw.NavigationPage):
         ctx = self.page.ctx
 
         head = Adw.PreferencesGroup()
-        if eff.preview:
+        overlay = Gtk.Overlay()
+        if eff.animated_preview:
+            pic = AnimatedPicture(eff.animated_preview, content_fit=Gtk.ContentFit.CONTAIN, height_request=300,
+                                  can_shrink=True)
+        else:
             pic = Gtk.Picture(content_fit=Gtk.ContentFit.CONTAIN, height_request=300, can_shrink=True)
-            _load_thumb(eff.preview, 900, 600, pic)
-            head.add(pic)
+            if eff.preview:
+                _load_thumb(eff.preview, 900, 600, pic)
+        overlay.set_child(Gtk.Frame(child=pic, css_classes=["card"]))
+        play = Gtk.Button(halign=Gtk.Align.CENTER, valign=Gtk.Align.CENTER, css_classes=["osd", "pill", "preview-play"],
+                          tooltip_text=_("Opens a window on which Umbriel renders this effect – "
+                                         "nothing in your config changes."))
+        play.set_child(Adw.ButtonContent(icon_name="media-playback-start-symbolic", label=_("Live preview")))
+        play.connect("clicked", lambda *_: self.page.preview(self._preview_effect()))
+        overlay.add_overlay(play)
+        head.add(overlay)
+
+        actions = Gtk.Box(spacing=8, margin_top=12)
+        live = Gtk.Button(css_classes=["pill"])
+        live.set_child(Adw.ButtonContent(icon_name="media-playback-start-symbolic", label=_("Live preview")))
+        live.connect("clicked", lambda *_: self.page.preview(self._preview_effect()))
+        actions.append(live)
+        spacer = Gtk.Box(hexpand=True)
+        actions.append(spacer)
+        self._action_box = actions
+        head.add(actions)
         self._push(head)
 
         info = Adw.PreferencesGroup(title=esc(eff.title), description=esc(eff.summary))
         installed = shaders.is_installed(eff)
-        btns = Gtk.Box(spacing=6)
+        btns = self._action_box
         if installed:
-            upd = Gtk.Button(label=_("Update"))
+            upd = Gtk.Button(label=_("Update"), css_classes=["pill"])
             upd.connect("clicked", lambda *_: self.page.install(eff, activate=False))
-            rm = Gtk.Button(label=_("Uninstall"), css_classes=["destructive-action"])
+            rm = Gtk.Button(label=_("Uninstall"), css_classes=["destructive-action", "pill"])
             rm.connect("clicked", lambda *_: self.page.uninstall(eff))
             btns.append(upd)
             btns.append(rm)
         else:
-            inst = Gtk.Button(label=_("Install"))
+            inst = Gtk.Button(label=_("Install"), css_classes=["pill"])
             inst.connect("clicked", lambda *_: self.page.install(eff, activate=False))
-            act = Gtk.Button(label=_("Install & activate"), css_classes=["suggested-action"])
+            act = Gtk.Button(label=_("Install & activate"), css_classes=["suggested-action", "pill"])
             act.connect("clicked", lambda *_: self._confirm_activate())
             btns.append(inst)
             btns.append(act)
         gh = icon_button("web-browser-symbolic", _("View on GitHub"),
                          lambda: ctx.open_uri(f"{shaders.REPO_URL}/tree/main/{eff.rel}"))
         btns.append(gh)
-        info.set_header_suffix(btns)
 
         def row(title, subtitle):
             r = Adw.ActionRow(title=esc(title), subtitle=esc(subtitle))
@@ -364,7 +378,7 @@ class DetailPage(Adw.NavigationPage):
             info.add(warn)
         changes = shaders.activation_changes(eff)
         if changes:
-            row(_("Activation sets"), "\n".join(f"{'.'.join(map(str, p))} = {v!r}" for p, v in changes))
+            row(_("Activation sets"), "\n".join(f"{'.'.join(map(str, p))} = {toml_literal(v)}" for p, v in changes))
         if installed:
             for name in eff.presets:
                 cfg_row = Adw.ActionRow(title=esc(_("Configure preset “{name}”").format(name=name)), activatable=True)
@@ -514,8 +528,7 @@ class PresetPage(Adw.NavigationPage):
         super().__init__(title=name)
         self.page, self.tf, self.name, self.effect = page, tf, name, effect
         self.body = Adw.PreferencesPage()
-        extra = _preview_button(lambda: page.preview(effect)) if effect is not None else None
-        self.set_child(_with_header(self.body, extra))
+        self.set_child(_with_header(self.body))
         self._groups = []
         self.refresh()
 
@@ -550,14 +563,7 @@ class PresetPage(Adw.NavigationPage):
 
             sw.connect("notify::active", toggled)
             sel.add(sw)
-            if self.effect is not None:
-                live = Adw.ActionRow(title=_("Live preview"),
-                                     subtitle=_("Opens a window on which Umbriel renders this effect – "
-                                                "nothing in your config changes."))
-                btn = Gtk.Button(label=_("Open"), valign=Gtk.Align.CENTER)
-                btn.connect("clicked", lambda *_: self.page.preview(self.effect))
-                live.add_suffix(btn)
-                sel.add(live)
+
         elif kind == "animation":
             for event in self._animation_events():
                 path = ("animation", event, "effect")
@@ -576,6 +582,14 @@ class PresetPage(Adw.NavigationPage):
                 if eff_opt is not None:
                     sw.add_suffix(doc_button(ctx, option_doc_url(ctx, eff_opt), f"animation.{event}.effect"))
                 sel.add(sw)
+        if self.effect is not None:
+            live = Adw.ActionRow(title=_("Live preview"),
+                                 subtitle=_("Opens a window on which Umbriel renders this effect – "
+                                            "nothing in your config changes."))
+            btn = Gtk.Button(label=_("Open"), valign=Gtk.Align.CENTER)
+            btn.connect("clicked", lambda *_: self.page.preview(self.effect))
+            live.add_suffix(btn)
+            sel.add(live)
         if self.effect is not None:
             cat = next((e for e in shaders.catalog() if e.rel == self.effect.rel), None)
             if cat is not None and shaders.activation_changes(cat):

@@ -116,8 +116,8 @@ msgid "despite inhibit"
 msgstr "trotz Inhibit"
 
 #: umbrielmod/pages/keybinds.py:211
-#: umbrielmod/pages/shaders.py:174
-#: umbrielmod/pages/shaders.py:402
+#: umbrielmod/pages/shaders.py:167
+#: umbrielmod/pages/shaders.py:416
 #: umbrielmod/window.py:476
 #: umbrielmod/window.py:289
 #: umbrielmod/window.py:374
@@ -126,7 +126,7 @@ msgstr "Abbrechen"
 
 #: umbrielmod/pages/keybinds.py:213
 #: umbrielmod/pages/raw.py:30
-#: umbrielmod/pages/shaders.py:404
+#: umbrielmod/pages/shaders.py:418
 msgid "Apply"
 msgstr "Übernehmen"
 
@@ -294,86 +294,152 @@ msgstr "Auflösung und Bildwiederholrate"
 msgid "{mode} (from config)"
 msgstr "{mode} (aus Config)"
 
-#: umbrielmod/pages/preview_window.py:155
+#: umbrielmod/pages/preview_window.py:20
+msgid "Open & close a window"
+msgstr "Fenster öffnen & schließen"
+
+#: umbrielmod/pages/preview_window.py:21
+msgid "Opens a test window and closes it again once the animation has finished."
+msgstr "Öffnet ein Testfenster und schließt es wieder, sobald die Animation fertig ist."
+
+#: umbrielmod/pages/preview_window.py:23
+msgid "Switch workspace"
+msgstr "Arbeitsbereich wechseln"
+
+#: umbrielmod/pages/preview_window.py:24
+msgid "Switches to the next workspace and back again."
+msgstr "Wechselt zum nächsten Arbeitsbereich und wieder zurück."
+
+#: umbrielmod/pages/preview_window.py:26
+msgid "Move a window"
+msgstr "Fenster verschieben"
+
+#: umbrielmod/pages/preview_window.py:27
+msgid "Opens a test window, moves it left and back, then closes it."
+msgstr "Öffnet ein Testfenster, schiebt es nach links und zurück und schließt es dann."
+
+#: umbrielmod/pages/preview_window.py:29
+msgid "Open the overview"
+msgstr "Übersicht öffnen"
+
+#: umbrielmod/pages/preview_window.py:30
+msgid "Opens the overview and closes it again."
+msgstr "Öffnet die Übersicht und schließt sie wieder."
+
+#: umbrielmod/pages/preview_window.py:205
 msgid "The effect is shown on your screen until the preview closes."
 msgstr "Der Effekt liegt auf deinem Bildschirm, bis die Vorschau geschlossen wird."
 
-#: umbrielmod/pages/preview_window.py:156
+#: umbrielmod/pages/preview_window.py:206
 msgid "Move the pointer to see the cursor effect."
 msgstr "Bewege den Mauszeiger, um den Cursor-Effekt zu sehen."
 
-#: umbrielmod/pages/preview_window.py:40
+#: umbrielmod/pages/preview_window.py:218
+msgid "Playing…"
+msgstr "Wird abgespielt…"
+
+#: umbrielmod/pages/preview_window.py:56
 msgid "Preview: {name}"
 msgstr "Vorschau: {name}"
 
-#: umbrielmod/pages/preview_window.py:78
+#: umbrielmod/pages/preview_window.py:95
 msgid "First line"
 msgstr "Erste Zeile"
 
-#: umbrielmod/pages/preview_window.py:78
+#: umbrielmod/pages/preview_window.py:95
 msgid "Second line"
 msgstr "Zweite Zeile"
 
-#: umbrielmod/pages/preview_window.py:78
+#: umbrielmod/pages/preview_window.py:95
 msgid "Third line"
 msgstr "Dritte Zeile"
 
-#: umbrielmod/pages/preview_window.py:96
+#: umbrielmod/pages/preview_window.py:106
+msgid "Play on your desktop"
+msgstr "Auf deinem Desktop abspielen"
+
+#: umbrielmod/pages/preview_window.py:107
+msgid "While this preview is open, Umbriel uses this animation for the events below. The buttons trigger them for real."
+msgstr "Solange diese Vorschau offen ist, nutzt Umbriel diese Animation für die folgenden Ereignisse. Die Knöpfe lösen sie echt aus."
+
+#: umbrielmod/pages/preview_window.py:147
 msgid "Apply to the whole screen"
 msgstr "Auf den ganzen Bildschirm anwenden"
 
-#: umbrielmod/pages/preview_window.py:96
+#: umbrielmod/pages/preview_window.py:147
 msgid "Show cursor effect"
 msgstr "Cursor-Effekt zeigen"
 
-#: umbrielmod/pages/preview_window.py:107
-msgid "Apply again"
-msgstr "Erneut anwenden"
-
-#: umbrielmod/pages/preview_window.py:110
+#: umbrielmod/pages/preview_window.py:155
 msgid "Close preview"
 msgstr "Vorschau schließen"
 
-#: umbrielmod/pages/preview_window.py:123
+#: umbrielmod/pages/preview_window.py:170
 msgid "A temporary copy of your configuration is active while the preview is open."
 msgstr "Solange die Vorschau offen ist, nutzt Umbriel eine temporäre Kopie deiner Konfiguration."
 
-#: umbrielmod/pages/preview_window.py:126
+#: umbrielmod/pages/preview_window.py:173
 msgid "Unsaved shader changes become visible after saving."
 msgstr "Ungespeicherte Shader-Änderungen werden erst nach dem Speichern sichtbar."
 
-#: umbrielmod/pages/preview_window.py:145
+#: umbrielmod/pages/preview_window.py:195
 msgid "Border effects show while this window is focused."
 msgstr "Rahmen-Effekte erscheinen, solange dieses Fenster fokussiert ist."
 
-#: umbrielmod/pages/preview_window.py:135
-msgid "This window could not be found in Umbriel's window list."
-msgstr "Dieses Fenster wurde in Umbriels Fensterliste nicht gefunden."
-
-#: umbrielmod/pages/preview_window.py:161
-#: umbrielmod/pages/preview_window.py:162
+#: umbrielmod/pages/preview_window.py:238
+#: umbrielmod/pages/preview_window.py:50
+#: umbrielmod/pages/preview_window.py:240
+#: umbrielmod/pages/preview_window.py:264
 msgid "Animation test"
 msgstr "Animationstest"
 
-#: umbrielmod/pages/preview_window.py:174
+#: umbrielmod/pages/preview_window.py:132
+msgid "Recording from the collection"
+msgstr "Aufzeichnung aus der Sammlung"
+
+#: umbrielmod/pages/preview_window.py:133
+msgid "Rendered by the collection's headless Umbriel preview."
+msgstr "Gerendert von der Headless-Umbriel-Vorschau der Sammlung."
+
+#: umbrielmod/pages/preview_window.py:152
+msgid "Apply again"
+msgstr "Erneut anwenden"
+
+#: umbrielmod/pages/preview_window.py:184
+msgid "This window could not be found in Umbriel's window list."
+msgstr "Dieses Fenster wurde in Umbriels Fensterliste nicht gefunden."
+
+#: umbrielmod/pages/preview_window.py:224
+msgid "Done – press “Play” to watch again."
+msgstr "Fertig – „Abspielen“ zeigt sie noch einmal."
+
+#: umbrielmod/pages/preview_window.py:286
 msgid "Effect active."
 msgstr "Effekt aktiv."
 
-#: umbrielmod/pages/preview_window.py:120
+#: umbrielmod/pages/preview_window.py:119
+msgid "Play"
+msgstr "Abspielen"
+
+#: umbrielmod/pages/preview_window.py:167
 msgid "Umbriel could not load the effect:"
 msgstr "Umbriel konnte den Effekt nicht laden:"
 
-#: umbrielmod/pages/preview_window.py:151
-msgid "Use the buttons below to play the transition."
-msgstr "Mit den Knöpfen unten lässt sich der Übergang abspielen."
+#: umbrielmod/pages/preview_window.py:201
+msgid "Press “Play” to see the animation."
+msgstr "Drücke „Abspielen“, um die Animation zu sehen."
 
-#: umbrielmod/pages/preview_window.py:51
+#: umbrielmod/pages/preview_window.py:126
+msgid "This animation has no event that can be played from here."
+msgstr "Diese Animation hat kein Ereignis, das sich von hier abspielen lässt."
+
+#: umbrielmod/pages/preview_window.py:70
 msgid "Rendered live by Umbriel · {kind}"
 msgstr "Live von Umbriel gerendert · {kind}"
 
-#: umbrielmod/pages/preview_window.py:103
-msgid "Play: {event}"
-msgstr "Abspielen: {event}"
+#: umbrielmod/pages/preview_window.py:114
+msgid "{events} · {ms} ms"
+msgstr "{events} · {ms} ms"
 
 #: umbrielmod/pages/raw.py:104
 msgid "Text applied – not saved yet"
@@ -513,7 +579,7 @@ msgid "Security context rules"
 msgstr "Sicherheitskontext-Regeln"
 
 #: umbrielmod/pages/schema_page.py:33
-#: umbrielmod/pages/shaders.py:213
+#: umbrielmod/pages/shaders.py:206
 msgid "Effects"
 msgstr "Effekte"
 
@@ -627,290 +693,292 @@ msgstr "Unfokussiert abdunkeln"
 msgid "Layer surfaces"
 msgstr "Layer-Flächen"
 
-#: umbrielmod/pages/shaders.py:111
-#: umbrielmod/pages/shaders.py:261
+#: umbrielmod/pages/shaders.py:104
+#: umbrielmod/pages/shaders.py:254
 msgid "Installed"
 msgstr "Installiert"
 
-#: umbrielmod/pages/shaders.py:112
+#: umbrielmod/pages/shaders.py:105
 msgid "Catalogue"
 msgstr "Katalog"
 
-#: umbrielmod/pages/shaders.py:113
+#: umbrielmod/pages/shaders.py:106
 msgid "Selection & pools"
 msgstr "Auswahl & Pools"
 
-#: umbrielmod/pages/shaders.py:175
-#: umbrielmod/pages/shaders.py:499
-#: umbrielmod/pages/shaders.py:330
+#: umbrielmod/pages/shaders.py:168
+#: umbrielmod/pages/shaders.py:513
+#: umbrielmod/pages/shaders.py:345
 msgid "Uninstall"
 msgstr "Deinstallieren"
 
-#: umbrielmod/pages/shaders.py:278
+#: umbrielmod/pages/shaders.py:271
 msgid "Loading…"
 msgstr "Lade…"
 
-#: umbrielmod/pages/shaders.py:279
+#: umbrielmod/pages/shaders.py:272
 msgid "Fetching the community shaders from GitHub…"
 msgstr "Lade Community-Shader von GitHub…"
 
-#: umbrielmod/pages/shaders.py:341
+#: umbrielmod/pages/shaders.py:356
 msgid "View on GitHub"
 msgstr "Auf GitHub ansehen"
 
-#: umbrielmod/pages/shaders.py:351
-#: umbrielmod/pages/shaders.py:591
+#: umbrielmod/pages/shaders.py:365
+#: umbrielmod/pages/shaders.py:605
 msgid "Kind"
 msgstr "Art"
 
-#: umbrielmod/pages/shaders.py:352
+#: umbrielmod/pages/shaders.py:366
 msgid "Preset names"
 msgstr "Preset-Namen"
 
-#: umbrielmod/pages/shaders.py:355
+#: umbrielmod/pages/shaders.py:369
 msgid "Install location"
 msgstr "Installationsort"
 
-#: umbrielmod/pages/shaders.py:403
+#: umbrielmod/pages/shaders.py:417
 msgid "Install only"
 msgstr "Nur installieren"
 
-#: umbrielmod/pages/shaders.py:87
-#: umbrielmod/pages/shaders.py:483
-#: umbrielmod/pages/shaders.py:554
-msgid "Live preview"
-msgstr "Live-Vorschau"
-
-#: umbrielmod/pages/shaders.py:170
+#: umbrielmod/pages/shaders.py:163
 msgid "The files in {dir} will be deleted."
 msgstr "Die Dateien in {dir} werden gelöscht."
 
-#: umbrielmod/pages/shaders.py:205
+#: umbrielmod/pages/shaders.py:198
 msgid "Search effects…"
 msgstr "Effekte suchen…"
 
-#: umbrielmod/pages/shaders.py:209
+#: umbrielmod/pages/shaders.py:202
 msgid "Update the catalogue from GitHub"
 msgstr "Katalog von GitHub aktualisieren"
 
-#: umbrielmod/pages/shaders.py:224
+#: umbrielmod/pages/shaders.py:217
 msgid "Get the community shaders"
 msgstr "Community-Shader laden"
 
-#: umbrielmod/pages/shaders.py:229
+#: umbrielmod/pages/shaders.py:222
 msgid "Download"
 msgstr "Herunterladen"
 
-#: umbrielmod/pages/shaders.py:354
+#: umbrielmod/pages/shaders.py:321
+#: umbrielmod/pages/shaders.py:587
+msgid "Opens a window on which Umbriel renders this effect – nothing in your config changes."
+msgstr "Öffnet ein Fenster, auf dem Umbriel diesen Effekt rendert – an deiner Config ändert sich nichts."
+
+#: umbrielmod/pages/shaders.py:368
 msgid "Companion effects (installed too)"
 msgstr "Begleit-Effekte (werden mitinstalliert)"
 
-#: umbrielmod/pages/shaders.py:358
+#: umbrielmod/pages/shaders.py:372
 msgid "Licence"
 msgstr "Lizenz"
 
-#: umbrielmod/pages/shaders.py:367
+#: umbrielmod/pages/shaders.py:381
 msgid "Activation sets"
 msgstr "Aktivierung setzt"
 
-#: umbrielmod/pages/shaders.py:383
+#: umbrielmod/pages/shaders.py:397
 msgid "Description, options and shader controls"
 msgstr "Beschreibung, Optionen und Shader-Regler"
 
-#: umbrielmod/pages/shaders.py:400
+#: umbrielmod/pages/shaders.py:414
 msgid "Overwrite existing settings?"
 msgstr "Bestehende Einstellungen überschreiben?"
 
-#: umbrielmod/pages/shaders.py:477
+#: umbrielmod/pages/shaders.py:491
 msgid "not included"
 msgstr "nicht eingebunden"
 
-#: umbrielmod/pages/shaders.py:535
-#: umbrielmod/pages/shaders.py:538
+#: umbrielmod/pages/shaders.py:497
+#: umbrielmod/pages/shaders.py:323
+#: umbrielmod/pages/shaders.py:330
+#: umbrielmod/pages/shaders.py:586
+msgid "Live preview"
+msgstr "Live-Vorschau"
+
+#: umbrielmod/pages/shaders.py:548
+#: umbrielmod/pages/shaders.py:551
 msgid "Use"
 msgstr "Verwenden"
 
-#: umbrielmod/pages/shaders.py:536
+#: umbrielmod/pages/shaders.py:549
 msgid "Selection in your config.toml. Window rules and outputs can set their own effects as well."
 msgstr "Auswahl in deiner config.toml. Fensterregeln und Ausgaben können zusätzlich eigene Effekte setzen."
 
-#: umbrielmod/pages/shaders.py:589
-#: umbrielmod/pages/shaders.py:590
+#: umbrielmod/pages/shaders.py:603
+#: umbrielmod/pages/shaders.py:604
 msgid "Preset"
 msgstr "Preset"
 
-#: umbrielmod/pages/shaders.py:593
+#: umbrielmod/pages/shaders.py:607
 msgid "Shader"
 msgstr "Shader"
 
-#: umbrielmod/pages/shaders.py:673
+#: umbrielmod/pages/shaders.py:687
 msgid "Top-level constants from the GLSL code – the collection's documented way to fine-tune. Written to the shader file when you save."
 msgstr "Top-Level-Konstanten aus dem GLSL-Code – so dokumentiert die Sammlung das Feintuning. Werden beim Speichern in die Shader-Datei geschrieben."
 
-#: umbrielmod/pages/shaders.py:700
+#: umbrielmod/pages/shaders.py:714
 msgid "Must match the preset padding"
 msgstr "Muss dem padding des Presets entsprechen"
 
-#: umbrielmod/pages/shaders.py:768
+#: umbrielmod/pages/shaders.py:782
 msgid "Global effects"
 msgstr "Globale Effekte"
 
-#: umbrielmod/pages/shaders.py:119
+#: umbrielmod/pages/shaders.py:112
 #: umbrielmod/window.py:35
 msgid "Effects & shaders"
 msgstr "Effekte & Shader"
 
-#: umbrielmod/pages/shaders.py:148
+#: umbrielmod/pages/shaders.py:141
 msgid "Installation failed"
 msgstr "Installation fehlgeschlagen"
 
-#: umbrielmod/pages/shaders.py:328
+#: umbrielmod/pages/shaders.py:343
 msgid "Update"
 msgstr "Aktualisieren"
 
-#: umbrielmod/pages/shaders.py:335
+#: umbrielmod/pages/shaders.py:350
 msgid "Install"
 msgstr "Installieren"
 
-#: umbrielmod/pages/shaders.py:337
+#: umbrielmod/pages/shaders.py:352
 msgid "Install & activate"
 msgstr "Installieren & aktivieren"
 
-#: umbrielmod/pages/shaders.py:360
+#: umbrielmod/pages/shaders.py:374
 msgid "Needs the cursor history API"
 msgstr "Benötigt die Cursor-Verlaufs-API"
 
-#: umbrielmod/pages/shaders.py:361
+#: umbrielmod/pages/shaders.py:375
 msgid "Uses umbriel_pointer_path/umbriel_pointer_count – only works with newer Umbriel builds."
 msgstr "Nutzt umbriel_pointer_path/umbriel_pointer_count – funktioniert nur mit neueren Umbriel-Builds."
 
-#: umbrielmod/pages/shaders.py:452
+#: umbrielmod/pages/shaders.py:466
 msgid "Other presets"
 msgstr "Weitere Presets"
 
-#: umbrielmod/pages/shaders.py:452
+#: umbrielmod/pages/shaders.py:466
 msgid "Defined in the configuration, not from the catalogue."
 msgstr "In der Konfiguration definiert, nicht aus dem Katalog."
 
-#: umbrielmod/pages/shaders.py:463
+#: umbrielmod/pages/shaders.py:477
 msgid "No effects installed yet"
 msgstr "Noch keine Effekte installiert"
 
-#: umbrielmod/pages/shaders.py:464
+#: umbrielmod/pages/shaders.py:478
 msgid "The catalogue has the community shaders for Umbriel."
 msgstr "Im Katalog findest du die Community-Shader für Umbriel."
 
-#: umbrielmod/pages/shaders.py:486
+#: umbrielmod/pages/shaders.py:500
 msgid "Include"
 msgstr "Einbinden"
 
-#: umbrielmod/pages/shaders.py:498
+#: umbrielmod/pages/shaders.py:512
 msgid "Details"
 msgstr "Details"
 
-#: umbrielmod/pages/shaders.py:601
-msgid "Match ring_padding in the shader to padding"
-msgstr "ring_padding im Shader an padding angleichen"
-
-#: umbrielmod/pages/shaders.py:608
-#: umbrielmod/pages/shaders.py:612
-msgid "Light"
-msgstr "Licht"
-
-#: umbrielmod/pages/shaders.py:609
-msgid "The border casts light onto its surroundings. Off without the table."
-msgstr "Der Rahmen strahlt Licht auf die Umgebung ab. Ohne Tabelle aus."
-
-#: umbrielmod/pages/shaders.py:614
-msgid "Enable light"
-msgstr "Licht aktivieren"
-
-#: umbrielmod/pages/shaders.py:683
-msgid "Restore the original"
-msgstr "Original wiederherstellen"
-
-#: umbrielmod/pages/shaders.py:172
-msgid "These selections will be removed:"
-msgstr "Diese Auswahlen werden entfernt:"
-
-#: umbrielmod/pages/shaders.py:173
-msgid "Uninstall {name}?"
-msgstr "{name} deinstallieren?"
-
-#: umbrielmod/pages/shaders.py:225
-msgid "Downloads the collection from github.com/{repo} (about 40 MB) to {dir}."
-msgstr "Lädt die Sammlung von github.com/{repo} (ca. 40 MB) nach {dir}."
-
-#: umbrielmod/pages/shaders.py:244
-msgid "{n} effects · {revision}"
-msgstr "{n} Effekte · {revision}"
-
-#: umbrielmod/pages/shaders.py:376
-msgid "Not included"
-msgstr "Nicht eingebunden"
-
-#: umbrielmod/pages/shaders.py:401
-msgid "The activation example changes:"
-msgstr "Das Aktivierungsbeispiel ändert:"
-
-#: umbrielmod/pages/shaders.py:482
-msgid "Active"
-msgstr "Aktiv"
-
-#: umbrielmod/pages/shaders.py:555
-msgid "Opens a window on which Umbriel renders this effect – nothing in your config changes."
-msgstr "Öffnet ein Fenster, auf dem Umbriel diesen Effekt rendert – an deiner Config ändert sich nichts."
-
-#: umbrielmod/pages/shaders.py:557
+#: umbrielmod/pages/shaders.py:589
 msgid "Open"
 msgstr "Öffnen"
 
-#: umbrielmod/pages/shaders.py:582
+#: umbrielmod/pages/shaders.py:615
+msgid "Match ring_padding in the shader to padding"
+msgstr "ring_padding im Shader an padding angleichen"
+
+#: umbrielmod/pages/shaders.py:622
+#: umbrielmod/pages/shaders.py:626
+msgid "Light"
+msgstr "Licht"
+
+#: umbrielmod/pages/shaders.py:623
+msgid "The border casts light onto its surroundings. Off without the table."
+msgstr "Der Rahmen strahlt Licht auf die Umgebung ab. Ohne Tabelle aus."
+
+#: umbrielmod/pages/shaders.py:628
+msgid "Enable light"
+msgstr "Licht aktivieren"
+
+#: umbrielmod/pages/shaders.py:697
+msgid "Restore the original"
+msgstr "Original wiederherstellen"
+
+#: umbrielmod/pages/shaders.py:165
+msgid "These selections will be removed:"
+msgstr "Diese Auswahlen werden entfernt:"
+
+#: umbrielmod/pages/shaders.py:166
+msgid "Uninstall {name}?"
+msgstr "{name} deinstallieren?"
+
+#: umbrielmod/pages/shaders.py:218
+msgid "Downloads the collection from github.com/{repo} (about 40 MB) to {dir}."
+msgstr "Lädt die Sammlung von github.com/{repo} (ca. 40 MB) nach {dir}."
+
+#: umbrielmod/pages/shaders.py:237
+msgid "{n} effects · {revision}"
+msgstr "{n} Effekte · {revision}"
+
+#: umbrielmod/pages/shaders.py:390
+msgid "Not included"
+msgstr "Nicht eingebunden"
+
+#: umbrielmod/pages/shaders.py:415
+msgid "The activation example changes:"
+msgstr "Das Aktivierungsbeispiel ändert:"
+
+#: umbrielmod/pages/shaders.py:496
+msgid "Active"
+msgstr "Aktiv"
+
+#: umbrielmod/pages/shaders.py:596
 msgid "Apply the activation example"
 msgstr "Aktivierungsbeispiel übernehmen"
 
-#: umbrielmod/pages/shaders.py:685
+#: umbrielmod/pages/shaders.py:699
 msgid "No adjustable constants found"
 msgstr "Keine einstellbaren Konstanten gefunden"
 
-#: umbrielmod/pages/shaders.py:160
+#: umbrielmod/pages/shaders.py:153
 msgid "{name} installed and activated"
 msgstr "{name} installiert und aktiviert"
 
-#: umbrielmod/pages/shaders.py:160
+#: umbrielmod/pages/shaders.py:153
 msgid "{name} installed"
 msgstr "{name} installiert"
 
-#: umbrielmod/pages/shaders.py:185
+#: umbrielmod/pages/shaders.py:178
 msgid "{name} removed"
 msgstr "{name} entfernt"
 
-#: umbrielmod/pages/shaders.py:207
+#: umbrielmod/pages/shaders.py:200
 msgid "All"
 msgstr "Alle"
 
-#: umbrielmod/pages/shaders.py:289
+#: umbrielmod/pages/shaders.py:282
 msgid "Catalogue updated ({revision})"
 msgstr "Katalog aktualisiert ({revision})"
 
-#: umbrielmod/pages/shaders.py:290
+#: umbrielmod/pages/shaders.py:283
 #: umbrielmod/window.py:313
 msgid "Error: {message}"
 msgstr "Fehler: {message}"
 
-#: umbrielmod/pages/shaders.py:479
+#: umbrielmod/pages/shaders.py:493
 msgid "active: {where}"
 msgstr "aktiv: {where}"
 
-#: umbrielmod/pages/shaders.py:672
+#: umbrielmod/pages/shaders.py:686
 msgid "Shader controls ({file})"
 msgstr "Shader-Regler ({file})"
 
-#: umbrielmod/pages/shaders.py:541
+#: umbrielmod/pages/shaders.py:554
 msgid "Use as default effect ({kind})"
 msgstr "Als Standard-Effekt verwenden ({kind})"
 
-#: umbrielmod/pages/shaders.py:370
+#: umbrielmod/pages/shaders.py:384
 msgid "Configure preset “{name}”"
 msgstr "Preset „{name}“ konfigurieren"
 
@@ -2276,3 +2344,6 @@ msgstr ""
 #: umbriel-docs:workspaces-overview
 msgid "The overview displays every workspace and lets you navigate, focus, close, and move windows."
 msgstr ""
+
+#~ msgid "Opens a test window, moves its column left and right, then closes it."
+#~ msgstr "Öffnet ein Testfenster, verschiebt seine Spalte nach links und rechts und schließt es dann."

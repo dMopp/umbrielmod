@@ -194,6 +194,19 @@ class Effect:
         return None
 
     @property
+    def animated_preview(self) -> Path | None:
+        gif = self.dir / "preview.gif"
+        return gif if gif.exists() else None
+
+    def animation_durations(self) -> dict[str, int]:
+        """event → duration_ms from the activation example (defaults 250)."""
+        out: dict[str, int] = {}
+        for event, table in (self.activation.get("animation") or {}).items():
+            if isinstance(table, dict) and table.get("effect"):
+                out[event] = int(table.get("duration_ms", 250))
+        return out
+
+    @property
     def needs_pointer_history(self) -> bool:
         for sp in self.shader_paths:
             try:
