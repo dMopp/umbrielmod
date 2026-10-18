@@ -136,7 +136,11 @@ if [[ "$SKIP_DEPS" -eq 0 ]]; then
       export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
     fi
   fi
-  have uv && success "$(uv --version)" || warn "Falling back to python3 -m venv"
+  if have uv; then
+    success "$(uv --version)"
+  else
+    warn "Falling back to python3 -m venv"
+  fi
 fi
 
 # ----------------------------------------------------------------------------- fetch
