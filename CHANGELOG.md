@@ -10,7 +10,15 @@ that section into the next version.
 
 ## [Unreleased]
 
+### Added
+
+- NixOS support: a flake with package, overlay and development shell; the
+  installer points NixOS users to it.
+
 ### Changed
+
+- Noctalia's Tabler icon font is looked up in `$XDG_DATA_DIRS` (Nix profiles)
+  before `/usr/share`.
 
 - CI runs for branches and pull requests, no longer again for release tags.
 

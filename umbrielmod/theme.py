@@ -20,8 +20,8 @@ from pathlib import Path
 
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
-TABLER_FONT = Path("/usr/share/noctalia/assets/fonts/noctalia-tabler.ttf")
-TABLER_MAP = Path("/usr/share/noctalia/assets/fonts/tabler.json")
+TABLER_FONT_NAME = "noctalia-tabler.ttf"
+TABLER_MAP_NAME = "tabler.json"
 TABLER_FAMILY = "noctalia-tabler-icons"
 
 
@@ -206,20 +206,34 @@ FALLBACK_ICONS = {
 }
 
 
+def tabler_font_dir() -> Path | None:
+    """Noctalia's font directory: ``$XDG_DATA_DIRS`` (covers Nix profiles such
+    as ``/run/current-system/sw/share``), then the usual system prefixes."""
+    dirs = [d for d in os.environ.get("XDG_DATA_DIRS", "").split(":") if d]
+    dirs += ["/usr/share", "/usr/local/share"]
+    for d in dirs:
+        fonts = Path(d) / "noctalia" / "assets" / "fonts"
+        if (fonts / TABLER_FONT_NAME).is_file() and (fonts / TABLER_MAP_NAME).is_file():
+            return fonts
+    return None
+
+
 def load_tabler_font() -> bool:
     """Register Noctalia's Tabler icon font for this process."""
-    if not (TABLER_FONT.is_file() and TABLER_MAP.is_file()):
+    fonts = tabler_font_dir()
+    if fonts is None:
         return False
     try:
-        data = json.loads(TABLER_MAP.read_text())
+        data = json.loads((fonts / TABLER_MAP_NAME).read_text())
         for name, info in data.items():
             cp = info.get("codepoint", "") if isinstance(info, dict) else ""
             if cp.startswith("U+"):
                 _TABLER[name] = chr(int(cp[2:], 16))
+        # Already loaded by GTK, so the soname resolves without a library path (NixOS).
         fc = ctypes.CDLL("libfontconfig.so.1")
         fc.FcConfigAppFontAddFile.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
         fc.FcConfigAppFontAddFile.restype = ctypes.c_int
-        return bool(fc.FcConfigAppFontAddFile(None, str(TABLER_FONT).encode()))
+        return bool(fc.FcConfigAppFontAddFile(None, str(fonts / TABLER_FONT_NAME).encode()))
     except (OSError, ValueError, AttributeError):
         _TABLER.clear()
         return False
