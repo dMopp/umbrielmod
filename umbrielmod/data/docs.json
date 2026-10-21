@@ -1617,7 +1617,7 @@
   "output.<name>.scale": {
    "default_text": "`1.0`",
    "desc": "Output scale from 0.25 to 4.0.",
-   "doc": "outputs/?section=settings#settings"
+   "doc": "outputs/?section=position-and-scale#position-and-scale"
   },
   "output.<name>.screen_effect": {
    "default_text": "inherited",

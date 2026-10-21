@@ -10,6 +10,11 @@ that section into the next version.
 
 ## [Unreleased]
 
+### Fixed
+
+- The (?) button of an output's `scale` opens the *Position and scale* section
+  of the Umbriel docs instead of the settings table.
+
 ## [0.3.0] - 2026-10-21
 
 ### Added

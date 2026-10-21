@@ -249,11 +249,16 @@ def _pages_for(schema_path: str) -> list[str]:
     return list(dict.fromkeys(pages))
 
 
-def _best_anchor(secs: list[tuple[str, str, str]], key: str, table_anchor: str) -> str:
+_FILLER = {"and", "or", "the", "a", "an", "of"}
+
+
+def _best_anchor(secs: list[tuple[str, str, str]], key: str, table_anchor: str, siblings: frozenset[str] = frozenset()) -> str:
     """Most specific heading for ``key`` (document order):
 
     1. a heading named after the key (``tearing`` → ``#tearing``)
-    2. a heading containing the key as a word whose text uses it
+    2. a heading containing the key as a word whose text uses it as code, or
+       as a plain word when the heading's other words are sibling keys
+       (``Position and scale`` → ``at scale 1.25``)
     3. the section holding the key table
     4. without a table: the first section that uses the key
     """
@@ -261,6 +266,9 @@ def _best_anchor(secs: list[tuple[str, str, str]], key: str, table_anchor: str) 
 
     def mentions(body: str) -> bool:
         return f"`{key}`" in body or f"\n{key} =" in body or f"`{key} =" in body or f"{key} = " in body
+
+    def says(body: str) -> bool:
+        return re.search(rf"\b{re.escape(key.replace('_', ' '))}\b", body, re.I) is not None
 
     secs = [s for s in secs if s[0]]
     for anchor, _h, _b in secs:
@@ -270,10 +278,19 @@ def _best_anchor(secs: list[tuple[str, str, str]], key: str, table_anchor: str) 
     for anchor, _h, body in secs:
         if words <= set(anchor.split("-")) and mentions(body):
             return anchor
+    allowed = words | {w for s in siblings for w in s.split("_")} | _FILLER
+    for anchor, _h, body in secs:
+        if words <= set(anchor.split("-")) <= allowed and says(body):
+            return anchor
     return table_anchor or next((a for a, _h, b in secs if mentions(b)), "")
 
 
 def _deep_links(schema_paths: list[str], options: dict, sections: dict) -> None:
+    children: dict[str, set[str]] = {}
+    for path in schema_paths:
+        parent, _, last = path.rpartition(".")
+        if parent:  # top-level sections are not related keys
+            children.setdefault(parent, set()).add(last.removesuffix("[]"))
     for path in schema_paths:
         key = path.rsplit(".", 1)[-1].removesuffix("[]")
         if key == "<name>":
@@ -288,7 +305,8 @@ def _deep_links(schema_paths: list[str], options: dict, sections: dict) -> None:
             if not page:
                 continue
         secs = sections.get(page, [])
-        best = _best_anchor(secs, key, anchor) if secs else anchor
+        siblings = frozenset(children.get(path.rpartition(".")[0], set()) - {key})
+        best = _best_anchor(secs, key, anchor, siblings) if secs else anchor
         site = SITE_PAGES.get(page, page)
         doc = f"{site}/?section={best}#{best}" if best else f"{site}/"
         if entry:
