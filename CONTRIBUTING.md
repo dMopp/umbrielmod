@@ -45,7 +45,10 @@ Versions follow [Semantic Versioning](https://semver.org/). To release:
 tools/release.sh 0.3.0 --push
 ```
 
-The script moves the Unreleased changelog entries to `0.3.0`, sets
-`__version__`, commits `Release v0.3.0`, tags `v0.3.0` and pushes. The
-*Release* workflow then publishes the GitHub release with the changelog
-section as notes. Installed copies pick up the new release on their next start.
+`main` only accepts pull requests, so the script works on a branch: it moves
+the Unreleased changelog entries to `0.3.0`, sets `__version__`, commits
+`Release v0.3.0` on `release-0.3.0`, pushes it and opens the pull request with
+`gh` – or prints its link, title and text. Merging the pull request (any merge
+method) is the release: the *Release* workflow tags `v0.3.0` on `main` and
+publishes the GitHub release with the changelog section as notes. Installed
+copies pick up the new release on their next start.

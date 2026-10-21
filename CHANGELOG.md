@@ -10,6 +10,11 @@ that section into the next version.
 
 ## [Unreleased]
 
+### Changed
+
+- Releases go through a pull request: `tools/release.sh` prepares a
+  `release-X.Y.Z` branch, and merging it tags and publishes the release.
+
 ## [0.3.0] - 2026-10-21
 
 ### Added

@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
-# Cut a release: tools/release.sh X.Y.Z [--push]
+# Prepare a release: tools/release.sh X.Y.Z [--push]
 #
-# Moves the "Unreleased" CHANGELOG section to X.Y.Z, sets __version__,
-# commits "Release vX.Y.Z" and creates the annotated tag. With --push the
-# commit and tag are pushed; GitHub Actions then publishes the release.
+# main only accepts pull requests, so this works on a branch: it moves the
+# "Unreleased" CHANGELOG section to X.Y.Z, sets __version__ and commits
+# "Release vX.Y.Z" on release-X.Y.Z. With --push the branch is pushed and the
+# pull request is opened (with gh) or its title and text are printed. Merging
+# it is the release: the Release workflow then tags vX.Y.Z on main and
+# publishes the GitHub release.
 set -euo pipefail
 
 version="${1:-}"
@@ -17,10 +20,13 @@ cd "$(dirname "$0")/.."
 
 [[ -z "$(git status --porcelain)" ]] || { echo "error: working tree not clean" >&2; exit 1; }
 [[ "$(git rev-parse --abbrev-ref HEAD)" == "main" ]] || { echo "error: release from main" >&2; exit 1; }
+git fetch -q origin main --tags
+[[ "$(git rev-parse HEAD)" == "$(git rev-parse origin/main)" ]] || { echo "error: main differs from origin/main – pull first" >&2; exit 1; }
 if git rev-parse -q --verify "refs/tags/v$version" >/dev/null; then
   echo "error: tag v$version exists" >&2
   exit 1
 fi
+branch="release-$version"
 
 python3 - "$version" "$(date +%F)" <<'PY'
 import re, sys
@@ -47,12 +53,33 @@ init = Path("umbrielmod/__init__.py")
 init.write_text(re.sub(r'^__version__ = ".*"$', f'__version__ = "{version}"', init.read_text(), flags=re.M))
 PY
 
+git switch -q -c "$branch"
 git add CHANGELOG.md umbrielmod/__init__.py
 git commit -q -m "Release v$version"
-git tag -a "v$version" -m "UmbrielMod $version"
-echo "Created commit and tag v$version."
-if [[ "$push" == "--push" ]]; then
-  git push origin main "v$version"
+notes="$(awk -v v="$version" 'index($0, "## [" v "]") == 1 {f=1; next} /^## \[/ {f=0} f' CHANGELOG.md | sed -e '/./,$!d')"
+git switch -q main
+echo "Created $branch with commit \"Release v$version\"."
+
+title="Release v$version"
+body="Release UmbrielMod $version.
+
+Merging this tags \`v$version\` on main and publishes the GitHub release with
+these notes (any merge method works):
+
+$notes"
+
+if [[ "$push" != "--push" ]]; then
+  echo "Push with: git push -u origin $branch"
+  exit 0
+fi
+git push -q -u origin "$branch"
+if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+  gh pr create --base main --head "$branch" --title "$title" --body "$body"
 else
-  echo "Push with: git push origin main v$version"
+  echo
+  echo "Open the pull request: https://github.com/dMopp/umbrielmod/pull/new/$branch"
+  echo
+  echo "Title: $title"
+  echo
+  echo "$body"
 fi
