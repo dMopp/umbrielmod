@@ -77,6 +77,19 @@ if [[ "$MODE" == "uninstall" ]]; then
   exit 0
 fi
 
+# ----------------------------------------------------------------------------- NixOS
+
+# System packages and --system-site-packages venvs do not work on NixOS;
+# the flake builds a wrapped package instead.
+if [[ "$SKIP_DEPS" -eq 0 ]] && { [[ -e /etc/NIXOS ]] || grep -qs '^ID=nixos' /etc/os-release; }; then
+  step "NixOS detected"
+  info "Install UmbrielMod from its flake instead of this script:"
+  info "  nix profile install github:dMopp/umbrielmod"
+  info "or add it to your configuration (see the README, section NixOS)."
+  info "Rerun with --skip-deps to use this installer anyway."
+  exit 1
+fi
+
 # ----------------------------------------------------------------------------- dependencies
 
 detect_pm() {

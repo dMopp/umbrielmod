@@ -10,7 +10,17 @@ that section into the next version.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-21
+
+### Added
+
+- NixOS support: a flake with package, overlay and development shell; the
+  installer points NixOS users to it.
+
 ### Changed
+
+- Noctalia's Tabler icon font is looked up in `$XDG_DATA_DIRS` (Nix profiles)
+  before `/usr/share`.
 
 - CI runs for branches and pull requests, no longer again for release tags.
 
@@ -67,6 +77,7 @@ that section into the next version.
   constants.
 - `curl … | bash` installer.
 
-[Unreleased]: https://github.com/dMopp/umbrielmod/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/dMopp/umbrielmod/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/dMopp/umbrielmod/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/dMopp/umbrielmod/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/dMopp/umbrielmod/releases/tag/v0.1.0

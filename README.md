@@ -134,6 +134,29 @@ branch instead of releases – updates then track every commit).
 
 What changed between versions: [CHANGELOG.md](CHANGELOG.md).
 
+### NixOS
+
+The installer above does not apply to NixOS; use the flake. It builds a
+wrapped package with GTK 4, libadwaita and git, plus desktop entry and icon:
+
+```bash
+nix run github:dMopp/umbrielmod            # try it
+nix profile install github:dMopp/umbrielmod
+```
+
+or in a flake-based configuration:
+
+```nix
+inputs.umbrielmod.url = "github:dMopp/umbrielmod";
+# …
+environment.systemPackages = [ inputs.umbrielmod.packages.${pkgs.system}.default ];
+```
+
+An overlay is available as `umbrielmod.overlays.default`. Nix installations do
+not update themselves; update with `nix profile upgrade` or `nix flake update`.
+`umbriel` still has to be on `PATH`, and Noctalia's icon font is found through
+`XDG_DATA_DIRS` (e.g. `/run/current-system/sw/share/noctalia`).
+
 ### Requirements
 
 - Umbriel on `PATH` (for the schema, validation and live preview)
@@ -150,6 +173,9 @@ uv sync
 uv run umbrielmod            # or: uv run umbrielmod -c /path/to/config.toml
 uv run pytest
 ```
+
+On NixOS, `nix develop` provides Python with PyGObject, GTK 4, libadwaita,
+tomlkit and pytest; run `python -m umbrielmod` and `pytest` there.
 
 Regenerate the bundled option descriptions from an Umbriel checkout:
 
