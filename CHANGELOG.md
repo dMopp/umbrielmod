@@ -10,6 +10,11 @@ that section into the next version.
 
 ## [Unreleased]
 
+### Changed
+
+- Releases go through a pull request: `tools/release.sh` prepares a
+  `release-X.Y.Z` branch, and merging it tags and publishes the release.
+
 ### Fixed
 
 - The (?) button of an output's `scale` opens the *Position and scale* section

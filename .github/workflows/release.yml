@@ -1,6 +1,8 @@
 name: Release
 
 # Creates a GitHub release for every vX.Y.Z tag that has a CHANGELOG section.
+# When a release pull request (tools/release.sh) is merged, the version on main
+# has a CHANGELOG section but no tag yet: the tag is created on main first.
 # Runs on tag pushes and on pushes to main, so releases for tags whose commit
 # predates this workflow (e.g. v0.1.0) are created as well. Idempotent.
 on:
@@ -30,6 +32,15 @@ jobs:
           git fetch --quiet origin main
           git show origin/main:CHANGELOG.md > changelog.md
           versions=$(sed -n 's/^## \[\([0-9][0-9.]*\)\].*/\1/p' changelog.md | sort -V)
+          current=$(git show origin/main:umbrielmod/__init__.py | sed -n 's/^__version__ = "\(.*\)"/\1/p')
+          if ! git rev-parse -q --verify "refs/tags/v$current" >/dev/null \
+             && printf '%s\n' $versions | grep -qFx "$current"; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "v$current" -m "UmbrielMod $current" origin/main
+            git push origin "v$current"
+            echo "tagged v$current"
+          fi
           latest=$(git tag --list 'v*' | sed 's/^v//' | sort -V | tail -n 1)
           for v in $versions; do
             tag="v$v"
