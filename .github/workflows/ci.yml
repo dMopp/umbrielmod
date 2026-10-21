@@ -5,6 +5,9 @@ on:
     branches: ["**"]   # tags are covered by the commit they point to
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-24.04
