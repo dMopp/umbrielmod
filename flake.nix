@@ -62,11 +62,11 @@
             mainProgram = "umbrielmod";
           };
         };
-        default = self.packages.${pkgs.system}.umbrielmod;
+        default = self.packages.${pkgs.stdenv.hostPlatform.system}.umbrielmod;
       });
 
       overlays.default = final: _prev: {
-        umbrielmod = self.packages.${final.system}.umbrielmod;
+        umbrielmod = self.packages.${final.stdenv.hostPlatform.system}.umbrielmod;
       };
 
       devShells = forAllSystems (pkgs: {

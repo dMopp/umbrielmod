@@ -10,32 +10,40 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umbrielmod/__main__.py:59
+#: umbrielmod/__main__.py:64
 msgid "GTK4 configuration editor for Umbriel"
 msgstr ""
 
-#: umbrielmod/__main__.py:60
+#: umbrielmod/__main__.py:65
 msgid "path to config.toml"
 msgstr ""
 
-#: umbrielmod/__main__.py:61
+#: umbrielmod/__main__.py:66
 msgid "interface language, e.g. en or de"
 msgstr ""
 
-#: umbrielmod/__main__.py:69
+#: umbrielmod/__main__.py:74
 msgid "umbrielmod: `umbriel` was not found on PATH"
 msgstr ""
 
-#: umbrielmod/__main__.py:52
+#: umbrielmod/__main__.py:57
 msgid "UmbrielMod cannot start"
 msgstr ""
 
-#: umbrielmod/__main__.py:43
+#: umbrielmod/__main__.py:44
 msgid "{file} is not valid TOML:\n{error}"
 msgstr ""
 
-#: umbrielmod/__main__.py:39
+#: umbrielmod/__main__.py:40
 msgid "Could not read the Umbriel schema:\n{error}\n\nIs `umbriel` installed and on PATH?"
+msgstr ""
+
+#: umbrielmod/config.py:540
+msgid "These files cannot be written (read-only or managed by another tool?):\n{files}"
+msgstr ""
+
+#: umbrielmod/docs.py:474
+msgid "{count} of {total} options described"
 msgstr ""
 
 #: umbrielmod/pages/keybinds.py:18
@@ -118,17 +126,17 @@ msgid "despite inhibit"
 msgstr ""
 
 #: umbrielmod/pages/keybinds.py:211
-#: umbrielmod/pages/shaders.py:167
-#: umbrielmod/pages/shaders.py:416
-#: umbrielmod/window.py:476
+#: umbrielmod/pages/shaders.py:170
+#: umbrielmod/pages/shaders.py:422
+#: umbrielmod/window.py:481
 #: umbrielmod/window.py:289
-#: umbrielmod/window.py:374
+#: umbrielmod/window.py:377
 msgid "Cancel"
 msgstr ""
 
 #: umbrielmod/pages/keybinds.py:213
 #: umbrielmod/pages/raw.py:30
-#: umbrielmod/pages/shaders.py:418
+#: umbrielmod/pages/shaders.py:424
 msgid "Apply"
 msgstr ""
 
@@ -456,7 +464,7 @@ msgstr ""
 msgid "Text applied – not saved yet"
 msgstr ""
 
-#: umbrielmod/pages/raw.py:151
+#: umbrielmod/pages/raw.py:154
 msgid "Backup loaded – press “Save” to keep it"
 msgstr ""
 
@@ -473,7 +481,7 @@ msgstr ""
 msgid "Backups"
 msgstr ""
 
-#: umbrielmod/pages/raw.py:143
+#: umbrielmod/pages/raw.py:142
 msgid "This file is no longer part of the configuration"
 msgstr ""
 
@@ -496,6 +504,13 @@ msgstr ""
 
 #: umbrielmod/pages/raw.py:114
 msgid "Before every save a copy is stored in {dir} (the last 50 per file)."
+msgstr ""
+
+#: umbrielmod/pages/raw.py:148
+#: umbrielmod/pages/shaders.py:289
+#: umbrielmod/pages/shaders.py:184
+#: umbrielmod/window.py:313
+msgid "Error: {message}"
 msgstr ""
 
 #: umbrielmod/pages/rules.py:37
@@ -590,7 +605,7 @@ msgid "Security context rules"
 msgstr ""
 
 #: umbrielmod/pages/schema_page.py:33
-#: umbrielmod/pages/shaders.py:206
+#: umbrielmod/pages/shaders.py:212
 msgid "Effects"
 msgstr ""
 
@@ -692,7 +707,7 @@ msgid "Workspace switch"
 msgstr ""
 
 #: umbrielmod/pages/shaders.py:26
-#: umbrielmod/shaders.py:33
+#: umbrielmod/shaders.py:35
 msgid "Border"
 msgstr ""
 
@@ -704,324 +719,323 @@ msgstr ""
 msgid "Layer surfaces"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:104
-#: umbrielmod/pages/shaders.py:254
+#: umbrielmod/pages/shaders.py:107
+#: umbrielmod/pages/shaders.py:260
 msgid "Installed"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:105
+#: umbrielmod/pages/shaders.py:108
 msgid "Catalogue"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:106
+#: umbrielmod/pages/shaders.py:109
 msgid "Selection & pools"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:168
-#: umbrielmod/pages/shaders.py:513
-#: umbrielmod/pages/shaders.py:345
+#: umbrielmod/pages/shaders.py:171
+#: umbrielmod/pages/shaders.py:519
+#: umbrielmod/pages/shaders.py:351
 msgid "Uninstall"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:271
+#: umbrielmod/pages/shaders.py:277
 msgid "Loading…"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:272
+#: umbrielmod/pages/shaders.py:278
 msgid "Fetching the community shaders from GitHub…"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:356
+#: umbrielmod/pages/shaders.py:362
 msgid "View on GitHub"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:365
-#: umbrielmod/pages/shaders.py:605
+#: umbrielmod/pages/shaders.py:371
+#: umbrielmod/pages/shaders.py:611
 msgid "Kind"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:366
+#: umbrielmod/pages/shaders.py:372
 msgid "Preset names"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:369
+#: umbrielmod/pages/shaders.py:375
 msgid "Install location"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:417
+#: umbrielmod/pages/shaders.py:423
 msgid "Install only"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:163
+#: umbrielmod/pages/shaders.py:166
 msgid "The files in {dir} will be deleted."
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:198
+#: umbrielmod/pages/shaders.py:204
 msgid "Search effects…"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:202
+#: umbrielmod/pages/shaders.py:208
 msgid "Update the catalogue from GitHub"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:217
+#: umbrielmod/pages/shaders.py:223
 msgid "Get the community shaders"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:222
+#: umbrielmod/pages/shaders.py:228
 msgid "Download"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:321
-#: umbrielmod/pages/shaders.py:587
+#: umbrielmod/pages/shaders.py:327
+#: umbrielmod/pages/shaders.py:593
 msgid "Opens a window on which Umbriel renders this effect – nothing in your config changes."
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:368
+#: umbrielmod/pages/shaders.py:374
 msgid "Companion effects (installed too)"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:372
+#: umbrielmod/pages/shaders.py:378
 msgid "Licence"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:381
+#: umbrielmod/pages/shaders.py:387
 msgid "Activation sets"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:397
+#: umbrielmod/pages/shaders.py:403
 msgid "Description, options and shader controls"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:414
+#: umbrielmod/pages/shaders.py:420
 msgid "Overwrite existing settings?"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:491
+#: umbrielmod/pages/shaders.py:497
 msgid "not included"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:497
-#: umbrielmod/pages/shaders.py:323
-#: umbrielmod/pages/shaders.py:330
-#: umbrielmod/pages/shaders.py:586
+#: umbrielmod/pages/shaders.py:503
+#: umbrielmod/pages/shaders.py:329
+#: umbrielmod/pages/shaders.py:336
+#: umbrielmod/pages/shaders.py:592
 msgid "Live preview"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:548
-#: umbrielmod/pages/shaders.py:551
+#: umbrielmod/pages/shaders.py:554
+#: umbrielmod/pages/shaders.py:557
 msgid "Use"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:549
+#: umbrielmod/pages/shaders.py:555
 msgid "Selection in your config.toml. Window rules and outputs can set their own effects as well."
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:603
-#: umbrielmod/pages/shaders.py:604
+#: umbrielmod/pages/shaders.py:609
+#: umbrielmod/pages/shaders.py:610
 msgid "Preset"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:607
+#: umbrielmod/pages/shaders.py:613
 msgid "Shader"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:655
+#: umbrielmod/pages/shaders.py:661
 msgid "Theme colours for this effect"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:701
+#: umbrielmod/pages/shaders.py:707
 msgid "Top-level constants from the GLSL code – the collection's documented way to fine-tune. Written to the shader file when you save."
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:728
+#: umbrielmod/pages/shaders.py:734
 msgid "Must match the preset padding"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:796
+#: umbrielmod/pages/shaders.py:802
 msgid "Global effects"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:112
+#: umbrielmod/pages/shaders.py:115
 #: umbrielmod/window.py:35
 msgid "Effects & shaders"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:141
+#: umbrielmod/pages/shaders.py:144
 msgid "Installation failed"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:343
+#: umbrielmod/pages/shaders.py:349
 msgid "Update"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:350
+#: umbrielmod/pages/shaders.py:356
 msgid "Install"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:352
+#: umbrielmod/pages/shaders.py:358
 msgid "Install & activate"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:374
+#: umbrielmod/pages/shaders.py:380
 msgid "Needs the cursor history API"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:375
+#: umbrielmod/pages/shaders.py:381
 msgid "Uses umbriel_pointer_path/umbriel_pointer_count – only works with newer Umbriel builds."
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:466
+#: umbrielmod/pages/shaders.py:472
 msgid "Other presets"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:466
+#: umbrielmod/pages/shaders.py:472
 msgid "Defined in the configuration, not from the catalogue."
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:477
+#: umbrielmod/pages/shaders.py:483
 msgid "No effects installed yet"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:478
+#: umbrielmod/pages/shaders.py:484
 msgid "The catalogue has the community shaders for Umbriel."
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:500
+#: umbrielmod/pages/shaders.py:506
 msgid "Include"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:512
+#: umbrielmod/pages/shaders.py:518
 msgid "Details"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:589
+#: umbrielmod/pages/shaders.py:595
 msgid "Open"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:617
+#: umbrielmod/pages/shaders.py:623
 msgid "Match ring_padding in the shader to padding"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:624
-#: umbrielmod/pages/shaders.py:628
+#: umbrielmod/pages/shaders.py:630
+#: umbrielmod/pages/shaders.py:634
 msgid "Light"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:625
+#: umbrielmod/pages/shaders.py:631
 msgid "The border casts light onto its surroundings. Off without the table."
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:630
+#: umbrielmod/pages/shaders.py:636
 msgid "Enable light"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:656
+#: umbrielmod/pages/shaders.py:662
 msgid "With “Palette” on, the shader recolours its artwork with these colours from [colors] (accent_primary, accent_secondary, warning, error). Off shows the shader's original colours – as in the catalogue previews."
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:711
+#: umbrielmod/pages/shaders.py:717
 msgid "Restore the original"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:165
+#: umbrielmod/pages/shaders.py:168
 msgid "These selections will be removed:"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:166
+#: umbrielmod/pages/shaders.py:169
 msgid "Uninstall {name}?"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:218
+#: umbrielmod/pages/shaders.py:224
 msgid "Downloads the collection from github.com/{repo} (about 40 MB) to {dir}."
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:237
+#: umbrielmod/pages/shaders.py:243
 msgid "{n} effects · {revision}"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:390
+#: umbrielmod/pages/shaders.py:396
 msgid "Not included"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:415
+#: umbrielmod/pages/shaders.py:421
 msgid "The activation example changes:"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:496
+#: umbrielmod/pages/shaders.py:502
 msgid "Active"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:596
+#: umbrielmod/pages/shaders.py:602
 msgid "Apply the activation example"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:713
+#: umbrielmod/pages/shaders.py:719
 msgid "No adjustable constants found"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:153
+#: umbrielmod/pages/shaders.py:156
 msgid "{name} installed and activated"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:153
+#: umbrielmod/pages/shaders.py:156
 msgid "{name} installed"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:178
-msgid "{name} removed"
-msgstr ""
-
-#: umbrielmod/pages/shaders.py:200
+#: umbrielmod/pages/shaders.py:206
 msgid "All"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:282
+#: umbrielmod/pages/shaders.py:288
 msgid "Catalogue updated ({revision})"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:283
-#: umbrielmod/window.py:313
-msgid "Error: {message}"
-msgstr ""
-
-#: umbrielmod/pages/shaders.py:493
+#: umbrielmod/pages/shaders.py:499
 msgid "active: {where}"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:700
+#: umbrielmod/pages/shaders.py:706
 msgid "Shader controls ({file})"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:554
+#: umbrielmod/pages/shaders.py:182
+msgid "{name} removed"
+msgstr ""
+
+#: umbrielmod/pages/shaders.py:560
 msgid "Use as default effect ({kind})"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:384
+#: umbrielmod/pages/shaders.py:390
 msgid "Configure preset “{name}”"
 msgstr ""
 
-#: umbrielmod/shaders.py:34
-msgid "Window"
-msgstr ""
-
-#: umbrielmod/shaders.py:35
-msgid "Screen"
+#: umbrielmod/preview.py:76
+msgid "Save the configuration once before using the live preview."
 msgstr ""
 
 #: umbrielmod/shaders.py:36
-msgid "Cursor"
+msgid "Window"
 msgstr ""
 
 #: umbrielmod/shaders.py:37
+msgid "Screen"
+msgstr ""
+
+#: umbrielmod/shaders.py:38
+msgid "Cursor"
+msgstr ""
+
+#: umbrielmod/shaders.py:39
 msgid "Animation"
 msgstr ""
 
-#: umbrielmod/umbriel.py:116
+#: umbrielmod/umbriel.py:128
 msgid "current"
 msgstr ""
 
-#: umbrielmod/umbriel.py:116
+#: umbrielmod/umbriel.py:128
 msgid "preferred"
 msgstr ""
 
@@ -1152,16 +1166,16 @@ msgstr ""
 msgid "Fetching the Umbriel documentation for the installed version…"
 msgstr ""
 
-#: umbrielmod/window.py:477
+#: umbrielmod/window.py:482
 #: umbrielmod/window.py:144
 #: umbrielmod/window.py:290
-#: umbrielmod/window.py:375
+#: umbrielmod/window.py:378
 msgid "Discard"
 msgstr ""
 
-#: umbrielmod/window.py:478
+#: umbrielmod/window.py:483
 #: umbrielmod/window.py:142
-#: umbrielmod/window.py:376
+#: umbrielmod/window.py:379
 msgid "Save"
 msgstr ""
 
@@ -1202,27 +1216,23 @@ msgid "Saved – Umbriel applies the changes automatically"
 msgstr ""
 
 #: umbrielmod/window.py:281
-msgid "Invalid configuration – not saved"
+msgid "Configuration not saved"
 msgstr ""
 
 #: umbrielmod/window.py:344
 msgid "Checking for updates…"
 msgstr ""
 
-#: umbrielmod/window.py:412
+#: umbrielmod/window.py:415
 msgid "Graphical configuration for the Umbriel Wayland compositor"
 msgstr ""
 
-#: umbrielmod/window.py:468
-msgid "The configuration changed on disk and was reloaded"
-msgstr ""
-
-#: umbrielmod/window.py:474
-#: umbrielmod/window.py:372
+#: umbrielmod/window.py:479
+#: umbrielmod/window.py:375
 msgid "Unsaved changes"
 msgstr ""
 
-#: umbrielmod/window.py:475
+#: umbrielmod/window.py:480
 msgid "Save the changes before closing?"
 msgstr ""
 
@@ -1238,24 +1248,28 @@ msgstr ""
 msgid "The configuration will be reloaded from disk."
 msgstr ""
 
-#: umbrielmod/window.py:361
+#: umbrielmod/window.py:364
 msgid "Update failed"
 msgstr ""
 
-#: umbrielmod/window.py:373
+#: umbrielmod/window.py:376
 msgid "Save the changes before restarting?"
 msgstr ""
 
-#: umbrielmod/window.py:413
-#: umbrielmod/window.py:413
+#: umbrielmod/window.py:416
+#: umbrielmod/window.py:416
 msgid "translator-credits"
+msgstr ""
+
+#: umbrielmod/window.py:473
+msgid "The configuration changed on disk and was reloaded"
 msgstr ""
 
 #: umbrielmod/window.py:261
 msgid "Unsaved: {files}"
 msgstr ""
 
-#: umbrielmod/window.py:366
+#: umbrielmod/window.py:369
 msgid "UmbrielMod was updated ({version}). Restart to use it."
 msgstr ""
 
@@ -1263,7 +1277,11 @@ msgstr ""
 msgid "A leftover preview configuration was reset"
 msgstr ""
 
-#: umbrielmod/window.py:352
+#: umbrielmod/window.py:472
+msgid "{file} is not valid TOML – fix it before saving"
+msgstr ""
+
+#: umbrielmod/window.py:355
 msgid "Installing an UmbrielMod update…"
 msgstr ""
 
@@ -1271,11 +1289,11 @@ msgstr ""
 msgid "Updated to {version}"
 msgstr ""
 
-#: umbrielmod/window.py:350
+#: umbrielmod/window.py:353
 msgid "Could not check for updates"
 msgstr ""
 
-#: umbrielmod/window.py:350
+#: umbrielmod/window.py:353
 msgid "UmbrielMod is up to date"
 msgstr ""
 

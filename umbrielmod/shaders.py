@@ -16,12 +16,14 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
 import tomlkit
 
 from . import config as cfgmod
+from . import paths
 from .i18n import N_
 
 REPO_SLUG = "noctalia-dev/community-umbriel-shaders"
@@ -56,8 +58,7 @@ POINTER_HISTORY_TOKENS = ("umbriel_pointer_path", "umbriel_pointer_count")
 
 
 def cache_repo_dir() -> Path:
-    base = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
-    return base / "umbrielmod" / "community-umbriel-shaders"
+    return paths.cache_home() / "umbrielmod" / "community-umbriel-shaders"
 
 
 def install_root() -> Path:
@@ -71,10 +72,13 @@ def repo_revision(repo: Path | None = None) -> str:
     repo = repo or cache_repo_dir()
     if not (repo / ".git").exists():
         return ""
-    proc = subprocess.run(
-        ["git", "-C", str(repo), "log", "-1", "--format=%h · %cs"],
-        capture_output=True, text=True,
-    )
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(repo), "log", "-1", "--format=%h · %cs"],
+            capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=20,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
     return proc.stdout.strip()
 
 
@@ -82,19 +86,24 @@ def sync_repo(repo: Path | None = None) -> tuple[bool, str]:
     """Clone or fast-forward the collection (shallow). Blocking."""
     repo = repo or cache_repo_dir()
     env = dict(os.environ, GIT_TERMINAL_PROMPT="0")
+    fresh = repo.with_name(repo.name + ".new")
     try:
         if (repo / ".git").exists():
             steps = [
                 ["git", "-C", str(repo), "fetch", "--depth", "1", "origin"],
                 ["git", "-C", str(repo), "reset", "--hard", "FETCH_HEAD"],
             ]
-        else:
+        else:  # clone next to it, so an interrupted clone never looks like the catalogue
             repo.parent.mkdir(parents=True, exist_ok=True)
-            steps = [["git", "clone", "--depth", "1", REPO_URL, str(repo)]]
+            shutil.rmtree(fresh, ignore_errors=True)
+            steps = [["git", "clone", "--depth", "1", REPO_URL, str(fresh)]]
         for cmd in steps:
-            proc = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=300)
+            proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env, timeout=300)
             if proc.returncode != 0:
                 return False, (proc.stderr or proc.stdout).strip()
+        if fresh.exists():
+            shutil.rmtree(repo, ignore_errors=True)
+            fresh.rename(repo)
     except (OSError, subprocess.TimeoutExpired) as exc:
         return False, str(exc)
     return True, repo_revision(repo)
@@ -105,18 +114,38 @@ def sync_repo(repo: Path | None = None) -> tuple[bool, str]:
 
 def _read_toml(path: Path) -> dict:
     try:
-        return tomlkit.parse(path.read_text()).unwrap()
+        return tomlkit.parse(path.read_text(encoding="utf-8")).unwrap()
     except Exception:
         return {}
 
 
+def _table(data, key: str) -> dict:
+    value = data.get(key) if isinstance(data, dict) else None
+    return value if isinstance(value, dict) else {}
+
+
 def _presets_of(data: dict) -> dict[str, dict]:
-    return dict(data.get("effects", {}).get("preset", {}))
+    presets = _table(_table(data, "effects"), "preset")
+    return {name: p for name, p in presets.items() if isinstance(p, dict)}
 
 
 def _includes_of(data: dict) -> list[str]:
-    inc = data.get("include", {})
-    return list(inc.get("files", [])) + list(inc.get("optional", {}).get("files", []))
+    inc = _table(data, "include")
+    out = []
+    for files in (inc.get("files"), _table(inc, "optional").get("files")):
+        if isinstance(files, list):
+            out.extend(f for f in files if isinstance(f, str))
+    return out
+
+
+class UnsafeEffect(OSError):
+    """A catalogue effect that does more than define effects."""
+
+
+# All an effect may contain or activate. The rest of a configuration can run
+# commands (`keybinds`, `general.autostart`, `scratchpad[].spawn_when_empty`).
+EFFECT_TABLES = {"effects", "include"}
+ACTIVATION_TABLES = ("effects", "animation")
 
 
 _HEADING_RE = re.compile(r"^#\s+(.+)$", re.M)
@@ -158,15 +187,19 @@ class Effect:
     @property
     def shader_paths(self) -> list[Path]:
         out = []
+        base = self.dir.resolve()
         for p in self.presets.values():
-            if p.get("shader"):
-                out.append((self.dir / p["shader"]).resolve())
+            shader = p.get("shader")
+            if isinstance(shader, str) and shader:
+                path = (self.dir / shader).resolve()
+                if path.is_relative_to(base):
+                    out.append(path)
         return out
 
     @property
     def readme(self) -> str:
         try:
-            return (self.dir / "README.md").read_text()
+            return (self.dir / "README.md").read_text(encoding="utf-8", errors="replace")
         except OSError:
             return ""
 
@@ -203,15 +236,16 @@ class Effect:
         out: dict[str, int] = {}
         for event, table in (self.activation.get("animation") or {}).items():
             if isinstance(table, dict) and table.get("effect"):
-                out[event] = int(table.get("duration_ms", 250))
+                duration = table.get("duration_ms", 250)
+                out[event] = duration if isinstance(duration, int) else 250
         return out
 
     @property
     def needs_pointer_history(self) -> bool:
         for sp in self.shader_paths:
             try:
-                src = sp.read_text()
-            except OSError:
+                src = sp.read_text(encoding="utf-8")
+            except (OSError, ValueError):
                 continue
             if any(tok in src for tok in POINTER_HISTORY_TOKENS):
                 return True
@@ -219,18 +253,18 @@ class Effect:
 
     @property
     def activation(self) -> dict:
-        """The activation example (config.toml next to the effect) without
-        its ``[include]`` table."""
+        """The activation example (config.toml next to the effect), limited
+        to selecting effects."""
         data = _read_toml(self.dir / "config.toml")
-        data.pop("include", None)
-        return data
+        return {k: v for k, v in data.items() if k in ACTIVATION_TABLES}
 
     @property
     def license_files(self) -> list[Path]:
         out = []
+        licenses = self.root.resolve() / "LICENSES"
         for m in _LICENSE_RE.finditer(self.readme):
             p = (self.dir / m.group(1)).resolve()
-            if p.exists() and p not in out:
+            if p.is_relative_to(licenses) and p.is_file() and p not in out:
                 out.append(p)
         return out
 
@@ -241,6 +275,25 @@ class Effect:
             p = (self.dir / inc).resolve()
             out.append(p.parent if p.name == "effect.toml" else p)
         return out
+
+
+def unsafe_reason(effect: Effect) -> str:
+    """Why a catalogue effect must not be loaded ("" when it is fine)."""
+    root = effect.root.resolve()
+    if not effect.effect_toml.resolve().is_relative_to(root):
+        return "effect.toml is outside the collection"
+    extra = set(_read_toml(effect.effect_toml)) - EFFECT_TABLES
+    if extra:
+        return f"effect.toml sets {', '.join(sorted(extra))}"
+    for inc in effect.includes:
+        if inc.startswith("~") or not (effect.dir / inc).resolve().is_relative_to(root):
+            return f"include outside the collection: {inc}"
+    base = effect.dir.resolve()
+    for preset in effect.presets.values():
+        shader = preset.get("shader")
+        if isinstance(shader, str) and (shader.startswith("~") or not (effect.dir / shader).resolve().is_relative_to(base)):
+            return f"shader outside the effect: {shader}"
+    return ""
 
 
 def load_effect(root: Path, effect_dir: Path) -> Effect:
@@ -262,7 +315,14 @@ def scan(root: Path) -> list[Effect]:
 
 
 def catalog() -> list[Effect]:
-    return scan(cache_repo_dir())
+    effects = []
+    for effect in scan(cache_repo_dir()):
+        reason = unsafe_reason(effect)
+        if reason:
+            print(f"umbrielmod: skipping effect {effect.rel}: {reason}", file=sys.stderr)
+        else:
+            effects.append(effect)
+    return effects
 
 
 def installed() -> list[Effect]:
@@ -300,12 +360,15 @@ def install_files(effect: Effect) -> list[Path]:
             continue
         dst.mkdir(parents=True, exist_ok=True)
         eff = load_effect(repo_root, src)
+        reason = unsafe_reason(eff)
+        if reason:
+            raise UnsafeEffect(f"{rel}: {reason}")
         for f in src.iterdir():
-            if f.is_file() and f.suffix in (".toml", ".glsl", ".md") and f.name != "config.toml":
+            if f.is_file() and not f.is_symlink() and f.suffix in (".toml", ".glsl", ".md") and f.name != "config.toml":
                 target = dst / f.name
                 if f.suffix == ".glsl" and target.exists():
                     orig = dst / (f.name + ".orig")
-                    if orig.exists() and orig.read_text() != target.read_text():
+                    if orig.exists() and orig.read_bytes() != target.read_bytes():
                         shutil.copy2(target, dst / (f.name + ".local"))
                 shutil.copy2(f, target)
                 if f.suffix == ".glsl":
@@ -401,7 +464,7 @@ def references(cfg: cfgmod.Config, names: set[str]) -> list[tuple]:
         if isinstance(out_cfg, dict) and out_cfg.get("screen_effect") in names:
             out.append(("output", name, "screen_effect"))
     for pool, pcfg in (m.get(("effects", "pool")) or {}).items():
-        if any(c in names for c in pcfg.get("choose", [])):
+        if isinstance(pcfg, dict) and any(c in names for c in pcfg.get("choose", [])):
             out.append(("effects", "pool", pool, "choose"))
     return out
 
@@ -442,16 +505,18 @@ def preset_names(cfg: cfgmod.Config) -> dict[str, str]:
     """All preset names known to the configuration → kind."""
     out: dict[str, str] = {}
     for f in cfg.files:
-        for name, p in (f.get(("effects", "preset")) or {}).items():
-            out[name] = p.get("kind", "")
+        presets = f.get(("effects", "preset"))
+        for name, p in (presets if isinstance(presets, dict) else {}).items():
+            out[name] = p.get("kind", "") if isinstance(p, dict) else ""
     return out
 
 
 def pool_names(cfg: cfgmod.Config) -> dict[str, str]:
     out: dict[str, str] = {}
     for f in cfg.files:
-        for name, p in (f.get(("effects", "pool")) or {}).items():
-            out[name] = p.get("kind", "")
+        pools = f.get(("effects", "pool"))
+        for name, p in (pools if isinstance(pools, dict) else {}).items():
+            out[name] = p.get("kind", "") if isinstance(p, dict) else ""
     return out
 
 

@@ -9,7 +9,7 @@ release.
 
 | Version                      | Supported |
 | ---------------------------- | --------- |
-| latest release (currently 0.2.x) | ✅ |
+| latest release               | ✅ |
 | older releases               | ❌ |
 | `main` branch (`--branch main`) | best effort – fixed on `main` first |
 

@@ -23,4 +23,4 @@ jobs:
       - name: Tests
         run: uv run pytest -q
       - name: Installer lint
-        run: shellcheck install.sh
+        run: shellcheck install.sh tools/release.sh

@@ -137,13 +137,16 @@ class BackupsPage(Adw.PreferencesPage):
             self._rows.append(row)
 
     def restore(self, backup, original):
-        text = backup.read_text()
         tf = self.ctx.cfg.file_for(original)
         if tf is None:
             self.ctx.toast(_("This file is no longer part of the configuration"))
             return
         self.ctx.cfg.checkpoint(tf)
-        tf.set_text(text)
+        try:
+            tf.set_text(backup.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            self.ctx.toast(_("Error: {message}").format(message=exc))
+            return
         if tf is self.ctx.cfg.main:
             self.ctx.cfg.resolve_includes()
         self.ctx.changed()

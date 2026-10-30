@@ -19,7 +19,8 @@ import re
 from pathlib import Path
 
 from . import config as cfgmod
-from . import shaders, umbriel
+from . import paths, shaders, umbriel
+from .i18n import _
 
 PREVIEW_NAME = ".umbrielmod-preview.toml"
 
@@ -71,8 +72,17 @@ class PreviewSession:
         preview windows ``(title, width, height)``. Returns (ok, message)."""
         if windows is not None:
             self.windows = list(windows)
+        if not self.cfg.main.exists:  # nothing to switch back to afterwards
+            return False, _("Save the configuration once before using the live preview.")
+        try:
+            return self._load()
+        except Exception as exc:  # unwritable config dir, broken effect files
+            preview_path(self.cfg).unlink(missing_ok=True)
+            return False, str(exc)
+
+    def _load(self) -> tuple[bool, str]:
         target = preview_path(self.cfg)
-        target.write_text(self.cfg.main.real_path.read_text())
+        target.write_text(self.cfg.main.real_path.read_text(encoding="utf-8"), encoding="utf-8")
         tmp = cfgmod.TomlFile(target)
         if self.palette is not None:
             # include a copy of the effect with `palette` overridden instead of the original
@@ -100,7 +110,7 @@ class PreviewSession:
             tmp.set(("window_rule", idx, "default_floating_size_px"), {"width": width, "height": height})
             tmp.set(("window_rule", idx, "default_position"), {"anchor": "center", "x": 0, "y": 0})
             tmp.set(("window_rule", idx, "default_focused"), True)
-        target.write_text(tmp.as_string())
+        target.write_text(tmp.as_string(), encoding="utf-8")
         ok, msg = umbriel.validate(str(target))
         if not ok:
             target.unlink(missing_ok=True)
@@ -140,8 +150,11 @@ class PreviewSession:
         self.applied.clear()
         if self.replaced:
             umbriel.config_replace(str(self.cfg.main.real_path))
-            preview_path(self.cfg).unlink(missing_ok=True)
             self.replaced = False
+            try:
+                preview_path(self.cfg).unlink(missing_ok=True)
+            except OSError:
+                pass  # recover() tries again on the next start
 
 
 def _resolve(base: Path, entry: str) -> Path:
@@ -155,11 +168,11 @@ def _palette_copy(effect: shaders.Effect, palette: bool) -> Path:
 
     import tomlkit
 
-    dest = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "umbrielmod" / "preview-effect"
+    dest = paths.cache_home() / "umbrielmod" / "preview-effect"
     shutil.rmtree(dest, ignore_errors=True)
     shutil.copytree(effect.dir, dest, ignore=shutil.ignore_patterns("*.png", "*.gif", "*.md"))
     toml = dest / "effect.toml"
-    doc = tomlkit.parse(toml.read_text())
+    doc = tomlkit.parse(toml.read_text(encoding="utf-8"))
     inc = doc.get("include")
     if inc is not None:  # companion includes are relative to the original directory
         for table in (inc, inc.get("optional")):
@@ -167,7 +180,7 @@ def _palette_copy(effect: shaders.Effect, palette: bool) -> Path:
                 table["files"] = [str((effect.dir / f).resolve()) for f in table["files"]]
     for preset in doc.get("effects", {}).get("preset", {}).values():
         preset["palette"] = palette
-    toml.write_text(doc.as_string())
+    toml.write_text(doc.as_string(), encoding="utf-8")
     return toml
 
 

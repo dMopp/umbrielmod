@@ -11,6 +11,10 @@
 #   --branch X    follow branch X instead of releases (e.g. main for development builds)
 set -euo pipefail
 
+# Bash parses this whole group before running any of it: a truncated download
+# cannot run half a script, and child processes cannot eat it from stdin.
+{
+
 REPO_URL="${UMBRIELMOD_REPO:-https://github.com/dMopp/umbrielmod.git}"
 BRANCH=""
 VERSION=""
@@ -48,6 +52,9 @@ warn()    { echo "    ${Y}!${N} $*"; }
 error()   { echo "    ${R}✗${N} $*" >&2; }
 have()    { command -v "$1" >/dev/null 2>&1; }
 
+# Desktop sessions often lack the directories uv is installed to.
+export PATH="$PATH:$HOME/.local/bin:$HOME/.cargo/bin"
+
 # Reading answers works even when the script is piped into bash.
 ask() {
   local prompt="$1" reply
@@ -64,7 +71,12 @@ ask() {
 
 uninstall() {
   step "Removing UmbrielMod"
-  rm -rf "$APP_DIR"
+  if [[ -d "$APP_DIR/locale" ]]; then # your own translations
+    find "$APP_DIR" -mindepth 1 -maxdepth 1 ! -name locale -exec rm -rf {} +
+    info "Kept your translations in $APP_DIR/locale"
+  else
+    rm -rf "$APP_DIR"
+  fi
   rm -f "$BIN_DIR/umbrielmod" "$DESKTOP_DIR/io.github.umbrielmod.desktop" "$ICON_DIR/io.github.umbrielmod.svg"
   if have update-desktop-database; then
     update-desktop-database "$DESKTOP_DIR" >/dev/null 2>&1 || true
@@ -99,26 +111,40 @@ detect_pm() {
   echo ""
 }
 
+as_root() {
+  if [[ "$EUID" -eq 0 ]]; then "$@"
+  elif have sudo; then sudo "$@"
+  elif have doas; then doas "$@"
+  else error "Neither sudo nor doas found. Install the packages as root, then rerun."; exit 1
+  fi
+}
+
 install_packages() {
   local pm; pm="$(detect_pm)"
   case "$pm" in
-    apt-get) sudo apt-get install -y python3 python3-gi python3-gi-cairo gir1.2-gtk-4.0 gir1.2-adw-1 git curl ;;
-    pacman) sudo pacman -S --needed --noconfirm python python-gobject gtk4 libadwaita git curl ;;
-    dnf) sudo dnf install -y python3 python3-gobject gtk4 libadwaita git curl ;;
-    zypper) sudo zypper install -y python3 python3-gobject python3-gobject-Gdk typelib-1_0-Gtk-4_0 typelib-1_0-Adw-1 git curl ;;
-    emerge) sudo emerge --noreplace dev-lang/python dev-python/pygobject gui-libs/gtk gui-libs/libadwaita dev-vcs/git net-misc/curl ;;
-    xbps-install) sudo xbps-install -y python3 python3-gobject gtk4 libadwaita git curl ;;
+    apt-get) as_root apt-get install -y python3 python3-venv python3-gi python3-gi-cairo gir1.2-gtk-4.0 gir1.2-adw-1 git curl ;;
+    pacman) as_root pacman -S --needed --noconfirm python python-gobject python-cairo gtk4 libadwaita git curl ;;
+    dnf) as_root dnf install -y python3 python3-gobject python3-cairo gtk4 libadwaita git curl ;;
+    zypper) as_root zypper --non-interactive install python3 python3-gobject python3-gobject-cairo python3-gobject-Gdk typelib-1_0-Gtk-4_0 typelib-1_0-Adw-1 git curl ;;
+    emerge) as_root emerge --noreplace dev-lang/python dev-python/pygobject dev-python/pycairo gui-libs/gtk gui-libs/libadwaita dev-vcs/git net-misc/curl ;;
+    xbps-install) as_root xbps-install -y python3 python3-gobject python3-cairo gtk4 libadwaita git curl ;;
     *) error "No supported package manager found. Install Python 3, PyGObject, GTK 4, libadwaita and git manually, then rerun with --skip-deps."; exit 1 ;;
   esac
 }
 
 check_python_gi() {
   python3 - <<'PY' >/dev/null 2>&1
+import sys
+assert sys.version_info >= (3, 12)
+import cairo
 import gi
+gi.require_foreign("cairo")
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gtk
-assert (Adw.MAJOR_VERSION, Adw.MINOR_VERSION) >= (1, 5)
+gi.require_version("GdkPixbuf", "2.0")
+from gi.repository import Adw, GdkPixbuf, Gtk
+assert (Adw.MAJOR_VERSION, Adw.MINOR_VERSION) >= (1, 7)
+assert (Gtk.get_major_version(), Gtk.get_minor_version()) >= (4, 12)
 PY
 }
 
@@ -128,13 +154,13 @@ if [[ "$SKIP_DEPS" -eq 0 ]]; then
   have python3 || { warn "python3 missing"; missing=1; }
   have git || { warn "git missing"; missing=1; }
   if have python3 && ! check_python_gi; then
-    warn "PyGObject with GTK 4 and libadwaita ≥ 1.5 not found"
+    warn "Python ≥ 3.12 with PyGObject, pycairo, GTK ≥ 4.12 and libadwaita ≥ 1.7 not found"
     missing=1
   fi
   if [[ "$missing" -eq 1 ]]; then
     if ask "Install the missing packages with $(detect_pm) (needs sudo)?"; then
       install_packages
-      check_python_gi || { error "GTK 4 / libadwaita still not importable from python3."; exit 1; }
+      check_python_gi || { error "Python ≥ 3.12, PyGObject, pycairo, GTK ≥ 4.12 or libadwaita ≥ 1.7 still missing. Your distribution may be too old."; exit 1; }
     else
       error "Cannot continue without these packages."; exit 1
     fi
@@ -194,9 +220,14 @@ if [[ -d "$APP_DIR/.git" ]]; then
   fi
   success "Updated $APP_DIR"
 else
-  rm -rf "$APP_DIR"
+  # Clone next to it: a failed download leaves what is there, and only your
+  # own translations (see the README) survive from an earlier directory.
   mkdir -p "$(dirname "$APP_DIR")"
-  git clone --depth 1 --branch "$REF" "$REPO_URL" "$APP_DIR"
+  rm -rf "$APP_DIR.new"
+  git clone --depth 1 --branch "$REF" "$REPO_URL" "$APP_DIR.new"
+  if [[ -d "$APP_DIR/locale" ]]; then mv "$APP_DIR/locale" "$APP_DIR.new/locale"; fi
+  rm -rf "$APP_DIR"
+  mv "$APP_DIR.new" "$APP_DIR"
   success "Cloned to $APP_DIR"
 fi
 
@@ -215,30 +246,33 @@ if ! .venv/bin/python -c "import sys" >/dev/null 2>&1; then
   fi
 fi
 if have uv; then
-  uv sync --quiet --no-dev
+  uv sync --quiet --no-dev --locked
 else
-  .venv/bin/pip install --quiet --upgrade pip
-  .venv/bin/pip install --quiet .
+  # A venv made by uv has no pip. Editable: the self-update needs the git checkout.
+  .venv/bin/python -m pip --version >/dev/null 2>&1 || .venv/bin/python -m ensurepip --upgrade
+  .venv/bin/python -m pip install --quiet -e .
 fi
-.venv/bin/python -c "import umbrielmod, tomlkit" || { error "Environment check failed"; exit 1; }
+# from outside the checkout, or this would find the sources instead of the install
+(cd / && "$APP_DIR/.venv/bin/python" -c "import umbrielmod, tomlkit") || { error "Environment check failed"; exit 1; }
 success "Environment ready"
 
 # ----------------------------------------------------------------------------- launcher
 
 step "Installing launcher and desktop entry"
 mkdir -p "$BIN_DIR" "$DESKTOP_DIR" "$ICON_DIR"
-cat > "$BIN_DIR/umbrielmod" <<EOF
-#!/usr/bin/env bash
-# Generated by the UmbrielMod installer. The variables enable the self-update.
-export UMBRIELMOD_MANAGED=1
-export UMBRIELMOD_CHANNEL="$CHANNEL"
-export UMBRIELMOD_BRANCH="$BRANCH"
-export UMBRIELMOD_LAUNCHER="$BIN_DIR/umbrielmod"
-exec "$APP_DIR/.venv/bin/python" -m umbrielmod "\$@"
-EOF
+{
+  echo '#!/usr/bin/env bash'
+  echo '# Generated by the UmbrielMod installer. The variables enable the self-update.'
+  echo 'export UMBRIELMOD_MANAGED=1'
+  printf 'export UMBRIELMOD_CHANNEL=%q\n' "$CHANNEL"
+  printf 'export UMBRIELMOD_BRANCH=%q\n' "$BRANCH"
+  printf 'export UMBRIELMOD_LAUNCHER=%q\n' "$BIN_DIR/umbrielmod"
+  # shellcheck disable=SC2016 # "$@" belongs to the launcher
+  printf 'exec %q -m umbrielmod "$@"\n' "$APP_DIR/.venv/bin/python"
+} > "$BIN_DIR/umbrielmod"
 chmod +x "$BIN_DIR/umbrielmod"
 install -m 644 "$APP_DIR/data/io.github.umbrielmod.svg" "$ICON_DIR/io.github.umbrielmod.svg"
-sed "s|^Exec=.*|Exec=$BIN_DIR/umbrielmod|" "$APP_DIR/data/io.github.umbrielmod.desktop" > "$DESKTOP_DIR/io.github.umbrielmod.desktop"
+sed "s|^Exec=.*|Exec=\"$BIN_DIR/umbrielmod\"|" "$APP_DIR/data/io.github.umbrielmod.desktop" > "$DESKTOP_DIR/io.github.umbrielmod.desktop"
 if have update-desktop-database; then
   update-desktop-database "$DESKTOP_DIR" >/dev/null 2>&1 || true
 fi
@@ -255,3 +289,5 @@ step "Done"
 info "Start UmbrielMod from your launcher or run: umbrielmod"
 info "UmbrielMod updates itself on start (Menu → Update automatically);"
 info "you can also re-run this installer. Remove with --uninstall."
+
+}
