@@ -28,6 +28,8 @@ import re
 import sys
 from pathlib import Path
 
+from . import paths
+
 PACKAGE_DIR = Path(__file__).parent
 LOCALE_DIR = PACKAGE_DIR / "locale"
 SOURCE_LANG = "en"
@@ -120,8 +122,7 @@ def _po_entry(msgid: str, msgstr: str, refs: list[str] | None = None) -> str:
 
 def search_dirs() -> list[Path]:
     dirs = [LOCALE_DIR]
-    data = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
-    dirs.append(data / "umbrielmod" / "locale")
+    dirs.append(paths.data_home() / "umbrielmod" / "locale")
     for d in os.environ.get("UMBRIELMOD_LOCALE_DIR", "").split(":"):
         if d:
             dirs.append(Path(d).expanduser())
@@ -139,7 +140,7 @@ def available_languages() -> dict[str, str]:
     for d in search_dirs():
         for po in sorted(d.glob("*.po")) if d.is_dir() else []:
             try:
-                text = po.read_text()
+                text = po.read_text(encoding="utf-8")
             except OSError:
                 continue
             langs[po.stem] = _po_header_value(text, "Language-Team").split("<")[0].strip() or po.stem
@@ -174,7 +175,7 @@ def load(lang: str | None = None) -> str:
             po = d / f"{code}.po"
             if po.is_file():
                 try:
-                    catalog.update(parse_po(po.read_text()))
+                    catalog.update(parse_po(po.read_text(encoding="utf-8")))
                     found = True
                 except (OSError, ValueError):
                     continue
@@ -197,7 +198,7 @@ def _extract() -> dict[str, list[str]]:
     found: dict[str, list[str]] = {}
     root = PACKAGE_DIR.parent
     for py in sorted(PACKAGE_DIR.rglob("*.py")):
-        tree = ast.parse(py.read_text())
+        tree = ast.parse(py.read_text(encoding="utf-8"))
         for node in ast.walk(tree):
             if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in ("_", "N_")
                     and node.args and isinstance(node.args[0], ast.Constant) and isinstance(node.args[0].value, str)):
@@ -222,7 +223,7 @@ msgstr ""
 def _docs_strings() -> dict[str, list[str]]:
     """Descriptions taken from Umbriel's documentation (data/docs.json)."""
     try:
-        data = json.loads((PACKAGE_DIR / "data" / "docs.json").read_text())
+        data = json.loads((PACKAGE_DIR / "data" / "docs.json").read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return {}
     out: dict[str, list[str]] = {}
@@ -245,7 +246,7 @@ def write_pot() -> Path:
     out = LOCALE_DIR / "umbrielmod.pot"
     LOCALE_DIR.mkdir(exist_ok=True)
     body = "\n\n".join(_po_entry(m, "", refs) for m, refs in found.items())
-    out.write_text(POT_HEADER + "\n" + body + "\n")
+    out.write_text(POT_HEADER + "\n" + body + "\n", encoding="utf-8")
     return out
 
 
@@ -256,7 +257,7 @@ def update_po(po: Path) -> tuple[int, int]:
     ui = set(found)
     for msgid, refs in _docs_strings().items():
         found.setdefault(msgid, []).extend(refs)
-    text = po.read_text()
+    text = po.read_text(encoding="utf-8")
     old = parse_po(text)
     header_end = text.find("\n\n")
     header = text[: header_end if header_end > 0 else len(text)]
@@ -264,7 +265,7 @@ def update_po(po: Path) -> tuple[int, int]:
     obsolete = [m for m in old if m not in found]
     if obsolete:
         body += "\n\n" + "\n\n".join("#~ msgid " + _po_quote(m) + "\n#~ msgstr " + _po_quote(old[m]) for m in obsolete)
-    po.write_text(header + "\n\n" + body + "\n")
+    po.write_text(header + "\n\n" + body + "\n", encoding="utf-8")
     return sum(1 for m in ui if old.get(m)), len(ui)
 
 
@@ -278,11 +279,11 @@ def main(argv: list[str]) -> int:
             if cmd == "update":
                 done, total = update_po(po)
             else:
-                cat = parse_po(po.read_text())
+                cat = parse_po(po.read_text(encoding="utf-8"))
                 done, total = sum(1 for m in found if cat.get(m)), len(found)
             missing = total - done
             docs = _docs_strings()
-            cat = parse_po(po.read_text())
+            cat = parse_po(po.read_text(encoding="utf-8"))
             ddone = sum(1 for m in docs if cat.get(m))
             print(f"{po.name}: {done}/{total} interface strings" + (f", {missing} missing" if missing else "")
                   + f"; {ddone}/{len(docs)} Umbriel doc descriptions")

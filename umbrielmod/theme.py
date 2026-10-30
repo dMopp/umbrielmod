@@ -16,9 +16,12 @@ from __future__ import annotations
 import ctypes
 import json
 import os
+import shutil
 from pathlib import Path
 
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk
+
+from . import paths
 
 TABLER_FONT_NAME = "noctalia-tabler.ttf"
 TABLER_MAP_NAME = "tabler.json"
@@ -26,7 +29,7 @@ TABLER_FAMILY = "noctalia-tabler-icons"
 
 
 def _config_home() -> Path:
-    return Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
+    return paths.config_home()
 
 
 def noctalia_gtk_css() -> Path:
@@ -112,7 +115,7 @@ flowboxchild:hover .effect-card { background-color: alpha(@accent_bg_color, 0.10
 def _v4_palette_css(path: Path) -> str:
     """@define-color rules from a Noctalia v4 ``colors.json`` palette."""
     try:
-        c = json.loads(path.read_text())
+        c = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return ""
     pairs = {
@@ -169,7 +172,10 @@ class Theme:
     def load_palette(self):
         css = ""
         if noctalia_gtk_css().is_file():
-            css = noctalia_gtk_css().read_text()
+            try:
+                css = noctalia_gtk_css().read_text(encoding="utf-8")
+            except (OSError, ValueError):  # being rewritten; the monitor fires again
+                return
             self.source = str(noctalia_gtk_css())
         elif noctalia_v4_colors().is_file():
             css = _v4_palette_css(noctalia_v4_colors())
@@ -207,9 +213,13 @@ FALLBACK_ICONS = {
 
 
 def tabler_font_dir() -> Path | None:
-    """Noctalia's font directory: ``$XDG_DATA_DIRS`` (covers Nix profiles such
-    as ``/run/current-system/sw/share``), then the usual system prefixes."""
-    dirs = [d for d in os.environ.get("XDG_DATA_DIRS", "").split(":") if d]
+    """Noctalia's font directory: user data, ``$XDG_DATA_DIRS`` (covers Nix
+    profiles), next to the ``noctalia`` binary, then the usual system prefixes."""
+    dirs = [str(paths.data_home())]
+    dirs += [d for d in os.environ.get("XDG_DATA_DIRS", "").split(":") if d]
+    binary = shutil.which("noctalia")
+    if binary:
+        dirs.append(str(Path(os.path.realpath(binary)).parent.parent / "share"))
     dirs += ["/usr/share", "/usr/local/share"]
     for d in dirs:
         fonts = Path(d) / "noctalia" / "assets" / "fonts"
@@ -224,7 +234,7 @@ def load_tabler_font() -> bool:
     if fonts is None:
         return False
     try:
-        data = json.loads((fonts / TABLER_MAP_NAME).read_text())
+        data = json.loads((fonts / TABLER_MAP_NAME).read_text(encoding="utf-8"))
         for name, info in data.items():
             cp = info.get("codepoint", "") if isinstance(info, dict) else ""
             if cp.startswith("U+"):

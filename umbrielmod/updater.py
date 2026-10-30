@@ -17,14 +17,20 @@ restart picks up the new version.
 
 from __future__ import annotations
 
+import fcntl
 import os
+import re
 import subprocess
 import tempfile
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 
+from . import paths
+
 ROOT = Path(__file__).resolve().parent.parent
 _ENV = dict(os.environ, GIT_TERMINAL_PROMPT="0", LC_ALL="C")
+RELEASE_TAG = re.compile(r"v\d+(\.\d+)*")
 
 
 @dataclass
@@ -50,8 +56,8 @@ class UpdateInfo:
 def parse_version(text: str) -> tuple[int, ...]:
     parts = []
     for p in text.lstrip("v").split("."):
-        digits = "".join(c for c in p if c.isdigit())
-        parts.append(int(digits) if digits else 0)
+        m = re.match(r"\d+", p)
+        parts.append(int(m.group()) if m else 0)
     return tuple(parts)
 
 
@@ -67,7 +73,7 @@ def is_managed(root: Path = ROOT) -> bool:
 
 
 def _git(root: Path, *args: str, timeout: float = 20) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True, env=_ENV, timeout=timeout)
+    return subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True, encoding="utf-8", errors="replace", env=_ENV, timeout=timeout)
 
 
 def branch(root: Path = ROOT) -> str:
@@ -86,9 +92,28 @@ def latest_release(root: Path = ROOT, timeout: float = 10) -> str | None:
     versions = []
     for line in proc.stdout.splitlines():
         tag = line.rsplit("refs/tags/", 1)[-1]
-        if tag.startswith("v") and tag[1:2].isdigit():
+        if RELEASE_TAG.fullmatch(tag):  # same rule as install.sh: no pre-releases
             versions.append(tag[1:])
     return max(versions, key=parse_version) if versions else ""
+
+
+@contextmanager
+def update_lock():
+    """Yields False while another window or instance is updating."""
+    path = paths.state_home() / "umbrielmod" / "update.lock"
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        fh = open(path, "w", encoding="utf-8")
+    except OSError:
+        yield True
+        return
+    with fh:
+        try:
+            fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            yield False
+            return
+        yield True
 
 
 def check(root: Path = ROOT, timeout: float = 10) -> UpdateInfo | None:
@@ -138,7 +163,7 @@ def apply(info: UpdateInfo, root: Path = ROOT) -> tuple[bool, str]:
             target = ["--version", info.ref] if info.channel == "release" else ["--branch", info.ref]
             proc = subprocess.run(
                 ["bash", path, "--install", "--skip-deps", *target],
-                capture_output=True, text=True, env=env, timeout=900,
+                capture_output=True, text=True, encoding="utf-8", errors="replace", env=env, timeout=900,
             )
         finally:
             os.unlink(path)
@@ -151,10 +176,11 @@ def apply(info: UpdateInfo, root: Path = ROOT) -> tuple[bool, str]:
 
 def summary(root: Path = ROOT) -> str:
     """The installed version: release tag if HEAD is one, else the commit."""
-    tag = _git(root, "describe", "--tags", "--exact-match").stdout.strip()
-    if tag:
-        return tag
-    return _git(root, "log", "-1", "--format=%h %s").stdout.strip()
+    try:
+        tag = _git(root, "describe", "--tags", "--exact-match").stdout.strip()
+        return tag or _git(root, "log", "-1", "--format=%h %s").stdout.strip()
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
 
 
 def launcher() -> str | None:

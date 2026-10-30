@@ -64,10 +64,13 @@ def _kick_pool():
     _POOL_RUNNING[0] = True
 
     def run():
-        while _THUMB_POOL:
-            job = _THUMB_POOL.pop(0)
-            job()
-        _POOL_RUNNING[0] = False
+        try:
+            while _THUMB_POOL:
+                _THUMB_POOL.pop(0)()
+        finally:
+            _POOL_RUNNING[0] = False
+        if _THUMB_POOL:  # queued while this thread was finishing
+            _kick_pool()
 
     threading.Thread(target=run, daemon=True).start()
 
@@ -174,8 +177,11 @@ class ShadersPage(Gtk.Box):
             self.ctx.edit(self.ctx.cfg.main, lambda: (shaders.clear_references(self.ctx.cfg, names),
                                                       shaders.remove_include(self.ctx.cfg, installed)))
             if self.window.save():
-                shaders.remove_files(installed)
-                self.ctx.toast(_("{name} removed").format(name=effect.title))
+                try:
+                    shaders.remove_files(installed)
+                    self.ctx.toast(_("{name} removed").format(name=effect.title))
+                except OSError as exc:
+                    self.ctx.toast(_("Error: {message}").format(message=exc))
                 while self.nav.get_visible_page().get_tag() != "root":
                     self.nav.pop()
             else:
@@ -704,7 +710,7 @@ class PresetPage(Adw.NavigationPage):
         orig = shader_path.with_name(shader_path.name + ".orig")
         if orig.exists():
             def restore():
-                cfg.set_raw(shader_path, orig.read_text())
+                cfg.set_raw(shader_path, orig.read_text(encoding="utf-8"))
                 ctx.changed()
                 self.refresh()
 

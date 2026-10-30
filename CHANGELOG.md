@@ -10,6 +10,41 @@ that section into the next version.
 
 ## [Unreleased]
 
+### Security
+
+- Catalogue effects can no longer change anything but effects. An `effect.toml`
+  with other tables (`keybinds`, `general.autostart`, …), or includes and shaders
+  pointing outside the collection, is skipped; activation examples only apply
+  `effects` and `animation`.
+- Installing an effect no longer copies files from outside the collection through
+  licence links or symlinks.
+- The updater only accepts plain `vX.Y.Z` tags and never runs twice at the same time.
+
+### Fixed
+
+- Saving after a TOML syntax error no longer empties the file. A file that cannot
+  be parsed is never written, and the raw editor shows its text so it can be fixed.
+- Without a user configuration the first save keeps the defaults Umbriel was
+  using (`$XDG_CONFIG_DIRS` or the packaged file) instead of replacing them, and
+  no longer fails when `~/.config/umbriel` does not exist.
+- Backups restore to the right file: files outside the config directory (`-c`)
+  and names containing `__` went to the wrong path, and cleaning up old backups
+  could delete those of another file.
+- Saving reports read-only files (e.g. links into the Nix store), a missing
+  `umbriel` and full disks instead of doing nothing. Writes are flushed to disk.
+- Relative includes outside the config directory and symlink loops in it no
+  longer break validation.
+- Unreadable or non-UTF-8 files, malformed effects and unexpected output from
+  `umbriel` no longer crash the start or the catalogue. Text is always UTF-8,
+  whatever the locale, and empty `XDG_*` variables are ignored.
+- A previous preview is switched back even when the compositor does not answer;
+  *Update schema and descriptions* now also takes effect for `-g` style revisions.
+- An interrupted first download of the shader catalogue no longer blocks later ones.
+- Installer: checks everything the app needs (Python 3.12, pycairo, GTK 4.12,
+  libadwaita 1.7), finds `uv` outside the session's `PATH`, keeps your own
+  translations, works as root and with `doas`, verifies the lock file, and
+  self-updates also work without `uv`.
+
 ## [0.3.1] - 2026-10-21
 
 ### Changed

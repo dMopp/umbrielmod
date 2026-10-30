@@ -13,12 +13,14 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
+from urllib.parse import quote, unquote
 
 import tomlkit
 from tomlkit.container import Container
 from tomlkit.items import AoT, InlineTable, Item, Table, Whitespace
 
-from . import umbriel
+from . import paths, umbriel
+from .i18n import _
 
 Path_ = tuple  # tuple[str | int, ...]
 
@@ -26,17 +28,27 @@ _MISSING = object()
 
 
 def config_dir() -> Path:
-    base = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
-    return base / "umbriel"
+    return paths.config_home() / "umbriel"
 
 
 def default_config_path() -> Path:
     return config_dir() / "config.toml"
 
 
+def packaged_config() -> Path | None:
+    """The file Umbriel falls back to without a user configuration: each
+    ``$XDG_CONFIG_DIRS/umbriel/config.toml``, then the packaged one."""
+    dirs = [Path(d) / "umbriel" for d in os.environ.get("XDG_CONFIG_DIRS", "/etc/xdg").split(":") if d]
+    binary = shutil.which(umbriel.BINARY)
+    if binary:
+        dirs.append(Path(os.path.realpath(binary)).parent.parent / "share" / "umbriel")
+    data_dirs = [d for d in os.environ.get("XDG_DATA_DIRS", "").split(":") if d]
+    dirs += [Path(d) / "umbriel" for d in (*data_dirs, "/usr/local/share", "/usr/share")]
+    return next((d / "config.toml" for d in dirs if (d / "config.toml").is_file()), None)
+
+
 def state_dir() -> Path:
-    base = Path(os.environ.get("XDG_STATE_HOME", Path.home() / ".local" / "state"))
-    return base / "umbrielmod"
+    return paths.state_home() / "umbrielmod"
 
 
 def backup_dir() -> Path:
@@ -130,8 +142,10 @@ def parse_literal(text: str):
 
 
 class TomlFile:
-    def __init__(self, path: Path, *, included_by: "TomlFile | None" = None, optional: bool = False):
+    def __init__(self, path: Path, *, included_by: "TomlFile | None" = None, optional: bool = False,
+                 seed: Path | None = None):
         self.path = Path(path)
+        self.seed = seed  # starting content while the file does not exist yet
         self.included_by = included_by
         self.optional = optional
         self.exists = False
@@ -147,10 +161,20 @@ class TomlFile:
     def reload(self) -> None:
         self.error = None
         try:
-            self.text = self.path.read_text()
+            self.text = self.path.read_text(encoding="utf-8")
             self.exists = True
         except FileNotFoundError:
             self.text, self.exists = "", False
+            if self.seed is not None:
+                try:
+                    self.text = self.seed.read_text(encoding="utf-8")
+                except (OSError, ValueError):
+                    self.text = ""
+        except (OSError, ValueError) as exc:  # unreadable, a directory, not UTF-8
+            self.text, self.exists = "", True
+            self.doc = tomlkit.document()
+            self.error = str(exc)
+            return
         try:
             self.doc = tomlkit.parse(self.text)
         except Exception as exc:
@@ -159,10 +183,12 @@ class TomlFile:
 
     @property
     def dirty(self) -> bool:
-        return self.doc.as_string() != self.text
+        # A file that could not be parsed has an empty document: it must never
+        # count as changed, or saving would replace it with nothing.
+        return self.error is None and self.doc.as_string() != self.text
 
     def as_string(self) -> str:
-        return self.doc.as_string()
+        return self.text if self.error is not None else self.doc.as_string()
 
     def set_text(self, text: str) -> None:
         """Replace the whole document (raw editor); raises ValueError."""
@@ -170,6 +196,7 @@ class TomlFile:
             self.doc = tomlkit.parse(text)
         except Exception as exc:
             raise ValueError(str(exc)) from exc
+        self.error = None
 
     # ----------------------------------------------------------------- paths
 
@@ -306,7 +333,8 @@ class Config:
     """The main config file plus everything it includes."""
 
     def __init__(self, path: Path | None = None):
-        self.main = TomlFile(path or default_config_path())
+        path = Path(path or default_config_path())
+        self.main = TomlFile(path, seed=packaged_config() if path == default_config_path() else None)
         self.files: list[TomlFile] = []
         self.pending_raw: dict[Path, str] = {}  # non-TOML files (shaders) to write on save
         self.undo_stack: list[tuple[Path, str]] = []
@@ -326,7 +354,10 @@ class Config:
         if depth > 8:
             return
         for optional, key in ((False, ("include", "files")), (True, ("include", "optional", "files"))):
-            for entry in tf.get(key, []) or []:
+            entries = tf.get(key, [])
+            for entry in entries if isinstance(entries, list) else []:
+                if not isinstance(entry, str):
+                    continue
                 p = Path(os.path.expanduser(str(entry)))
                 if not p.is_absolute():
                     p = Path(os.path.normpath(tf.real_path.parent / p))
@@ -358,7 +389,7 @@ class Config:
         real = Path(os.path.realpath(path))
         if real in self.pending_raw:
             return self.pending_raw[real]
-        return real.read_text()
+        return real.read_text(encoding="utf-8")
 
     def set_raw(self, path: Path, text: str) -> None:
         self.pending_raw[Path(os.path.realpath(path))] = text
@@ -367,9 +398,9 @@ class Config:
         out = {}
         for p, text in self.pending_raw.items():
             try:
-                if p.read_text() == text:
+                if p.read_text(encoding="utf-8") == text:
                     continue
-            except OSError:
+            except (OSError, ValueError):
                 pass
             out[p] = text
         return out
@@ -432,10 +463,12 @@ class Config:
     def changed_on_disk(self) -> bool:
         for f in self.files:
             try:
-                on_disk = f.path.read_text()
+                on_disk = f.path.read_text(encoding="utf-8")
             except FileNotFoundError:
-                on_disk = ""
-            if on_disk != f.text:
+                on_disk = None
+            except (OSError, ValueError):
+                continue
+            if on_disk != (f.text if f.exists else None):
                 return True
         return False
 
@@ -448,24 +481,51 @@ class Config:
         if overrides is None:
             overrides = {f.real_path: f.as_string() for f in self.dirty_files()}
         src = self.dir
-        with tempfile.TemporaryDirectory(prefix="umbrielmod-") as tmp:
-            root = Path(tmp) / "umbriel"
-            shutil.copytree(
-                src, root, symlinks=False,
-                ignore=shutil.ignore_patterns("*.bak", "*.png", "*.gif", "*.jpg", ".git"),
-                ignore_dangling_symlinks=True,
-            )
-            for real, text in overrides.items():
-                try:
-                    rel = Path(real).relative_to(src)
-                except ValueError:
-                    continue  # outside the config dir: validated in place
-                target = root / rel
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(text)
-            main_rel = self.main.real_path.relative_to(src)
-            ok, message = umbriel.validate(str(root / main_rel))
-            return ok, message.replace(str(root), str(src))
+        try:
+            with tempfile.TemporaryDirectory(prefix="umbrielmod-") as tmp:
+                root = Path(tmp) / "umbriel"
+                _copy_config_dir(src, root)
+                for real, text in overrides.items():
+                    try:
+                        rel = Path(real).relative_to(src)
+                    except ValueError:
+                        continue  # outside the config dir: validated in place
+                    target = root / rel
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_text(text, encoding="utf-8")
+                self._pin_outside_includes(src, root)
+                main_rel = self.main.real_path.relative_to(src)
+                ok, message = umbriel.validate(str(root / main_rel))
+                return ok, message.replace(str(root), str(src))
+        except OSError as exc:
+            return False, str(exc)
+
+    def _pin_outside_includes(self, src: Path, root: Path) -> None:
+        """Relative includes leaving the config dir (``../noctalia/x.toml``)
+        do not exist below the scratch copy: make them absolute there."""
+        for f in self.files:
+            try:
+                target = root / f.real_path.relative_to(src)
+                doc = tomlkit.parse(target.read_text(encoding="utf-8"))
+            except Exception:  # outside the config dir, unreadable or invalid
+                continue
+            changed = False
+            for table in (doc.get("include"), (doc.get("include") or {}).get("optional")):
+                entries = table.get("files") if isinstance(table, dict) else None
+                if not isinstance(entries, list):
+                    continue
+                pinned = []
+                for entry in entries:
+                    p = Path(os.path.expanduser(str(entry)))
+                    if not p.is_absolute():
+                        real = Path(os.path.normpath(f.real_path.parent / p))
+                        if not real.is_relative_to(src):
+                            p, changed = real, True
+                    pinned.append(str(p))
+                if changed:
+                    table["files"] = pinned
+            if changed:
+                target.write_text(doc.as_string(), encoding="utf-8")
 
     def save(self) -> tuple[bool, str]:
         dirty = self.dirty_files()
@@ -475,23 +535,65 @@ class Config:
         ok, message = self.validate()
         if not ok:
             return False, message
+        blocked = [p for p in (*raw, *(f.real_path for f in dirty)) if not _writable(p)]
+        if blocked:
+            return False, _("These files cannot be written (read-only or managed by another tool?):\n{files}").format(
+                files="\n".join(map(str, blocked)))
         stamp = _dt.datetime.now().strftime("%Y%m%d-%H%M%S")
-        for path, text in raw.items():
-            backup_file(path, stamp)
-            atomic_write(path, text)
+        try:
+            for path, text in raw.items():
+                backup_file(path, stamp)
+                atomic_write(path, text)
+                self.pending_raw.pop(path, None)
+            for f in dirty:
+                text = f.as_string()
+                backup_file(f.real_path, stamp)
+                atomic_write(f.real_path, text)
+                f.text = text
+                f.exists = True
+            if raw and not dirty and self.main.exists:
+                # Shaders are compiled when the config loads; rewrite the main file
+                # unchanged so Umbriel's config watcher picks the new source up.
+                atomic_write(self.main.real_path, self.main.as_string())
+        except OSError as exc:
+            return False, str(exc)
         self.pending_raw.clear()
-        for f in dirty:
-            text = f.as_string()
-            backup_file(f.real_path, stamp)
-            atomic_write(f.real_path, text)
-            f.text = text
-            f.exists = True
-        if raw and not dirty:
-            # Shaders are compiled when the config loads; rewrite the main file
-            # unchanged so Umbriel's config watcher picks the new source up.
-            atomic_write(self.main.real_path, self.main.as_string())
         self.resolve_includes()
         return True, message
+
+
+def _copy_config_dir(src: Path, root: Path) -> None:
+    """Scratch copy for validation. Skips what a config cannot need and what
+    would break copying (sockets, symlinks back to a parent directory)."""
+    if not src.is_dir():
+        root.mkdir(parents=True)
+        return
+    by_pattern = shutil.ignore_patterns("*.bak", "*.png", "*.gif", "*.jpg", ".git")
+
+    def ignore(directory: str, names: list[str]) -> set[str]:
+        skip = set(by_pattern(directory, names))
+        here = os.path.realpath(directory)
+        for name in names:
+            p = os.path.join(directory, name)
+            real = os.path.realpath(p)
+            if here == real or here.startswith(real + os.sep) or not (os.path.isfile(p) or os.path.isdir(p)):
+                skip.add(name)
+        return skip
+
+    try:
+        shutil.copytree(src, root, ignore=ignore, copy_function=shutil.copyfile, ignore_dangling_symlinks=True)
+    except shutil.Error:
+        pass  # unreadable files: the validator reports whatever is really needed
+    for directory, _dirs, _files in os.walk(root):
+        os.chmod(directory, 0o700)  # the source may be read-only (e.g. the Nix store)
+
+
+def _writable(path: Path) -> bool:
+    """Files are replaced atomically, so what counts is the directory."""
+    parent = Path(path).parent
+    while not parent.exists() and parent != parent.parent:
+        parent = parent.parent
+    return os.access(parent, os.W_OK | os.X_OK)
 
 
 def atomic_write(path: Path, text: str) -> None:
@@ -499,8 +601,10 @@ def atomic_write(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".umbrielmod", dir=path.parent)
     try:
-        with os.fdopen(fd, "w") as fh:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
             fh.write(text)
+            fh.flush()
+            os.fsync(fh.fileno())
         if path.exists():
             shutil.copymode(path, tmp)
         os.replace(tmp, path)
@@ -515,18 +619,29 @@ def backup_file(path: Path, stamp: str | None = None, keep: int = 50) -> Path | 
     if not path.exists():
         return None
     stamp = stamp or _dt.datetime.now().strftime("%Y%m%d-%H%M%S")
-    try:
-        rel = path.relative_to(config_dir().resolve())
-    except ValueError:
-        rel = Path(path.name)
-    name = str(rel).replace(os.sep, "__")
+    name = _backup_name(path)
     dest = backup_dir() / f"{stamp}__{name}"
     dest.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(path, dest)
-    backups = sorted(backup_dir().glob(f"*__{name}"))
+    backups = sorted(f for f in backup_dir().iterdir() if f.name.partition("__")[2] == name)
     for old in backups[:-keep]:
         old.unlink(missing_ok=True)
     return dest
+
+
+def _backup_name(path: Path) -> str:
+    """Path relative to the config dir (absolute outside it) as one file name."""
+    try:
+        rel = str(path.relative_to(config_dir().resolve()))
+    except ValueError:
+        rel = str(path)
+    return quote(rel, safe="").replace("__", "%5F%5F")
+
+
+def _backup_original(name: str) -> Path:
+    # names without "%" come from before paths were quoted
+    rel = unquote(name) if "%" in name else name.replace("__", os.sep)
+    return config_dir() / rel
 
 
 def list_backups() -> list[tuple[_dt.datetime, Path, Path]]:
@@ -542,5 +657,5 @@ def list_backups() -> list[tuple[_dt.datetime, Path, Path]]:
             when = _dt.datetime.strptime(stamp, "%Y%m%d-%H%M%S")
         except ValueError:
             continue
-        out.append((when, f, config_dir() / name.replace("__", os.sep)))
+        out.append((when, f, _backup_original(name)))
     return sorted(out, reverse=True)

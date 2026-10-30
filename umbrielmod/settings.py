@@ -3,18 +3,18 @@
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
+
+from . import paths
 
 
 def path() -> Path:
-    base = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
-    return base / "umbrielmod" / "settings.json"
+    return paths.config_home() / "umbrielmod" / "settings.json"
 
 
 def load() -> dict:
     try:
-        return json.loads(path().read_text())
+        return json.loads(path().read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return {}
 
@@ -22,7 +22,7 @@ def load() -> dict:
 def save(data: dict) -> None:
     p = path()
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(data, indent=2))
+    p.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 
 def get(key: str, default=None):

@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import json
+import os
 import re
+import select
 import shutil
 import subprocess
+import time
 from dataclasses import dataclass, field
 
 BINARY = "umbriel"
@@ -23,7 +26,7 @@ def available() -> bool:
 def _run(*args: str, timeout: float = 10.0) -> subprocess.CompletedProcess[str]:
     try:
         return subprocess.run(
-            [BINARY, *args], capture_output=True, text=True, timeout=timeout
+            [BINARY, *args], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout
         )
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise UmbrielError(str(exc)) from exc
@@ -37,19 +40,28 @@ def schema_json() -> dict:
     proc = _run("config", "schema", "--json")
     if proc.returncode != 0:
         raise UmbrielError(proc.stderr.strip() or "umbriel config schema failed")
-    return json.loads(proc.stdout)
+    try:
+        return json.loads(proc.stdout)
+    except ValueError as exc:
+        raise UmbrielError(f"umbriel config schema: {exc}") from exc
 
 
 def validate(config_path: str) -> tuple[bool, str]:
     """Run `umbriel config validate -c <path>`; returns (ok, message)."""
-    proc = _run("config", "validate", "-c", config_path)
+    try:
+        proc = _run("config", "validate", "-c", config_path)
+    except UmbrielError as exc:
+        return False, str(exc)
     message = _ANSI_RE.sub("", proc.stdout + proc.stderr).strip()
     return proc.returncode == 0, message
 
 
 def msg(action: str) -> tuple[bool, str]:
     """Send an action to the running compositor."""
-    proc = _run("msg", action)
+    try:
+        proc = _run("msg", action)
+    except UmbrielError as exc:
+        return False, str(exc)
     return proc.returncode == 0, (proc.stdout + proc.stderr).strip()
 
 
@@ -183,7 +195,12 @@ def outputs() -> list[Output]:
         proc = _run("outputs")
     except UmbrielError:
         return []
-    return parse_outputs(proc.stdout) if proc.returncode == 0 else []
+    if proc.returncode != 0:
+        return []
+    try:
+        return parse_outputs(proc.stdout)
+    except ValueError:  # output format of another Umbriel version
+        return []
 
 
 # --------------------------------------------------------------------------- windows
@@ -192,23 +209,30 @@ def outputs() -> list[Output]:
 def windows() -> list[dict]:
     """Snapshot of open windows (first event of `umbriel subscribe windows`)."""
     try:
-        proc = subprocess.Popen(
-            [BINARY, "subscribe", "windows"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True
-        )
+        proc = subprocess.Popen([BINARY, "subscribe", "windows"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     except OSError:
         return []
+    line = b""
     try:
-        import select
-
-        ready, _w, _x = select.select([proc.stdout], [], [], 2.0)
-        line = proc.stdout.readline() if ready else ""
+        fd = proc.stdout.fileno()
+        deadline = time.monotonic() + 2.0
+        while b"\n" not in line and (left := deadline - time.monotonic()) > 0:
+            if not select.select([fd], [], [], left)[0]:
+                break
+            chunk = os.read(fd, 65536)
+            if not chunk:
+                break
+            line += chunk
     finally:
         proc.kill()
         proc.wait()
+        proc.stdout.close()
     try:
-        return list(json.loads(line).get("data", []))
+        data = json.loads(line.split(b"\n", 1)[0].decode("utf-8", "replace"))
     except ValueError:
         return []
+    items = data.get("data") if isinstance(data, dict) else None
+    return [w for w in items if isinstance(w, dict)] if isinstance(items, list) else []
 
 
 def config_replace(path: str) -> tuple[bool, str]:

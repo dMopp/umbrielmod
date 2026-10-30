@@ -278,7 +278,7 @@ class MainWindow(Adw.ApplicationWindow):
             self.toast(_("Saved – Umbriel applies the changes automatically"))
             self._watch_files()
         else:
-            self.error_dialog(_("Invalid configuration – not saved"), message)
+            self.error_dialog(_("Configuration not saved"), message)
         self._update_state()
         return ok
 
@@ -344,14 +344,17 @@ class MainWindow(Adw.ApplicationWindow):
             self.toast(_("Checking for updates…"))
 
         def work():
-            info = updater.check()
-            if info is None or not info.available:
-                GLib.idle_add(lambda: (not quiet and self.toast(
-                    _("Could not check for updates") if info is None else _("UmbrielMod is up to date"))) and False)
-                return
-            GLib.idle_add(lambda: self.toast(_("Installing an UmbrielMod update…")) and False)
-            ok, log = updater.apply(info)
-            GLib.idle_add(done, ok, log)
+            with updater.update_lock() as free:
+                if not free:  # already running in this or another window
+                    return
+                info = updater.check()
+                if info is None or not info.available:
+                    GLib.idle_add(lambda: (not quiet and self.toast(
+                        _("Could not check for updates") if info is None else _("UmbrielMod is up to date"))) and False)
+                    return
+                GLib.idle_add(lambda: self.toast(_("Installing an UmbrielMod update…")) and False)
+                ok, log = updater.apply(info)
+                GLib.idle_add(done, ok, log)
 
         def done(ok, log):
             if ok:
@@ -465,7 +468,9 @@ class MainWindow(Adw.ApplicationWindow):
             self.ctx.cfg.reload()
             self._watch_files()
             self.refresh_all()
-            self.toast(_("The configuration changed on disk and was reloaded"))
+            broken = next((f for f in self.ctx.cfg.files if f.error), None)
+            self.toast(_("{file} is not valid TOML – fix it before saving").format(file=broken.path.name) if broken
+                       else _("The configuration changed on disk and was reloaded"))
         return False
 
     def _on_close(self, *_):

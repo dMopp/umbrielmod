@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import traceback
 from pathlib import Path
 
 import gi
@@ -45,7 +46,11 @@ class App(Adw.Application):
         ctx = AppContext(cfg, schema, Docs.load(schema.revision))
         from .window import MainWindow
 
-        MainWindow(self, ctx).present()
+        try:
+            MainWindow(self, ctx).present()
+        except Exception as exc:  # a window that cannot be built must not vanish silently
+            traceback.print_exc()
+            self._fatal(str(exc))
 
     def _fatal(self, message: str):
         win = Adw.ApplicationWindow(application=self, title="UmbrielMod", default_width=520, default_height=260)

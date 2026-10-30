@@ -9,11 +9,9 @@ project are tuples such as ("output", "HDMI-A-1", "mode") or
 from __future__ import annotations
 
 import json
-import os
 from dataclasses import dataclass, field
-from pathlib import Path
 
-from . import umbriel
+from . import paths, umbriel
 
 CONTAINER_TYPES = {"table", "map", "array_of_tables"}
 
@@ -62,7 +60,7 @@ class Schema:
     @classmethod
     def load(cls) -> "Schema":
         """Load the schema from the umbriel binary, cached per revision."""
-        cache_dir = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "umbrielmod"
+        cache_dir = paths.cache_home() / "umbrielmod"
         try:
             ver = umbriel.version().replace(" ", "_").replace("/", "_")
         except umbriel.UmbrielError:
@@ -70,14 +68,21 @@ class Schema:
         cache = cache_dir / f"schema-{ver}.json" if ver else None
         if cache and cache.exists():
             try:
-                return cls(json.loads(cache.read_text()))
-            except (ValueError, KeyError):
+                return cls(json.loads(cache.read_text(encoding="utf-8")))
+            except (OSError, ValueError, KeyError, TypeError):
                 pass
         data = umbriel.schema_json()
+        try:
+            schema = cls(data)
+        except (KeyError, TypeError) as exc:
+            raise umbriel.UmbrielError(f"unexpected schema format: {exc}") from exc
         if cache:
-            cache_dir.mkdir(parents=True, exist_ok=True)
-            cache.write_text(json.dumps(data))
-        return cls(data)
+            try:
+                cache_dir.mkdir(parents=True, exist_ok=True)
+                cache.write_text(json.dumps(data), encoding="utf-8")
+            except OSError:
+                pass  # only a cache
+        return schema
 
     # ----------------------------------------------------------------- lookups
 

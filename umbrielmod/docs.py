@@ -18,6 +18,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from . import paths
+
 DOCS_SITE = "https://docs.noctalia.dev/umbriel"
 REPO_URL = "https://github.com/noctalia-dev/umbriel"
 BUNDLED = Path(__file__).parent / "data" / "docs.json"
@@ -34,8 +36,7 @@ def section_url(page: str, heading: str) -> str:
 
 
 def cache_dir() -> Path:
-    base = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
-    return base / "umbrielmod"
+    return paths.cache_home() / "umbrielmod"
 
 
 # --------------------------------------------------------------------------- extraction
@@ -145,7 +146,7 @@ def extract(repo: Path, schema_paths: list[str]) -> dict:
     docs = sorted((repo / "docs" / "user").glob("*.md"))
     for md in docs:
         page = md.stem
-        lines = md.read_text().splitlines()
+        lines = md.read_text(encoding="utf-8").splitlines()
         heading, anchor = page, ""
         contexts: list[str] = []
         in_code = False
@@ -215,7 +216,7 @@ def extract(repo: Path, schema_paths: list[str]) -> dict:
         pages[page] = {"title": _title(lines) or page, "intro": intro}
     _from_example(repo / "examples" / "config.toml", matcher, options)
     _inherit(schema_paths, options)
-    sections = {md.stem: _sections(md.read_text().splitlines()) for md in docs}
+    sections = {md.stem: _sections(md.read_text(encoding="utf-8").splitlines()) for md in docs}
     _deep_links(schema_paths, options, sections)
     for v in options.values():
         v.pop("scoped", None)
@@ -318,7 +319,7 @@ def _deep_links(schema_paths: list[str], options: dict, sections: dict) -> None:
 def _from_example(path: Path, matcher: "_Matcher", options: dict) -> None:
     """Use the comment block above a (commented-out) key in the example config."""
     try:
-        lines = path.read_text().splitlines()
+        lines = path.read_text(encoding="utf-8").splitlines()
     except OSError:
         return
     contexts: list[str] = []
@@ -425,28 +426,31 @@ class Docs:
 
     @classmethod
     def load(cls, revision: str = "") -> "Docs":
-        candidates = []
-        if revision:
-            candidates.append(cache_dir() / f"docs-{revision}.json")
-        candidates.append(BUNDLED)
+        candidates = [cache_dir() / f"docs-{_revision_sha(revision) or 'latest'}.json", BUNDLED]
         for path in candidates:
             try:
-                return cls(json.loads(path.read_text()))
+                return cls(json.loads(path.read_text(encoding="utf-8")))
             except (OSError, ValueError):
                 continue
         return cls()
+
+
+def _revision_sha(revision: str) -> str:
+    """The commit of a revision such as ``0.1.0-gabc123``; "" when unusable."""
+    sha = revision.split("-g")[-1] if "-g" in revision else revision
+    return sha if re.fullmatch(r"[0-9A-Za-z][\w.+-]*", sha) else ""
 
 
 def refresh(revision: str, schema_paths: list[str]) -> tuple[bool, str]:
     """Fetch Umbriel's docs at ``revision`` and rebuild the description cache."""
     repo = cache_dir() / "umbriel-src"
     env = dict(os.environ, GIT_TERMINAL_PROMPT="0")
-    sha = revision.split("-g")[-1] if "-g" in revision else revision
+    sha = _revision_sha(revision)
     try:
         if not (repo / ".git").exists():
             repo.parent.mkdir(parents=True, exist_ok=True)
             cmd = ["git", "clone", "--filter=blob:none", "--no-checkout", REPO_URL, str(repo)]
-            proc = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=300)
+            proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env, timeout=300)
             if proc.returncode != 0:
                 return False, proc.stderr.strip()
         else:
@@ -454,17 +458,22 @@ def refresh(revision: str, schema_paths: list[str]) -> tuple[bool, str]:
         target = sha or "origin/HEAD"
         proc = subprocess.run(
             ["git", "-C", str(repo), "checkout", "-q", "--force", target, "--", "docs/user"],
-            capture_output=True, text=True, env=env, timeout=300,
+            capture_output=True, text=True, encoding="utf-8", errors="replace", env=env, timeout=300,
         )
         if proc.returncode != 0:
             return False, proc.stderr.strip()
     except (OSError, subprocess.TimeoutExpired) as exc:
         return False, str(exc)
-    data = extract(repo, schema_paths)
-    data["revision"] = sha
-    out = cache_dir() / f"docs-{sha or 'latest'}.json"
-    out.write_text(json.dumps(data, indent=1, ensure_ascii=False))
-    return True, f"{len(data['options'])} von {len(schema_paths)} Optionen beschrieben"
+    try:
+        data = extract(repo, schema_paths)
+        data["revision"] = sha
+        out = cache_dir() / f"docs-{sha or 'latest'}.json"
+        out.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
+    except (OSError, ValueError) as exc:
+        return False, str(exc)
+    from .i18n import _
+
+    return True, _("{count} of {total} options described").format(count=len(data["options"]), total=len(schema_paths))
 
 
 def main(argv: list[str]) -> int:
@@ -478,10 +487,10 @@ def main(argv: list[str]) -> int:
     schema = Schema.load()
     leaf_paths = [p for p, o in schema.options.items() if not o.is_container]
     data = extract(repo, list(schema.options))
-    rev = subprocess.run(["git", "-C", str(repo), "rev-parse", "--short=12", "HEAD"], capture_output=True, text=True).stdout.strip()
+    rev = subprocess.run(["git", "-C", str(repo), "rev-parse", "--short=12", "HEAD"], capture_output=True, text=True, encoding="utf-8", errors="replace").stdout.strip()
     data["revision"] = rev
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(data, indent=1, ensure_ascii=False, sort_keys=True))
+    out.write_text(json.dumps(data, indent=1, ensure_ascii=False, sort_keys=True), encoding="utf-8")
     covered = [p for p in leaf_paths if data["options"].get(p, {}).get("desc")]
     linked = [p for p in leaf_paths if "#" in data["options"].get(p, {}).get("doc", "")]
     print(f"{out}: {len(covered)}/{len(leaf_paths)} leaf options described, "

@@ -5,7 +5,7 @@ from umbrielmod import updater
 
 
 def git(*args, cwd):
-    subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args], cwd=cwd, check=True,
+    subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", "-c", "tag.gpgsign=false", *args], cwd=cwd, check=True,
                    capture_output=True)
 
 
