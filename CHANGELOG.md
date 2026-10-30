@@ -10,6 +10,18 @@ that section into the next version.
 
 ## [Unreleased]
 
+### Fixed
+
+- Live preview, the action list and the keybind editor work with current Umbriel,
+  where action arguments are separate words (`workspace-switch 1` instead of
+  `workspace-switch:1`). The action list was missing every action with arguments,
+  and new keybinds with arguments were rejected as invalid. Binds in the old form
+  are still shown and are rewritten when edited.
+- A `config.toml` linked from somewhere else, such as the Nix store, is treated as
+  living where it is linked in, as Umbriel does: live preview no longer tries to
+  write next to the link's target, validation no longer copies that directory
+  (with the Nix store, all of it), and its relative includes are found.
+
 ## [0.5.0] - 2026-10-30
 
 ### Added

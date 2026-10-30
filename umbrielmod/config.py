@@ -158,6 +158,11 @@ class TomlFile:
     def real_path(self) -> Path:
         return Path(os.path.realpath(self.path))
 
+    @property
+    def abs_path(self) -> Path:
+        """Where the file is linked in. Umbriel resolves relative includes from here."""
+        return Path(os.path.abspath(self.path))
+
     def reload(self) -> None:
         self.error = None
         try:
@@ -343,7 +348,9 @@ class Config:
 
     @property
     def dir(self) -> Path:
-        return self.main.real_path.parent
+        # not the link's target: a config linked into the Nix store lives next to
+        # its includes in ~/.config/umbriel, not in /nix/store
+        return self.main.abs_path.parent
 
     def resolve_includes(self) -> None:
         old = {f.real_path: f for f in self.files[1:]}
@@ -360,7 +367,7 @@ class Config:
                     continue
                 p = Path(os.path.expanduser(str(entry)))
                 if not p.is_absolute():
-                    p = Path(os.path.normpath(tf.real_path.parent / p))
+                    p = Path(os.path.normpath(tf.abs_path.parent / p))
                 real = Path(os.path.realpath(p))
                 if real in seen:
                     continue
@@ -486,28 +493,37 @@ class Config:
                 root = Path(tmp) / "umbriel"
                 _copy_config_dir(src, root)
                 for real, text in overrides.items():
-                    try:
-                        rel = Path(real).relative_to(src)
-                    except ValueError:
+                    rel = self._in_config_dir(Path(real))
+                    if rel is None:
                         continue  # outside the config dir: validated in place
                     target = root / rel
                     target.parent.mkdir(parents=True, exist_ok=True)
                     target.write_text(text, encoding="utf-8")
                 self._pin_outside_includes(src, root)
-                main_rel = self.main.real_path.relative_to(src)
-                ok, message = umbriel.validate(str(root / main_rel))
+                ok, message = umbriel.validate(str(root / self._in_config_dir(self.main.real_path)))
                 return ok, message.replace(str(root), str(src))
         except OSError as exc:
             return False, str(exc)
+
+    def _in_config_dir(self, real: Path) -> Path | None:
+        """Path of a file relative to the config dir, also when it is linked in."""
+        path = next((f.abs_path for f in self.files if f.real_path == real), real)
+        for base in (self.dir, Path(os.path.realpath(self.dir))):
+            if path.is_relative_to(base):
+                return path.relative_to(base)
+        return None
 
     def _pin_outside_includes(self, src: Path, root: Path) -> None:
         """Relative includes leaving the config dir (``../noctalia/x.toml``)
         do not exist below the scratch copy: make them absolute there."""
         for f in self.files:
+            rel = self._in_config_dir(f.real_path)
+            if rel is None:
+                continue
+            target = root / rel
             try:
-                target = root / f.real_path.relative_to(src)
                 doc = tomlkit.parse(target.read_text(encoding="utf-8"))
-            except Exception:  # outside the config dir, unreadable or invalid
+            except Exception:  # unreadable or invalid
                 continue
             changed = False
             for table in (doc.get("include"), (doc.get("include") or {}).get("optional")):
@@ -518,7 +534,7 @@ class Config:
                 for entry in entries:
                     p = Path(os.path.expanduser(str(entry)))
                     if not p.is_absolute():
-                        real = Path(os.path.normpath(f.real_path.parent / p))
+                        real = Path(os.path.normpath(f.abs_path.parent / p))
                         if not real.is_relative_to(src):
                             p, changed = real, True
                     pinned.append(str(p))
@@ -568,7 +584,7 @@ def _copy_config_dir(src: Path, root: Path) -> None:
     if not src.is_dir():
         root.mkdir(parents=True)
         return
-    by_pattern = shutil.ignore_patterns("*.bak", "*.png", "*.gif", "*.jpg", ".git")
+    by_pattern = shutil.ignore_patterns("*.bak", "*.png", "*.gif", "*.jpg", ".git", ".umbrielmod-preview.toml")
 
     def ignore(directory: str, names: list[str]) -> set[str]:
         skip = set(by_pattern(directory, names))

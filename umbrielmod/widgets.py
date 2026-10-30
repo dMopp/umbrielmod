@@ -144,7 +144,7 @@ def suggestions(ctx: AppContext, opt: Option) -> list[tuple[str, str]] | None:
         out.append(("0.05,0.9,0.1,1.0", _("Bézier curve")))
         return out
     if fmt == "action":
-        return [(a.name + (":" if a.takes_arg else ""), a.description) for a in ctx.actions]
+        return [(a.name + (" " if a.takes_arg else ""), a.description) for a in ctx.actions]
     if opt.values:
         return [(v, "") for v in opt.values]
     if fmt == "output_mode":

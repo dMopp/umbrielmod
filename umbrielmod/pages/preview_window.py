@@ -289,7 +289,7 @@ class PreviewWindow(Adw.Window):
             def move(dx):
                 wid = preview.find_window_id(_("Animation test"))
                 if wid:
-                    umbriel.msg(f"window-move-by:{dx}/0/{wid}")
+                    umbriel.msg("window-move-by", str(dx), "0", "--window", wid)
 
             self._run([
                 (0, lambda: holder.setdefault("w", self._test_window()).present()),
