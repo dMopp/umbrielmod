@@ -96,7 +96,7 @@ fi
 if [[ "$SKIP_DEPS" -eq 0 ]] && { [[ -e /etc/NIXOS ]] || grep -qs '^ID=nixos' /etc/os-release; }; then
   step "NixOS detected"
   info "Install UmbrielMod from its flake instead of this script:"
-  info "  nix profile install github:dMopp/umbrielmod"
+  info "  nix profile add github:dMopp/umbrielmod"
   info "or add it to your configuration (see the README, section NixOS)."
   info "Rerun with --skip-deps to use this installer anyway."
   exit 1

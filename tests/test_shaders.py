@@ -1,3 +1,4 @@
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -92,3 +93,43 @@ def test_install_activate_uninstall(env: Path):
     assert cfg.main.get(("effects",)) is None
     shaders.remove_files(eff)
     assert not (shaders.install_root() / "border").exists()
+
+
+def test_parse_progress():
+    assert shaders.parse_progress("Receiving objects:  50% (1/2), 1.00 MiB | 2.00 MiB/s") == pytest.approx(0.425)
+    assert shaders.parse_progress("Resolving deltas: 100% (3/3), done.") == pytest.approx(0.95)
+    assert shaders.parse_progress("Updating files: 100% (9/9), done.") == pytest.approx(1.0)
+    assert shaders.parse_progress("remote: Compressing objects: 100% (9/9), done.") is None
+    assert shaders.parse_progress("fatal: repository not found") is None
+
+
+def _git(*args, cwd):
+    subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", *args],
+                   cwd=cwd, check=True, capture_output=True)
+
+
+def test_sync_repo_reports_rising_progress(tmp_path, monkeypatch):
+    src = tmp_path / "src"
+    src.mkdir()
+    _git("init", "-q", "-b", "main", cwd=src)
+    (src / "f.txt").write_text("x" * 100_000)
+    _git("add", "f.txt", cwd=src)
+    _git("commit", "-qm", "one", cwd=src)
+    monkeypatch.setattr(shaders, "REPO_URL", f"file://{src}")
+    seen: list[float] = []
+    repo = tmp_path / "cache" / "repo"
+
+    ok, _msg = shaders.sync_repo(repo, seen.append)
+    assert ok and (repo / "f.txt").exists() and not repo.with_name("repo.new").exists()
+    assert seen and seen == sorted(seen) and 0 <= seen[0] and seen[-1] <= 1
+
+    (src / "f.txt").write_text("y")
+    _git("commit", "-qam", "two", cwd=src)
+    ok, _msg = shaders.sync_repo(repo, seen.append)
+    assert ok and (repo / "f.txt").read_text() == "y"
+
+
+def test_sync_repo_returns_git_errors(tmp_path, monkeypatch):
+    monkeypatch.setattr(shaders, "REPO_URL", f"file://{tmp_path}/missing")
+    ok, msg = shaders.sync_repo(tmp_path / "cache" / "repo", lambda f: None)
+    assert not ok and "missing" in msg and not (tmp_path / "cache" / "repo").exists()

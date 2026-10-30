@@ -212,6 +212,8 @@ class CatalogView(Gtk.Box):
                   doc_button(page.ctx, f"{DOCS_SITE}/effects/", _("Effects"))):
             bar.append(w)
         self.append(bar)
+        self.progress = Gtk.ProgressBar(visible=False, margin_start=12, margin_end=12, margin_bottom=6)
+        self.append(self.progress)
 
         self.flow = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, homogeneous=True, min_children_per_line=2,
                                 max_children_per_line=6, row_spacing=6, column_spacing=6,
@@ -225,9 +227,9 @@ class CatalogView(Gtk.Box):
                 repo=shaders.REPO_SLUG, dir=shaders.cache_repo_dir()),
             vexpand=True,
         )
-        dl = Gtk.Button(label=_("Download"), css_classes=["pill", "suggested-action"], halign=Gtk.Align.CENTER)
-        dl.connect("clicked", lambda *_: self.sync())
-        self.empty.set_child(dl)
+        self.dl_btn = Gtk.Button(label=_("Download"), css_classes=["pill", "suggested-action"], halign=Gtk.Align.CENTER)
+        self.dl_btn.connect("clicked", lambda *_: self.sync())
+        self.empty.set_child(self.dl_btn)
         self.append(self.scroller)
         self.append(self.empty)
         self.refresh()
@@ -274,15 +276,34 @@ class CatalogView(Gtk.Box):
 
     def sync(self):
         self.sync_btn.set_sensitive(False)
+        self.dl_btn.set_sensitive(False)
         self.status.set_label(_("Loading…"))
         self.page.ctx.toast(_("Fetching the community shaders from GitHub…"))
+        self.progress.set_fraction(0)
+        self.progress.set_show_text(False)
+        self.progress.set_visible(True)
+
+        def pulse():  # until git reports the first percentage
+            if self.progress.get_show_text() or not self.progress.get_visible():
+                return False
+            self.progress.pulse()
+            return True
+
+        def show(fraction):
+            self.progress.set_show_text(True)
+            self.progress.set_fraction(fraction)
+            return False
+
+        GLib.timeout_add(150, pulse)
 
         def work():
-            ok, msg = shaders.sync_repo()
+            ok, msg = shaders.sync_repo(progress=lambda f: GLib.idle_add(show, f))
             GLib.idle_add(done, ok, msg)
 
         def done(ok, msg):
             self.sync_btn.set_sensitive(True)
+            self.dl_btn.set_sensitive(True)
+            self.progress.set_visible(False)
             self.refresh()
             self.page.installed_page.refresh()
             self.page.ctx.toast(_("Catalogue updated ({revision})").format(revision=msg) if ok
