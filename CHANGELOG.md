@@ -10,6 +10,8 @@ that section into the next version.
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-10-30
+
 ### Fixed
 
 - Live preview, the action list and the keybind editor work with current Umbriel,
@@ -154,7 +156,8 @@ that section into the next version.
   constants.
 - `curl … | bash` installer.
 
-[Unreleased]: https://github.com/dMopp/umbrielmod/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/dMopp/umbrielmod/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/dMopp/umbrielmod/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/dMopp/umbrielmod/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/dMopp/umbrielmod/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/dMopp/umbrielmod/compare/v0.3.0...v0.3.1
