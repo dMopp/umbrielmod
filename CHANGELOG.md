@@ -10,6 +10,20 @@ that section into the next version.
 
 ## [Unreleased]
 
+### Added
+
+- Progress bar while downloading or updating the shader catalogue.
+
+### Changed
+
+- The NixOS instructions use `nix profile add`; `install` is a deprecated alias.
+
+### Fixed
+
+- Clicking *Download* twice no longer starts a second download of the catalogue.
+- A slow connection no longer aborts the catalogue download after five minutes;
+  only five minutes without any progress do.
+
 ## [0.4.0] - 2026-10-30
 
 ### Security

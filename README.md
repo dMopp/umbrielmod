@@ -148,7 +148,7 @@ wrapped package with GTK 4, libadwaita and git, plus desktop entry and icon:
 
 ```bash
 nix run github:dMopp/umbrielmod            # try it
-nix profile install github:dMopp/umbrielmod
+nix profile add github:dMopp/umbrielmod
 ```
 
 or in a flake-based configuration:
@@ -160,7 +160,7 @@ environment.systemPackages = [ inputs.umbrielmod.packages.${pkgs.system}.default
 ```
 
 An overlay is available as `umbrielmod.overlays.default`. Nix installations do
-not update themselves; update with `nix profile upgrade` or `nix flake update`.
+not update themselves; update with `nix profile upgrade umbrielmod` or `nix flake update`.
 `umbriel` still has to be on `PATH`, and Noctalia's icon font is found through
 `XDG_DATA_DIRS` or next to the `noctalia` binary.
 

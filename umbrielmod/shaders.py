@@ -14,9 +14,11 @@ from __future__ import annotations
 
 import os
 import re
+import select
 import shutil
 import subprocess
 import sys
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -82,25 +84,73 @@ def repo_revision(repo: Path | None = None) -> str:
     return proc.stdout.strip()
 
 
-def sync_repo(repo: Path | None = None) -> tuple[bool, str]:
-    """Clone or fast-forward the collection (shallow). Blocking."""
+# git's progress phases as (start, share) of the whole download
+_PROGRESS_PHASES = {"Receiving objects": (0.0, 0.85), "Resolving deltas": (0.85, 0.1), "Updating files": (0.95, 0.05)}
+_PROGRESS_RE = re.compile(rf"({'|'.join(_PROGRESS_PHASES)}):\s+(\d+)%")
+_GIT_STALL_TIMEOUT = 300  # seconds without any output from git
+
+
+def parse_progress(line: str) -> float | None:
+    """Overall fraction (0–1) for one line of ``git --progress`` output."""
+    m = _PROGRESS_RE.search(line)
+    if not m:
+        return None
+    start, share = _PROGRESS_PHASES[m.group(1)]
+    return start + share * int(m.group(2)) / 100
+
+
+def _run_git(cmd: list[str], progress: Callable[[float], None] | None) -> tuple[bool, str]:
+    """Run git and report its progress. Returns (ok, everything but progress lines)."""
+    env = dict(os.environ, GIT_TERMINAL_PROMPT="0", LC_ALL="C")  # the phase names are parsed
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env)
+    fd = proc.stdout.fileno()
+    pending, messages, last = "", [], -1.0
+    try:
+        while True:
+            if not select.select([fd], [], [], _GIT_STALL_TIMEOUT)[0]:
+                raise subprocess.TimeoutExpired(cmd, _GIT_STALL_TIMEOUT)
+            chunk = os.read(fd, 65536)
+            if not chunk:
+                break
+            lines = re.split(r"[\r\n]", pending + chunk.decode("utf-8", "replace"))
+            pending = lines.pop()  # git updates a line with \r, so it may be incomplete
+            for line in lines:
+                fraction = parse_progress(line)
+                if fraction is None:
+                    if line.strip():
+                        messages.append(line)
+                elif fraction > last:
+                    last = fraction
+                    if progress:
+                        progress(fraction)
+        proc.wait()
+    finally:
+        if proc.poll() is None:
+            proc.kill()
+            proc.wait()
+        proc.stdout.close()
+    return proc.returncode == 0, "\n".join(m for m in [*messages, pending] if m.strip())
+
+
+def sync_repo(repo: Path | None = None, progress: Callable[[float], None] | None = None) -> tuple[bool, str]:
+    """Clone or fast-forward the collection (shallow). Blocking; ``progress``
+    is called from the same thread with the overall fraction (0–1)."""
     repo = repo or cache_repo_dir()
-    env = dict(os.environ, GIT_TERMINAL_PROMPT="0")
     fresh = repo.with_name(repo.name + ".new")
     try:
         if (repo / ".git").exists():
             steps = [
-                ["git", "-C", str(repo), "fetch", "--depth", "1", "origin"],
+                ["git", "-C", str(repo), "fetch", "--progress", "--depth", "1", "origin"],
                 ["git", "-C", str(repo), "reset", "--hard", "FETCH_HEAD"],
             ]
         else:  # clone next to it, so an interrupted clone never looks like the catalogue
             repo.parent.mkdir(parents=True, exist_ok=True)
             shutil.rmtree(fresh, ignore_errors=True)
-            steps = [["git", "clone", "--depth", "1", REPO_URL, str(fresh)]]
+            steps = [["git", "clone", "--progress", "--depth", "1", REPO_URL, str(fresh)]]
         for cmd in steps:
-            proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env, timeout=300)
-            if proc.returncode != 0:
-                return False, (proc.stderr or proc.stdout).strip()
+            ok, output = _run_git(cmd, progress)
+            if not ok:
+                return False, output
         if fresh.exists():
             shutil.rmtree(repo, ignore_errors=True)
             fresh.rename(repo)
