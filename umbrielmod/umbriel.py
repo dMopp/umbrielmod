@@ -56,10 +56,10 @@ def validate(config_path: str) -> tuple[bool, str]:
     return proc.returncode == 0, message
 
 
-def msg(action: str) -> tuple[bool, str]:
-    """Send an action to the running compositor."""
+def msg(action: str, *args: str) -> tuple[bool, str]:
+    """Send an action with its arguments (separate words) to the running compositor."""
     try:
-        proc = _run("msg", action)
+        proc = _run("msg", action, *args)
     except UmbrielError as exc:
         return False, str(exc)
     return proc.returncode == 0, (proc.stdout + proc.stderr).strip()
@@ -84,7 +84,14 @@ class Action:
         return self.arg.startswith("<")
 
 
-_ACTION_RE = re.compile(r"^  (\S+?)(?::(\S+))?\s{2,}(.+)$")
+_ACTION_RE = re.compile(r"^  (\S+)(?: (\S.*?))?\s{2,}(\S.*)$")
+
+
+def split_action(action: str) -> tuple[str, str]:
+    """(name, arguments) of a keybind action. Arguments are separate words;
+    ``name:argument`` is how configs for older Umbriel versions wrote them."""
+    m = re.match(r"([^\s:]*)[\s:]?\s*(.*)$", action, re.S)
+    return m.group(1), m.group(2).strip()
 
 
 def parse_actions(help_text: str) -> list[Action]:

@@ -1,3 +1,4 @@
+from umbrielmod.umbriel import split_action
 from umbrielmod.pages.keybinds import compose_bind, find_conflicts, normalize_combo, parse_bind
 
 
@@ -22,3 +23,10 @@ def test_compose_roundtrip():
     value = compose_bind("spawn:kitty", {"repeat": False, "cooldown_ms": 0})
     assert value == {"action": "spawn:kitty", "repeat": False}
     assert parse_bind(value) == ("spawn:kitty", {"repeat": False})
+
+
+def test_split_action():
+    assert split_action("workspace-switch 1") == ("workspace-switch", "1")
+    assert split_action("workspace-switch:1") == ("workspace-switch", "1")
+    assert split_action("spawn foot -e a:b") == ("spawn", "foot -e a:b")
+    assert split_action("window-close") == ("window-close", "")

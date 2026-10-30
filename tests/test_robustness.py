@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from umbrielmod import config, docs, paths, shaders, umbriel, updater
+from umbrielmod import config, docs, paths, preview, shaders, umbriel, updater
 from umbrielmod.config import Config
 
 
@@ -251,3 +251,109 @@ def test_docs_cache_name_matches_refresh():
     assert docs._revision_sha("../../evil") == ""
     write(docs.cache_dir() / f"docs-{sha}.json", json.dumps({"revision": sha}))
     assert docs.Docs.load("0.1.0-gabc123").revision == sha
+
+
+# ------------------------------------------------------------------ current Umbriel syntax
+
+
+HELP = """Usage: umbriel msg <action> [args...]
+
+Available actions, grouped as the cheatsheet groups them:
+
+Apps
+  spawn <cmd...>  Run a command with a launch activation token
+
+Effects
+  effect-border-set <name> [--window <window-id>]      Select a border preset
+  effect-border-reset [<window-id>]                    Clear runtime state
+  window-close                                         Close the window
+"""
+
+
+def test_actions_with_arguments_are_parsed():
+    actions = {a.name: a for a in umbriel.parse_actions(HELP)}
+    assert set(actions) == {"spawn", "effect-border-set", "effect-border-reset", "window-close"}
+    assert actions["effect-border-set"].arg == "<name> [--window <window-id>]"
+    assert actions["effect-border-set"].arg_required and not actions["effect-border-reset"].arg_required
+    assert not actions["window-close"].takes_arg
+    assert actions["spawn"].group == "Apps" and actions["effect-border-set"].group == "Effects"
+
+
+def preview_session(tmp_path, monkeypatch, kind):
+    repo = tmp_path / "repo"
+    d = effect_dir(repo, GOOD)
+    config_file = write(config.config_dir() / "config.toml", "[general]\n")
+    session = preview.PreviewSession(Config(config_file), shaders.load_effect(repo, d))
+    monkeypatch.setattr(type(session), "kind", property(lambda self: kind))
+    sent = []
+    monkeypatch.setattr(umbriel, "msg", lambda *words: (sent.append(words), (True, ""))[1])
+    return session, sent
+
+
+def test_preview_sends_separate_words(tmp_path, monkeypatch):
+    session, sent = preview_session(tmp_path, monkeypatch, "border")
+    assert session.apply_to_window("abc")[0]
+    session.stop()
+    assert sent == [("effect-border-set", "e", "--window", "abc"), ("effect-border-reset", "abc")]
+
+
+def test_preview_global_effect_is_reset(tmp_path, monkeypatch):
+    session, sent = preview_session(tmp_path, monkeypatch, "screen")
+    assert session.set_global(True)[0]
+    session.stop()
+    assert sent == [("effect-screen-set", "e"), ("effect-screen-reset",)]
+
+
+# ------------------------------------------------------------------ config linked in
+
+
+def linked_config(tmp_path) -> tuple[Path, Path]:
+    """Like Nix: the real file is elsewhere and read-only, includes sit next to the link."""
+    store = tmp_path / "store"
+    real = write(store / "abc-umbriel-config.toml", '[include.optional]\nfiles = ["noctalia.toml"]\n')
+    write(store / "unrelated", "must not be copied")
+    write(config.config_dir() / "noctalia.toml", '[colors]\nerror = "#ff0000ff"\n')
+    link = config.config_dir() / "config.toml"
+    os.symlink(real, link)
+    os.chmod(real, 0o444)
+    return link, store
+
+
+def test_linked_config_is_where_it_is_linked_in(tmp_path):
+    link, _store = linked_config(tmp_path)
+    cfg = Config(link)
+    assert cfg.dir == config.config_dir()
+    assert [f.path.name for f in cfg.files] == ["config.toml", "noctalia.toml"]
+    assert cfg.effective(("colors", "error")) == "#ff0000ff"
+    assert preview.preview_path(cfg).parent == config.config_dir()
+
+
+def test_linked_config_validation_copies_only_the_config_dir(tmp_path, monkeypatch):
+    link, _store = linked_config(tmp_path)
+    seen = {}
+
+    def validate(path):
+        root = Path(path).parent
+        seen.update(names=sorted(f.name for f in root.iterdir()), text=Path(path).read_text())
+        return True, "ok"
+
+    monkeypatch.setattr(umbriel, "validate", validate)
+    cfg = Config(link)
+    cfg.main.set(("colors", "warning"), "#00ff00ff")
+    assert cfg.validate()[0]
+    assert seen["names"] == ["config.toml", "noctalia.toml"]
+    assert "#00ff00ff" in seen["text"]  # pending changes of the linked file are validated
+
+
+def test_preview_of_linked_config_writes_next_to_the_link(tmp_path, monkeypatch):
+    link, _store = linked_config(tmp_path)
+    repo = tmp_path / "repo"
+    d = effect_dir(repo, GOOD)
+    replaced = []
+    monkeypatch.setattr(umbriel, "config_replace", lambda path: (replaced.append(path), (True, ""))[1])
+    session = preview.PreviewSession(Config(link), shaders.load_effect(repo, d))
+    assert session.start([]) == (True, "")
+    target = config.config_dir() / preview.PREVIEW_NAME
+    assert replaced == [str(target)] and "noctalia.toml" in target.read_text()
+    session.stop()
+    assert replaced[-1] == str(link) and not target.exists()

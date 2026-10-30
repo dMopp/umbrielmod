@@ -9,6 +9,7 @@ from gi.repository import Adw, Gdk, GLib, Gtk
 from ..context import AppContext
 from ..docs import DOCS_SITE, action_url, section_url
 from ..i18n import N_, _
+from ..umbriel import split_action
 from ..widgets import doc_button, esc
 
 MOD_ORDER = ("mod", "super", "ctrl", "alt", "shift")
@@ -112,7 +113,7 @@ class KeybindsPage(Gtk.Box):
         grouped: dict[str, list] = defaultdict(list)
         for key, value in binds.items():
             action, opts = parse_bind(value)
-            name = action.split(":", 1)[0]
+            name = split_action(action)[0]
             if q and q not in f"{key} {action} {desc_of.get(name, '')}".lower():
                 continue
             if self.conflicts_only.get_active() and key not in conflicts:
@@ -162,7 +163,7 @@ class KeybindsPage(Gtk.Box):
         self._groups.append(g)
 
     def _row(self, key, action, opts, conflict, desc_of) -> Adw.ActionRow:
-        name, _sep, arg = action.partition(":")
+        name, arg = split_action(action)
         desc = desc_of.get(name, "")
         if name == "spawn":
             title = _("Run: {command}").format(command=arg)
@@ -245,7 +246,7 @@ class KeybindDialog(Adw.Dialog):
         # --- action
         g = Adw.PreferencesGroup(title=_("Action"))
         g.set_header_suffix(doc_button(ctx, f"{DOCS_SITE}/actions/", _("Action")))
-        name, _sep, arg = action.partition(":")
+        name, arg = split_action(action)
         if name and not any(a.name == name for a in self.actions):
             from ..umbriel import Action
 
@@ -383,7 +384,7 @@ class KeybindDialog(Adw.Dialog):
         if a.arg_required and not arg:
             self.ctx.toast(_("The action {action} needs an argument {spec}").format(action=a.name, spec=a.arg))
             return
-        action = f"{a.name}:{arg}" if arg else a.name
+        action = f"{a.name} {arg}" if arg else a.name
         opts = {
             "repeat": self.repeat.get_active(),
             "allow_when_locked": self.locked.get_active(),

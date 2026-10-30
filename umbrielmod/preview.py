@@ -8,7 +8,7 @@ and switches the compositor to it with ``umbriel config-replace``. Stopping the
 session switches back to the real file. Nothing the user saved is modified.
 
 Border and window presets are then applied to the preview window only
-(``effect-<slot>-set:<name>/<window-id>``); screen and cursor presets are
+(``effect-<slot>-set <name> --window <window-id>``); screen and cursor presets are
 applied globally on request and reset when the preview closes.
 """
 
@@ -34,7 +34,7 @@ def recover(cfg: cfgmod.Config) -> bool:
     path = preview_path(cfg)
     if not path.exists():
         return False
-    umbriel.config_replace(str(cfg.main.real_path))
+    umbriel.config_replace(str(cfg.main.abs_path))
     path.unlink(missing_ok=True)
     return True
 
@@ -52,7 +52,7 @@ class PreviewSession:
         self.palette: bool | None = None  # None: as configured; else override `palette`
         self.windows: list[tuple[str, int, int]] = []
         self.replaced = False
-        self.applied: list[str] = []  # reset actions to run on stop
+        self.applied: list[tuple[str, ...]] = []  # reset actions to run on stop
 
     @property
     def kind(self) -> str:
@@ -125,31 +125,31 @@ class PreviewSession:
     def apply_to_window(self, window_id: str) -> tuple[bool, str]:
         if self.kind not in ("border", "window"):
             return True, ""
-        ok, msg = umbriel.msg(f"effect-{self.kind}-set:{self.name}/{window_id}")
+        ok, msg = umbriel.msg(f"effect-{self.kind}-set", self.name, "--window", window_id)
         if ok:
-            self.applied.append(f"effect-{self.kind}-reset:{window_id}")
+            self.applied.append((f"effect-{self.kind}-reset", window_id))
         return ok, msg
 
     def set_global(self, enabled: bool) -> tuple[bool, str]:
         """Screen/cursor presets: show on the whole output / pointer."""
         if self.kind not in ("screen", "cursor"):
             return True, ""
-        reset = f"effect-{self.kind}-reset"
+        reset = (f"effect-{self.kind}-reset",)
         if enabled:
-            ok, msg = umbriel.msg(f"effect-{self.kind}-set:{self.name}")
+            ok, msg = umbriel.msg(f"effect-{self.kind}-set", self.name)
             if ok and reset not in self.applied:
                 self.applied.append(reset)
             return ok, msg
         if reset in self.applied:
             self.applied.remove(reset)
-        return umbriel.msg(reset)
+        return umbriel.msg(*reset)
 
     def stop(self) -> None:
         for action in self.applied:
-            umbriel.msg(action)
+            umbriel.msg(*action)
         self.applied.clear()
         if self.replaced:
-            umbriel.config_replace(str(self.cfg.main.real_path))
+            umbriel.config_replace(str(self.cfg.main.abs_path))
             self.replaced = False
             try:
                 preview_path(self.cfg).unlink(missing_ok=True)
