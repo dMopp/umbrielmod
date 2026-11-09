@@ -461,11 +461,11 @@ msgstr ""
 msgid "{events} · {ms} ms"
 msgstr ""
 
-#: umbrielmod/pages/raw.py:104
+#: umbrielmod/pages/raw.py:244
 msgid "Text applied – not saved yet"
 msgstr ""
 
-#: umbrielmod/pages/raw.py:154
+#: umbrielmod/pages/raw.py:294
 msgid "Backup loaded – press “Save” to keep it"
 msgstr ""
 
@@ -473,41 +473,65 @@ msgstr ""
 msgid "Validate"
 msgstr ""
 
-#: umbrielmod/pages/raw.py:71
+#: umbrielmod/pages/raw.py:56
+msgid "Search in the file"
+msgstr ""
+
+#: umbrielmod/pages/raw.py:65
+msgid "Match case"
+msgstr ""
+
+#: umbrielmod/pages/raw.py:67
+msgid "Previous match (Shift+Enter)"
+msgstr ""
+
+#: umbrielmod/pages/raw.py:69
+msgid "Next match (Enter)"
+msgstr ""
+
+#: umbrielmod/pages/raw.py:142
+msgid "No match"
+msgstr ""
+
+#: umbrielmod/pages/raw.py:205
 msgid "Edited – “Apply” loads the text into the editor"
 msgstr ""
 
-#: umbrielmod/pages/raw.py:113
+#: umbrielmod/pages/raw.py:253
 #: umbrielmod/window.py:39
 msgid "Backups"
 msgstr ""
 
-#: umbrielmod/pages/raw.py:142
+#: umbrielmod/pages/raw.py:282
 msgid "This file is no longer part of the configuration"
 msgstr ""
 
-#: umbrielmod/pages/raw.py:90
+#: umbrielmod/pages/raw.py:174
+msgid "{current} of {total}"
+msgstr ""
+
+#: umbrielmod/pages/raw.py:230
 msgid "Invalid"
 msgstr ""
 
-#: umbrielmod/pages/raw.py:129
+#: umbrielmod/pages/raw.py:269
 msgid "Restore"
 msgstr ""
 
-#: umbrielmod/pages/raw.py:135
+#: umbrielmod/pages/raw.py:275
 msgid "No backups yet"
 msgstr ""
 
-#: umbrielmod/pages/raw.py:83
-#: umbrielmod/pages/raw.py:98
+#: umbrielmod/pages/raw.py:223
+#: umbrielmod/pages/raw.py:238
 msgid "TOML error: {error}"
 msgstr ""
 
-#: umbrielmod/pages/raw.py:114
+#: umbrielmod/pages/raw.py:254
 msgid "Before every save a copy is stored in {dir} (the last 50 per file)."
 msgstr ""
 
-#: umbrielmod/pages/raw.py:148
+#: umbrielmod/pages/raw.py:288
 #: umbrielmod/pages/shaders.py:343
 #: umbrielmod/pages/shaders.py:217
 #: umbrielmod/window.py:315
@@ -869,7 +893,7 @@ msgstr ""
 msgid "Must match the preset padding"
 msgstr ""
 
-#: umbrielmod/pages/shaders.py:857
+#: umbrielmod/pages/shaders.py:860
 msgid "Global effects"
 msgstr ""
 
@@ -1059,98 +1083,98 @@ msgstr ""
 msgid "preferred"
 msgstr ""
 
-#: umbrielmod/widgets.py:235
-#: umbrielmod/widgets.py:416
+#: umbrielmod/widgets.py:255
+#: umbrielmod/widgets.py:439
 msgid "Reset to default (removes the key)"
 msgstr ""
 
-#: umbrielmod/widgets.py:319
+#: umbrielmod/widgets.py:342
 msgid "Not set"
 msgstr ""
 
-#: umbrielmod/widgets.py:371
+#: umbrielmod/widgets.py:394
 msgid "TOML value, e.g. \"text\", 1.5, [1, 2] or { a = 1 }"
 msgstr ""
 
-#: umbrielmod/widgets.py:450
+#: umbrielmod/widgets.py:473
 msgid "Add entry"
 msgstr ""
 
-#: umbrielmod/widgets.py:64
+#: umbrielmod/widgets.py:84
 msgid "Suggestions"
 msgstr ""
 
-#: umbrielmod/widgets.py:70
+#: umbrielmod/widgets.py:90
 msgid "Search…"
 msgstr ""
 
-#: umbrielmod/widgets.py:139
+#: umbrielmod/widgets.py:159
 msgid "built-in"
 msgstr ""
 
-#: umbrielmod/widgets.py:143
+#: umbrielmod/widgets.py:163
 msgid "Spring: damping, stiffness"
 msgstr ""
 
-#: umbrielmod/widgets.py:144
+#: umbrielmod/widgets.py:164
 msgid "Bézier curve"
 msgstr ""
 
-#: umbrielmod/widgets.py:413
-#: umbrielmod/widgets.py:426
+#: umbrielmod/widgets.py:436
+#: umbrielmod/widgets.py:449
 msgid "empty"
 msgstr ""
 
-#: umbrielmod/widgets.py:444
+#: umbrielmod/widgets.py:467
 msgid "Remove"
 msgstr ""
 
-#: umbrielmod/widgets.py:40
+#: umbrielmod/widgets.py:60
 msgid "Open the Umbriel documentation"
 msgstr ""
 
-#: umbrielmod/widgets.py:137
+#: umbrielmod/widgets.py:157
 msgid "suppress"
 msgstr ""
 
-#: umbrielmod/widgets.py:141
+#: umbrielmod/widgets.py:161
 msgid "Bézier"
 msgstr ""
 
-#: umbrielmod/widgets.py:142
+#: umbrielmod/widgets.py:162
 msgid "Spring"
 msgstr ""
 
-#: umbrielmod/widgets.py:218
+#: umbrielmod/widgets.py:238
 msgid "Range: {min} – {max}"
 msgstr ""
 
-#: umbrielmod/widgets.py:319
+#: umbrielmod/widgets.py:342
 msgid "Default ({value})"
 msgstr ""
 
-#: umbrielmod/widgets.py:499
+#: umbrielmod/widgets.py:522
 msgid "Add option"
 msgstr ""
 
-#: umbrielmod/widgets.py:220
-#: umbrielmod/widgets.py:203
+#: umbrielmod/widgets.py:240
+#: umbrielmod/widgets.py:223
 msgid "Default: {value}"
 msgstr ""
 
-#: umbrielmod/widgets.py:430
+#: umbrielmod/widgets.py:453
 msgid "Entry {n}"
 msgstr ""
 
-#: umbrielmod/widgets.py:200
+#: umbrielmod/widgets.py:220
 msgid "Set in {file}"
 msgstr ""
 
-#: umbrielmod/widgets.py:223
+#: umbrielmod/widgets.py:243
 msgid "Description taken from {path}"
 msgstr ""
 
-#: umbrielmod/widgets.py:205
+#: umbrielmod/widgets.py:225
 msgid "Not set – Umbriel decides"
 msgstr ""
 

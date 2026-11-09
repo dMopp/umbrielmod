@@ -7,6 +7,7 @@ removes the key again so Umbriel's default applies.
 
 from __future__ import annotations
 
+import locale
 from typing import Callable
 
 import gi
@@ -19,7 +20,7 @@ from . import shaders  # noqa: E402
 from .i18n import _  # noqa: E402
 from .config import TomlFile, parse_literal, toml_literal  # noqa: E402
 from .context import AppContext  # noqa: E402
-from .schema import Option, humanize  # noqa: E402
+from .schema import MAX_DIGITS, Option, format_number, humanize  # noqa: E402
 
 _MISSING = object()
 BUILTIN_CURVES = ("linear", "ease", "easeout", "snappy", "bounce", "elastic")
@@ -31,6 +32,25 @@ def esc(text: str) -> str:
 
 
 # --------------------------------------------------------------------------- small widgets
+
+
+def precise_digits(row: Adw.SpinRow, min_digits: int) -> None:
+    """Let a float spin row keep up to MAX_DIGITS decimals.
+
+    GtkSpinButton rounds the value to its ``digits`` whenever it re-reads its
+    text and refuses typed decimals beyond them, so a fixed 2 would turn 0.125
+    into 0.13. The row keeps MAX_DIGITS and only the display drops trailing
+    zeros (never below *min_digits*). The text uses the locale's decimal
+    separator, as GTK only accepts that one when parsing.
+    """
+    row.set_digits(MAX_DIGITS)
+
+    def output(r):
+        point = locale.localeconv()["decimal_point"] or "."
+        r.set_text(format_number(r.get_value(), min_digits).replace(".", point))
+        return True
+
+    row.connect("output", output)
 
 
 def doc_button(ctx: AppContext, url: str | None, what: str = "") -> Gtk.Button:
@@ -301,14 +321,17 @@ def _make_row(ctx: AppContext, b: OptionBinding, title: str, rebuild: Callable[[
             step, digits = (0.01, 3) if span <= 2 else (0.05, 2) if span <= 20 else (1, 1)
         row = Adw.SpinRow.new_with_range(lo, hi, step)
         row.set_title(esc(title))
-        row.set_digits(digits)
+        if t == "int":
+            row.set_digits(0)
+        else:
+            precise_digits(row, digits)
         val = b.value()
         row.set_value(float(val) if isinstance(val, (int, float)) else max(lo, min(hi, 0)))
         reset = _decorate(ctx, row, b, refresh)
 
         def on_num(*_):
             v = row.get_value()
-            b.set(int(round(v)) if t == "int" else round(v, 6))
+            b.set(int(round(v)) if t == "int" else round(v, MAX_DIGITS))
             reset.set_visible(True)
 
         row.connect("notify::value", on_num)

@@ -10,6 +10,23 @@ that section into the next version.
 
 ## [Unreleased]
 
+### Added
+
+- Search in the raw editor: <kbd>Ctrl</kbd>+<kbd>F</kbd> opens a search bar that
+  highlights every match and shows "n of m"; <kbd>Enter</kbd> /
+  <kbd>Shift</kbd>+<kbd>Enter</kbd> (or the arrow buttons) jump between matches,
+  "Aa" matches case, <kbd>Esc</kbd> closes it.
+
+### Fixed
+
+- Decimal options and shader constants keep up to six decimal places. The
+  number fields had a fixed 1–3 digits, so a value such as `0.125` was shown as
+  `0.13`, rounded to that when the field lost focus, and more decimals could not
+  be typed at all.
+- Closing the window with unsaved changes asks again instead of closing without
+  the dialog, and the raw editor shows "Edited" again after a change (both
+  handlers shadowed the translation function and failed).
+
 ## [0.5.2] - 2026-11-09
 
 ### Security

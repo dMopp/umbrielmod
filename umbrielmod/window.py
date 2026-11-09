@@ -479,7 +479,7 @@ class MainWindow(Adw.ApplicationWindow):
                        else _("The configuration changed on disk and was reloaded"))
         return False
 
-    def _on_close(self, *_):
+    def _on_close(self, *_args):  # not *_: that would shadow the gettext _
         if not self.ctx.cfg.dirty:
             return False
         dlg = Adw.AlertDialog(heading=_("Unsaved changes"),
