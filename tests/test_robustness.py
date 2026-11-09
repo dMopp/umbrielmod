@@ -16,6 +16,7 @@ def isolated(tmp_path, monkeypatch):
     monkeypatch.setenv("XDG_DATA_DIRS", str(tmp_path / "share"))
     monkeypatch.setattr(umbriel, "validate", lambda path: (True, "ok"))
     monkeypatch.setattr(config.shutil, "which", lambda name: None)
+    monkeypatch.setattr(umbriel, "running_config", lambda: None)  # not the compositor of the machine running the tests
 
 
 def write(path: Path, text: str) -> Path:
@@ -357,3 +358,138 @@ def test_preview_of_linked_config_writes_next_to_the_link(tmp_path, monkeypatch)
     assert replaced == [str(target)] and "noctalia.toml" in target.read_text()
     session.stop()
     assert replaced[-1] == str(link) and not target.exists()
+
+
+# ------------------------------------------------------------------ review fixes
+
+
+@pytest.mark.parametrize("companion,extra", [
+    (GOOD.replace('"e"', '"c"').replace("preset.e", "preset.c") + '[keybinds]\n"Mod+X" = "spawn evil"\n', None),
+    (GOOD.replace("preset.e", "preset.c"), ("misc/x.toml", '[general]\nautostart = ["evil"]\n')),
+])
+def test_includes_are_checked_transitively(tmp_path, monkeypatch, companion, extra):
+    repo = tmp_path / "repo"
+    effect_dir(repo, companion, "c")
+    include = '"../c/effect.toml"' + (', "../../misc/x.toml"' if extra else "")
+    if extra:
+        write(repo / extra[0], extra[1])
+    d = effect_dir(repo, GOOD + f"[include]\nfiles = [{include}]\n")
+    effect = shaders.load_effect(repo, d)
+    assert shaders.unsafe_reason(effect)
+    monkeypatch.setattr(shaders, "cache_repo_dir", lambda: repo)
+    assert "e" not in [e.name for e in shaders.catalog()]  # so the live preview never loads it
+    with pytest.raises(shaders.UnsafeEffect):
+        shaders.install_files(effect)
+    assert not shaders.install_root().exists() or not any(shaders.install_root().rglob("*.toml"))
+
+
+def test_include_cycle_and_safe_companion(tmp_path):
+    repo = tmp_path / "repo"
+    effect_dir(repo, GOOD.replace("preset.e", "preset.c") + '[include]\nfiles = ["../e/effect.toml"]\n', "c")
+    d = effect_dir(repo, GOOD + '[include]\nfiles = ["../c/effect.toml"]\n')
+    effect = shaders.load_effect(repo, d)
+    assert shaders.unsafe_reason(effect) == ""
+    dirs = shaders.install_files(effect)
+    assert sorted(x.name for x in dirs) == ["c", "e"]
+
+
+def test_failed_install_leaves_no_directories(tmp_path, monkeypatch):
+    repo = tmp_path / "repo"
+    d = effect_dir(repo, GOOD)
+
+    def broken(*_a, **_k):
+        raise OSError("disk full")
+
+    monkeypatch.setattr(shaders.shutil, "copy2", broken)
+    with pytest.raises(OSError):
+        shaders.install_files(shaders.load_effect(repo, d))
+    assert not (shaders.install_root() / "border" / "e").exists()
+
+
+def test_non_finite_constant_is_not_written():
+    src = "const vec3 tint = vec3(1.0, 0.5, 0.0);\n"
+    const = shaders.parse_constants(src)[0]
+    assert shaders.set_constant(src, const, [float("nan"), 0.0, 0.0]) == src
+    assert "0.25" in shaders.set_constant(src, const, [0.25, 0.0, 0.0])
+
+
+@pytest.mark.parametrize("argv,env,cwd,expected", [
+    (["umbriel"], {"HOME": "/h"}, "/", "/h/.config/umbriel/config.toml"),
+    (["/nix/store/x/bin/.umbriel-wrapped"], {"HOME": "/h", "XDG_CONFIG_HOME": "/xdg"}, "/", "/xdg/umbriel/config.toml"),
+    (["umbriel", "-s", "foot", "-c", "my.toml"], {"HOME": "/h"}, "/w", "/w/my.toml"),
+    (["umbriel", "msg", "config-reload"], {"HOME": "/h"}, "/", None),
+    (["umbriel", "config", "validate", "-c", "x.toml"], {"HOME": "/h"}, "/", None),
+])
+def test_compositor_config_from_command_line(argv, env, cwd, expected):
+    assert umbriel._compositor_config(argv, env, cwd) == expected
+
+
+def test_preview_refuses_a_config_umbriel_is_not_running(tmp_path, monkeypatch):
+    repo = tmp_path / "repo"
+    d = effect_dir(repo, GOOD)
+    other = write(tmp_path / "other" / "config.toml", "[general]\n")
+    replaced = []
+    monkeypatch.setattr(umbriel, "config_replace", lambda path: (replaced.append(path), (True, ""))[1])
+    session = preview.PreviewSession(Config(other), shaders.load_effect(repo, d))
+    ok, message = session.start([])
+    assert not ok and "only works" in message and replaced == []
+    assert not (other.parent / preview.PREVIEW_NAME).exists()
+
+
+def test_recover_switches_back_to_the_running_config(tmp_path, monkeypatch):
+    other = write(tmp_path / "other" / "config.toml", "[general]\n")
+    write(other.parent / preview.PREVIEW_NAME, "[general]\n")
+    running = str(tmp_path / "running.toml")
+    monkeypatch.setattr(umbriel, "running_config", lambda: running)
+    replaced = []
+    monkeypatch.setattr(umbriel, "config_replace", lambda path: (replaced.append(path), (True, ""))[1])
+    assert preview.recover(Config(other))
+    assert replaced == [running] and not (other.parent / preview.PREVIEW_NAME).exists()
+
+
+def test_edited_outside_include_is_validated_with_its_edits(tmp_path, monkeypatch):
+    seen = {}
+
+    def validate(path):
+        main = Path(path).read_text()
+        seen["main"] = main
+        inc = next(line for line in main.splitlines() if "u.toml" in line).split('"')[1]
+        seen["inc"] = Path(inc).read_text()
+        return True, "ok"
+
+    monkeypatch.setattr(umbriel, "validate", validate)
+    outside = write(tmp_path / "noctalia" / "u.toml", '[colors]\nerror = "#000000ff"\n')
+    p = write(tmp_path / "umbriel" / "config.toml", '[include]\nfiles = ["../noctalia/u.toml"]\n')
+    cfg = Config(p)
+    tf = cfg.file_for(outside)
+    tf.set(("colors", "error"), "#ff0000ff")
+    assert cfg.validate()[0]
+    assert "#ff0000ff" in seen["inc"]
+    assert outside.read_text().count("#000000ff") == 1  # the real file is untouched
+
+
+def test_include_that_is_not_a_table_does_not_crash_validation(tmp_path):
+    p = write(tmp_path / "umbriel" / "config.toml", 'include = "x"\n')
+    cfg = Config(p)
+    cfg.main.set(("general", "x"), 1)
+    assert cfg.validate()[0]
+
+
+def test_output_values_of_any_type_fall_back():
+    from umbrielmod.pages import outputs
+
+    assert outputs._position([0], (5, 6)) == (5, 6)
+    assert outputs._position("0,0", (5, 6)) == (5, 6)
+    assert outputs._position([1, 2], (5, 6)) == (1, 2)
+    assert outputs._scale(0, 2.0) == 2.0
+    assert outputs._scale("x", 0) == 1.0
+    assert outputs._scale(1.5, 2.0) == 1.5
+
+
+@pytest.mark.parametrize("args", [["--branch"], ["--version"], ["--branch", "--install"]])
+def test_installer_option_without_value(args):
+    import subprocess
+
+    root = Path(__file__).resolve().parent.parent
+    proc = subprocess.run(["bash", str(root / "install.sh"), *args], capture_output=True, text=True, timeout=30)
+    assert proc.returncode == 2 and "needs a value" in proc.stderr

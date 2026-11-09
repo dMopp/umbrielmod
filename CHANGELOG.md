@@ -10,6 +10,33 @@ that section into the next version.
 
 ## [Unreleased]
 
+### Security
+
+- Catalogue effects are checked including everything they include. An effect
+  that passed the check could include another effect's `effect.toml` or any other
+  file of the collection that sets `keybinds` or `general.autostart`; the live
+  preview then loaded those while it was open. Includes now have to be another
+  safe effect of the collection.
+- The GitHub Actions in the workflows are pinned to commit SHAs (Dependabot keeps
+  them current).
+
+### Fixed
+
+- Installing or uninstalling an effect no longer saves other unsaved changes
+  without asking, and a failed installation leaves no files behind.
+- The live preview only runs for the configuration Umbriel is using and switches
+  back to exactly that file. With `umbrielmod -c other.toml` it used to leave the
+  compositor on `other.toml`.
+- Edited includes outside the config directory (`../noctalia/x.toml`) are
+  validated with their changes before saving, not in the version on disk.
+- After switching the interface language, update checks and the update banner
+  work in the new window.
+- Shader constants never get `nan` or `inf`, which GLSL cannot read.
+- Unvalidated values such as `position = [0]`, `scale = 0` or `include = "x"`
+  no longer crash the outputs page or saving.
+- `install.sh --branch` and `--version` without a value print an error instead
+  of "unbound variable".
+
 ## [0.5.1] - 2026-10-30
 
 ### Fixed

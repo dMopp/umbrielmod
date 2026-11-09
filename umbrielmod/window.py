@@ -47,10 +47,12 @@ CUSTOM_SECTIONS = {"output", "keybinds", "effects", "window_rule"}
 class MainWindow(Adw.ApplicationWindow):
     _update_checked = False  # once per process, not again after a language switch
     _update_installed = ""
+    _current: "MainWindow | None" = None  # timers outlive a window rebuilt for another language
 
     def __init__(self, app: Adw.Application, ctx: AppContext):
         super().__init__(application=app, title="UmbrielMod", default_width=1180, default_height=820)
         self.ctx = ctx
+        MainWindow._current = self
         ctx.toast = self.toast
         ctx.open_uri = self.open_uri
         ctx.on_changed(self._update_state)
@@ -90,9 +92,9 @@ class MainWindow(Adw.ApplicationWindow):
             self._show_update_banner(MainWindow._update_installed)
         elif not MainWindow._update_checked and self._auto_update_enabled():
             MainWindow._update_checked = True
-            GLib.timeout_add_seconds(2, lambda: self.check_updates(quiet=True) and False)
+            GLib.timeout_add_seconds(2, lambda: MainWindow._current.check_updates(quiet=True) and False)
             # long-running sessions: look again every few hours
-            GLib.timeout_add_seconds(UPDATE_INTERVAL, self._periodic_update_check)
+            GLib.timeout_add_seconds(UPDATE_INTERVAL, MainWindow._periodic_update_check)
         self._announce_new_version()
 
     # ----------------------------------------------------------------- layout
@@ -320,10 +322,13 @@ class MainWindow(Adw.ApplicationWindow):
         return (updater.is_managed() and settings.get("auto_update", True) is not False
                 and os.environ.get("UMBRIELMOD_NO_UPDATE") != "1")
 
-    def _periodic_update_check(self):
-        if MainWindow._update_installed or not self._auto_update_enabled():
-            return not MainWindow._update_installed
-        self.check_updates(quiet=True)
+    @staticmethod
+    def _periodic_update_check():
+        win = MainWindow._current
+        if win is None or MainWindow._update_installed:
+            return False
+        if win._auto_update_enabled():
+            win.check_updates(quiet=True)
         return True
 
     def _announce_new_version(self):
@@ -357,11 +362,12 @@ class MainWindow(Adw.ApplicationWindow):
                 GLib.idle_add(done, ok, log)
 
         def done(ok, log):
+            win = MainWindow._current or self  # the window may have been rebuilt meanwhile
             if ok:
                 MainWindow._update_installed = updater.summary()
-                self._show_update_banner(MainWindow._update_installed)
+                win._show_update_banner(MainWindow._update_installed)
             else:
-                self.error_dialog(_("Update failed"), log[-4000:])
+                win.error_dialog(_("Update failed"), log[-4000:])
 
         threading.Thread(target=work, daemon=True).start()
 

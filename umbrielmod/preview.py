@@ -29,12 +29,26 @@ def preview_path(cfg: cfgmod.Config) -> Path:
     return cfg.dir / PREVIEW_NAME
 
 
+def active_config(cfg: cfgmod.Config) -> Path:
+    """The file the running compositor uses (what a preview must switch back to).
+    Without a detectable compositor: Umbriel's default config path."""
+    found = umbriel.running_config()
+    return Path(found) if found else cfgmod.default_config_path()
+
+
+def is_active(cfg: cfgmod.Config) -> bool:
+    """Is the edited configuration the one the compositor is running?"""
+    return os.path.realpath(active_config(cfg)) == os.path.realpath(cfg.main.abs_path)
+
+
 def recover(cfg: cfgmod.Config) -> bool:
     """Undo a preview left behind by a crash. Returns True if one was found."""
     path = preview_path(cfg)
     if not path.exists():
         return False
-    umbriel.config_replace(str(cfg.main.abs_path))
+    # back to what the compositor was started with – not to the edited file,
+    # which may be another config (`umbrielmod -c other.toml`)
+    umbriel.config_replace(str(active_config(cfg)))
     path.unlink(missing_ok=True)
     return True
 
@@ -74,6 +88,10 @@ class PreviewSession:
             self.windows = list(windows)
         if not self.cfg.main.exists:  # nothing to switch back to afterwards
             return False, _("Save the configuration once before using the live preview.")
+        if not self.replaced and not is_active(self.cfg):
+            # switching back would leave the compositor on the edited file
+            return False, _("The live preview only works for the configuration Umbriel is running ({path}).").format(
+                path=active_config(self.cfg))
         try:
             return self._load()
         except Exception as exc:  # unwritable config dir, broken effect files

@@ -304,7 +304,7 @@ class TomlFile:
             parent[old_key] = new
             return
         if new_key in parent:
-            raise KeyError(f"{new_key} existiert bereits")
+            raise KeyError(f"{new_key} already exists")
         _body(parent)._replace(old_key, new_key, new)
 
     def append_table(self, path: Path_, value: dict | None = None) -> int:
@@ -492,14 +492,18 @@ class Config:
             with tempfile.TemporaryDirectory(prefix="umbrielmod-") as tmp:
                 root = Path(tmp) / "umbriel"
                 _copy_config_dir(src, root)
+                outside: dict[Path, Path] = {}  # edited files outside the config dir -> scratch copy
                 for real, text in overrides.items():
                     rel = self._in_config_dir(Path(real))
                     if rel is None:
-                        continue  # outside the config dir: validated in place
-                    target = root / rel
+                        target = Path(tmp) / "outside" / str(len(outside)) / Path(real).name
+                        outside[Path(os.path.realpath(real))] = target
+                        text = _absolute_includes(text, self._linked_dir(Path(real)))
+                    else:
+                        target = root / rel
                     target.parent.mkdir(parents=True, exist_ok=True)
                     target.write_text(text, encoding="utf-8")
-                self._pin_outside_includes(src, root)
+                self._pin_outside_includes(src, root, outside)
                 ok, message = umbriel.validate(str(root / self._in_config_dir(self.main.real_path)))
                 return ok, message.replace(str(root), str(src))
         except OSError as exc:
@@ -513,9 +517,16 @@ class Config:
                 return path.relative_to(base)
         return None
 
-    def _pin_outside_includes(self, src: Path, root: Path) -> None:
+    def _linked_dir(self, real: Path) -> Path:
+        """Directory a file's relative includes are resolved from."""
+        path = next((f.abs_path for f in self.files if f.real_path == Path(os.path.realpath(real))), real)
+        return path.parent
+
+    def _pin_outside_includes(self, src: Path, root: Path, outside: dict[Path, Path] | None = None) -> None:
         """Relative includes leaving the config dir (``../noctalia/x.toml``)
-        do not exist below the scratch copy: make them absolute there."""
+        do not exist below the scratch copy: make them absolute there, and
+        point edited ones (``outside``) at their scratch copy with the edits."""
+        outside = outside or {}
         for f in self.files:
             rel = self._in_config_dir(f.real_path)
             if rel is None:
@@ -526,17 +537,19 @@ class Config:
             except Exception:  # unreadable or invalid
                 continue
             changed = False
-            for table in (doc.get("include"), (doc.get("include") or {}).get("optional")):
-                entries = table.get("files") if isinstance(table, dict) else None
+            for table in _include_tables(doc):
+                entries = table.get("files")
                 if not isinstance(entries, list):
                     continue
                 pinned = []
                 for entry in entries:
                     p = Path(os.path.expanduser(str(entry)))
-                    if not p.is_absolute():
-                        real = Path(os.path.normpath(f.abs_path.parent / p))
-                        if not real.is_relative_to(src):
-                            p, changed = real, True
+                    real = p if p.is_absolute() else Path(os.path.normpath(f.abs_path.parent / p))
+                    copy = outside.get(Path(os.path.realpath(real)))
+                    if copy is not None:
+                        p, changed = copy, True
+                    elif not p.is_absolute() and not real.is_relative_to(src):
+                        p, changed = real, True
                     pinned.append(str(p))
                 if changed:
                     table["files"] = pinned
@@ -576,6 +589,31 @@ class Config:
         self.pending_raw.clear()
         self.resolve_includes()
         return True, message
+
+
+def _include_tables(doc) -> list:
+    """``[include]`` and ``[include.optional]`` when they are tables (a
+    config being edited may have anything there)."""
+    inc = doc.get("include")
+    if not isinstance(inc, dict):
+        return []
+    opt = inc.get("optional")
+    return [inc] + ([opt] if isinstance(opt, dict) else [])
+
+
+def _absolute_includes(text: str, base: Path) -> str:
+    """``text`` with its relative includes made absolute against ``base``
+    (for a copy that is validated somewhere else)."""
+    try:
+        doc = tomlkit.parse(text)
+    except Exception:
+        return text  # the validator reports the syntax error
+    for table in _include_tables(doc):
+        entries = table.get("files")
+        if isinstance(entries, list):
+            paths = [Path(os.path.expanduser(str(e))) for e in entries]
+            table["files"] = [str(p if p.is_absolute() else Path(os.path.normpath(base / p))) for p in paths]
+    return doc.as_string()
 
 
 def _copy_config_dir(src: Path, root: Path) -> None:

@@ -15,6 +15,25 @@ from .schema_page import config_path
 SNAP = 40  # logical pixels
 
 
+def _number(v) -> bool:
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+
+
+def _position(value, live: tuple[int, int]) -> tuple[float, float]:
+    """``position = [x, y]`` from the config; anything else (still unvalidated
+    hand edits) falls back to where the output really is."""
+    if isinstance(value, list) and len(value) == 2 and all(_number(v) for v in value):
+        return value[0], value[1]
+    return live
+
+
+def _scale(value, live: float) -> float:
+    for v in (value, live):
+        if _number(v) and v > 0:
+            return v
+    return 1.0
+
+
 class Arrangement(Gtk.DrawingArea):
     """Outputs drawn as rectangles in logical coordinates; drag to move."""
 
@@ -168,8 +187,8 @@ class OutputsPage(Adw.PreferencesPage):
         for out in live:
             key = self._config_key(out)
             self._keys[out.name] = key
-            pos = tf.get(("output", key, "position")) or list(out.position)
-            scale = tf.get(("output", key, "scale")) or out.scale
+            pos = _position(tf.get(("output", key, "position")), out.position)
+            scale = _scale(tf.get(("output", key, "scale")), out.scale)
             mode = out.current_mode
             mw, mh = (mode.width, mode.height) if mode else (1920, 1080)
             if out.transform in ("90", "270", "flipped-90", "flipped-270"):
