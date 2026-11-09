@@ -163,3 +163,20 @@ class Schema:
 def humanize(key: str) -> str:
     text = key.replace("_", " ").replace("-", " ").strip()
     return text[:1].upper() + text[1:]
+
+
+# Spin rows keep this many decimals internally; the display trims trailing zeros.
+MAX_DIGITS = 6
+
+
+def decimals(value: float) -> int:
+    """Decimal places *value* needs (at most MAX_DIGITS), e.g. 0.125 -> 3."""
+    text = f"{float(value):.{MAX_DIGITS}f}".rstrip("0")
+    return len(text.partition(".")[2])
+
+
+def format_number(value: float, min_digits: int = 0) -> str:
+    """*value* with as many decimals as it needs, but at least *min_digits*."""
+    value = round(float(value), MAX_DIGITS) + 0.0  # also turns -0.0 into 0.0
+    digits = min(max(min_digits, decimals(value)), MAX_DIGITS)
+    return f"{value:.{digits}f}"

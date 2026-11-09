@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import tomlkit
-from gi.repository import Adw, GLib, Gtk, Pango
+from gi.repository import Adw, Gdk, GLib, Gtk, Pango
 
 from .. import config as cfgmod
 from ..context import AppContext
@@ -35,11 +35,144 @@ class RawPage(Gtk.Box):
 
         self.buffer = Gtk.TextBuffer(enable_undo=True)
         self.buffer.connect("changed", self._changed)
-        view = Gtk.TextView(buffer=self.buffer, monospace=True, wrap_mode=Gtk.WrapMode.NONE,
-                            top_margin=8, bottom_margin=8, left_margin=12, right_margin=12)
-        scroller = Gtk.ScrolledWindow(vexpand=True, child=view)
+        self.match_tag = self.buffer.create_tag("search-match", background="rgba(246, 211, 45, 0.45)")
+        self.view = Gtk.TextView(buffer=self.buffer, monospace=True, wrap_mode=Gtk.WrapMode.NONE,
+                                 top_margin=8, bottom_margin=8, left_margin=12, right_margin=12)
+        self.append(self._build_search())
+        scroller = Gtk.ScrolledWindow(vexpand=True, child=self.view)
         self.append(scroller)
+
+        keys = Gtk.ShortcutController(propagation_phase=Gtk.PropagationPhase.CAPTURE)
+        keys.add_shortcut(Gtk.Shortcut(trigger=Gtk.ShortcutTrigger.parse_string("<Control>f"),
+                                       action=Gtk.CallbackAction.new(lambda *_: self.open_search() or True)))
+        self.add_controller(keys)
         self.refresh()
+
+    # ----------------------------------------------------------------- search
+
+    def _build_search(self) -> Gtk.SearchBar:
+        self._matches: list[tuple[int, int]] = []
+        self._match = -1
+        self.search = Gtk.SearchEntry(hexpand=True, placeholder_text=_("Search in the file"))
+        self.search.connect("search-changed", lambda *_: self._find())
+        self.search.connect("activate", lambda *_: self._step(1))
+        self.search.connect("next-match", lambda *_: self._step(1))
+        self.search.connect("previous-match", lambda *_: self._step(-1))
+        self.search.connect("stop-search", lambda *_: self.close_search())
+        keys = Gtk.EventControllerKey()
+        keys.connect("key-pressed", self._search_key)
+        self.search.add_controller(keys)
+        self.case = Gtk.ToggleButton(label="Aa", tooltip_text=_("Match case"))
+        self.case.connect("toggled", lambda *_: self._find())
+        prev = Gtk.Button(icon_name="go-up-symbolic", tooltip_text=_("Previous match (Shift+Enter)"))
+        prev.connect("clicked", lambda *_: self._step(-1))
+        nxt = Gtk.Button(icon_name="go-down-symbolic", tooltip_text=_("Next match (Enter)"))
+        nxt.connect("clicked", lambda *_: self._step(1))
+        self.match_label = Gtk.Label(width_chars=8, xalign=1)
+        self.match_label.add_css_class("dim-label")
+        nav = Gtk.Box(css_classes=["linked"])
+        nav.append(prev)
+        nav.append(nxt)
+        box = Gtk.Box(spacing=6)
+        for w in (self.search, self.match_label, self.case, nav):
+            box.append(w)
+        clamp = Adw.Clamp(maximum_size=640, child=box)
+        self.search_bar = Gtk.SearchBar(child=clamp, show_close_button=True)
+        self.search_bar.connect_entry(self.search)
+        self.search_bar.connect("notify::search-mode-enabled", self._search_mode)
+        return self.search_bar
+
+    def open_search(self):
+        sel = self.buffer.get_selection_bounds()
+        if sel and sel[0].get_line() == sel[1].get_line():
+            self.search.set_text(self.buffer.get_text(sel[0], sel[1], False))
+        self.search_bar.set_search_mode(True)
+        self.search.grab_focus()
+        self.search.select_region(0, -1)
+        self._find()
+
+    def close_search(self):
+        self.search_bar.set_search_mode(False)
+
+    def _search_mode(self, *_):
+        if self.search_bar.get_search_mode():
+            return
+        self._clear_matches()
+        self.match_label.set_label("")
+        self.view.grab_focus()
+
+    def _search_key(self, _ctrl, keyval, _code, state):
+        if keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter) and state & Gdk.ModifierType.SHIFT_MASK:
+            self._step(-1)
+            return True
+        return False
+
+    def _clear_matches(self):
+        start, end = self.buffer.get_bounds()
+        self.buffer.remove_tag(self.match_tag, start, end)
+        self._matches = []
+        self._match = -1
+
+    def _find(self, keep: int | None = None, select: bool = True):
+        """Highlight every match and select the first one at or after *keep* (default: the cursor).
+
+        With ``select=False`` (while the user types in the text) only the
+        highlights and the counter follow, the cursor stays where it is.
+        """
+        if self._loading or not self.search_bar.get_search_mode():
+            return
+        self._clear_matches()
+        needle = self.search.get_text()
+        if not needle:
+            self.match_label.set_label("")
+            self.search.remove_css_class("error")
+            return
+        flags = Gtk.TextSearchFlags.TEXT_ONLY
+        if not self.case.get_active():
+            flags |= Gtk.TextSearchFlags.CASE_INSENSITIVE
+        it = self.buffer.get_start_iter()
+        while (found := it.forward_search(needle, flags, None)) is not None:
+            start, end = found
+            self.buffer.apply_tag(self.match_tag, start, end)
+            self._matches.append((start.get_offset(), end.get_offset()))
+            if end.equal(it):  # zero-length guard
+                break
+            it = end
+        if not self._matches:
+            self.match_label.set_label(_("No match"))
+            self.search.add_css_class("error")
+            return
+        self.search.remove_css_class("error")
+        if keep is None:
+            keep = self.buffer.get_iter_at_mark(self.buffer.get_insert()).get_offset()
+            sel = self.buffer.get_selection_bounds()
+            if sel:
+                keep = sel[0].get_offset()
+        self._match = next((i for i, (s, _e) in enumerate(self._matches) if s >= keep), 0)
+        if select:
+            self._show_match()
+        else:
+            self._update_count()
+
+    def _step(self, delta: int):
+        if not self.search_bar.get_search_mode():
+            return
+        if not self._matches:
+            self._find()
+            return
+        self._match = (self._match + delta) % len(self._matches)
+        self._show_match()
+
+    def _show_match(self):
+        s, e = self._matches[self._match]
+        start, end = self.buffer.get_iter_at_offset(s), self.buffer.get_iter_at_offset(e)
+        self.buffer.select_range(start, end)
+        self.view.scroll_to_iter(start, 0.1, False, 0, 0)
+        self._update_count()
+
+    def _update_count(self):
+        self.match_label.set_label(_("{current} of {total}").format(current=self._match + 1,
+                                                                    total=len(self._matches)))
 
     def _current(self) -> cfgmod.TomlFile:
         idx = self.files.get_selected()
@@ -64,11 +197,18 @@ class RawPage(Gtk.Box):
         self._loading = False
         self._edited = False
         self.status.set_label(str(tf.path))
+        self._find(keep=0)
 
-    def _changed(self, *_):
+    def _changed(self, *_args):  # not *_: that would shadow the gettext _
         if not self._loading:
             self._edited = True
             self.status.set_label(_("Edited – “Apply” loads the text into the editor"))
+            if self.search_bar.get_search_mode():
+                GLib.idle_add(self._refind)
+
+    def _refind(self):
+        self._find(select=False)
+        return False
 
     def _text(self) -> str:
         start, end = self.buffer.get_bounds()

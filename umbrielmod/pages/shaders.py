@@ -16,7 +16,7 @@ from ..config import TomlFile, toml_literal
 from ..context import AppContext
 from ..docs import DOCS_SITE, section_url
 from ..i18n import N_, _
-from ..widgets import AnimatedPicture, color_swatches, doc_button, esc, icon_button, option_doc_url, option_row, rgba_from_string, rgba_to_string
+from ..widgets import AnimatedPicture, color_swatches, doc_button, esc, icon_button, option_doc_url, option_row, precise_digits, rgba_from_string, rgba_to_string
 from .schema_page import MapGroup, leaf_groups
 
 ANIMATION_EVENTS_LABELS = {
@@ -796,7 +796,10 @@ class PresetPage(Adw.NavigationPage):
                 row = Adw.SpinRow.new_with_range(lo, span, 1 if c.type == "int" else 0.01)
                 row.set_title(title)
                 row.set_subtitle(sub)
-                row.set_digits(0 if c.type == "int" else 3)
+                if c.type == "int":
+                    row.set_digits(0)
+                else:
+                    precise_digits(row, 3)
                 row.set_value(v)
                 row.connect("notify::value", lambda r, *_, c=c: write(c, [r.get_value()]))
             elif c.is_color:

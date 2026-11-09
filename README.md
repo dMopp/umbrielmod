@@ -95,7 +95,7 @@ Without Noctalia the regular libadwaita look is used.
     move a window). Effects that are not installed yet are loaded through a
     temporary copy of your saved config, which is restored when the preview
     closes.
-- **Raw editor** for any loaded file, **undo/redo**, and a backup browser.
+- **Raw editor** for any loaded file with search (Ctrl+F), **undo/redo**, and a backup browser.
 
 ## Configuration safety
 
