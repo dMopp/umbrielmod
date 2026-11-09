@@ -10,6 +10,8 @@ that section into the next version.
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-11-09
+
 ### Security
 
 - Catalogue effects are checked including everything they include. An effect
@@ -183,7 +185,8 @@ that section into the next version.
   constants.
 - `curl … | bash` installer.
 
-[Unreleased]: https://github.com/dMopp/umbrielmod/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/dMopp/umbrielmod/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/dMopp/umbrielmod/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/dMopp/umbrielmod/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/dMopp/umbrielmod/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/dMopp/umbrielmod/compare/v0.3.1...v0.4.0
