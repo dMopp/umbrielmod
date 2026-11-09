@@ -12,6 +12,7 @@ Only settings that Umbriel itself understands are exposed:
 
 from __future__ import annotations
 
+import math
 import os
 import re
 import select
@@ -327,22 +328,37 @@ class Effect:
         return out
 
 
-def unsafe_reason(effect: Effect) -> str:
-    """Why a catalogue effect must not be loaded ("" when it is fine)."""
+def unsafe_reason(effect: Effect, _seen: set[Path] | None = None) -> str:
+    """Why a catalogue effect must not be loaded ("" when it is fine).
+
+    Umbriel follows includes, so everything an effect pulls in is checked as
+    well: an include must be another effect's ``effect.toml`` inside the
+    collection, and that effect must be safe in turn."""
+    seen = set() if _seen is None else _seen
     root = effect.root.resolve()
-    if not effect.effect_toml.resolve().is_relative_to(root):
+    toml = effect.effect_toml.resolve()
+    if toml in seen:
+        return ""
+    seen.add(toml)
+    if not toml.is_relative_to(root):
         return "effect.toml is outside the collection"
     extra = set(_read_toml(effect.effect_toml)) - EFFECT_TABLES
     if extra:
         return f"effect.toml sets {', '.join(sorted(extra))}"
-    for inc in effect.includes:
-        if inc.startswith("~") or not (effect.dir / inc).resolve().is_relative_to(root):
-            return f"include outside the collection: {inc}"
     base = effect.dir.resolve()
     for preset in effect.presets.values():
         shader = preset.get("shader")
         if isinstance(shader, str) and (shader.startswith("~") or not (effect.dir / shader).resolve().is_relative_to(base)):
             return f"shader outside the effect: {shader}"
+    for inc in effect.includes:
+        target = (effect.dir / inc).resolve()
+        if inc.startswith("~") or not target.is_relative_to(root):
+            return f"include outside the collection: {inc}"
+        if target.name != "effect.toml" or not target.is_file():
+            return f"include is not another effect: {inc}"
+        reason = unsafe_reason(load_effect(root, target.parent), seen)
+        if reason:
+            return f"include {inc}: {reason}"
     return ""
 
 
@@ -396,9 +412,13 @@ def install_files(effect: Effect) -> list[Path]:
     Shaders already installed and edited locally are kept as ``.local`` copies
     so updating never silently discards tuning. Returns the installed dirs.
     """
-    done: list[Path] = []
-    pending = [effect.dir.resolve()]
+    # check everything (companions included) before the first file is copied
+    reason = unsafe_reason(effect)
+    if reason:
+        raise UnsafeEffect(f"{effect.rel}: {reason}")
     repo_root = effect.root.resolve()
+    plan: list[tuple[Effect, Path]] = []
+    pending = [effect.dir.resolve()]
     while pending:
         src = pending.pop()
         try:
@@ -406,28 +426,35 @@ def install_files(effect: Effect) -> list[Path]:
         except ValueError:
             continue
         dst = install_root() / rel
-        if dst in done:
+        if any(d == dst for _e, d in plan):
             continue
-        dst.mkdir(parents=True, exist_ok=True)
         eff = load_effect(repo_root, src)
-        reason = unsafe_reason(eff)
-        if reason:
-            raise UnsafeEffect(f"{rel}: {reason}")
-        for f in src.iterdir():
-            if f.is_file() and not f.is_symlink() and f.suffix in (".toml", ".glsl", ".md") and f.name != "config.toml":
-                target = dst / f.name
-                if f.suffix == ".glsl" and target.exists():
-                    orig = dst / (f.name + ".orig")
-                    if orig.exists() and orig.read_bytes() != target.read_bytes():
-                        shutil.copy2(target, dst / (f.name + ".local"))
-                shutil.copy2(f, target)
-                if f.suffix == ".glsl":
-                    shutil.copy2(f, dst / (f.name + ".orig"))
-        for lic in eff.license_files:
-            shutil.copy2(lic, dst / lic.name)
-        done.append(dst)
+        plan.append((eff, dst))
         pending.extend(eff.companions())
-    return done
+    created = [dst for _e, dst in plan if not dst.exists()]
+    try:
+        return [_copy_effect(eff, dst) for eff, dst in plan]
+    except BaseException:
+        for dst in created:  # no half-installed effect directories
+            shutil.rmtree(dst, ignore_errors=True)
+        raise
+
+
+def _copy_effect(eff: Effect, dst: Path) -> Path:
+    dst.mkdir(parents=True, exist_ok=True)
+    for f in eff.dir.iterdir():
+        if f.is_file() and not f.is_symlink() and f.suffix in (".toml", ".glsl", ".md") and f.name != "config.toml":
+            target = dst / f.name
+            if f.suffix == ".glsl" and target.exists():
+                orig = dst / (f.name + ".orig")
+                if orig.exists() and orig.read_bytes() != target.read_bytes():
+                    shutil.copy2(target, dst / (f.name + ".local"))
+            shutil.copy2(f, target)
+            if f.suffix == ".glsl":
+                shutil.copy2(f, dst / (f.name + ".orig"))
+    for lic in eff.license_files:
+        shutil.copy2(lic, dst / lic.name)
+    return dst
 
 
 def remove_files(effect: Effect) -> None:
@@ -704,6 +731,9 @@ def format_value(const: ShaderConst, values: list) -> str:
 
 
 def set_constant(src: str, const: ShaderConst, values: list) -> str:
+    """Replace a constant's value; non-finite numbers (no GLSL literal) leave ``src`` unchanged."""
+    if const.type != "bool" and not all(math.isfinite(float(v)) for v in values):
+        return src
     lines = src.splitlines(keepends=True)
     line = lines[const.line]
     lines[const.line] = line[: const.start] + format_value(const, values) + line[const.end:]

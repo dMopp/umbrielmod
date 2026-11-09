@@ -242,6 +242,59 @@ def windows() -> list[dict]:
     return [w for w in items if isinstance(w, dict)] if isinstance(items, list) else []
 
 
+_COMPOSITOR_NAMES = (BINARY, f".{BINARY}-wrapped")  # Nix wraps the binary
+
+
+def _compositor_config(argv: list[str], environ: dict[str, str], cwd: str) -> str | None:
+    """Config path of a ``umbriel [-s cmd] [-c config]`` command line; None
+    when the arguments are a subcommand (``umbriel msg …``), not the compositor."""
+    config = None
+    args = iter(argv[1:])
+    for arg in args:
+        if arg == "-c":
+            config = next(args, None)
+        elif arg == "-s":
+            next(args, None)
+        else:
+            return None
+    if config:
+        return os.path.normpath(os.path.join(cwd, os.path.expanduser(config)))
+    home = environ.get("XDG_CONFIG_HOME", "")
+    if not os.path.isabs(home):
+        home = os.path.join(environ.get("HOME") or os.path.expanduser("~"), ".config")
+    return os.path.join(home, "umbriel", "config.toml")
+
+
+def running_config() -> str | None:
+    """The config file the running compositor (of this user) was started with.
+
+    Umbriel cannot be asked which file it has loaded, so this reads its command
+    line. None when there is no compositor or more than one."""
+    found: dict[str, str] = {}  # real path -> path as given (a link keeps its includes' base)
+    uid = os.getuid()
+    try:
+        pids = [p for p in os.listdir("/proc") if p.isdigit()]
+    except OSError:
+        return None
+    for pid in pids:
+        base = f"/proc/{pid}"
+        try:
+            if os.stat(base).st_uid != uid:
+                continue
+            with open(f"{base}/cmdline", "rb") as fh:
+                argv = [a.decode("utf-8", "replace") for a in fh.read().split(b"\0") if a]
+            if not argv or os.path.basename(argv[0]) not in _COMPOSITOR_NAMES:
+                continue
+            with open(f"{base}/environ", "rb") as fh:
+                env = dict(e.decode("utf-8", "replace").partition("=")[::2] for e in fh.read().split(b"\0") if e)
+            path = _compositor_config(argv, env, os.readlink(f"{base}/cwd"))
+        except OSError:
+            continue
+        if path:
+            found.setdefault(os.path.realpath(path), path)
+    return next(iter(found.values())) if len(found) == 1 else None
+
+
 def config_replace(path: str) -> tuple[bool, str]:
     """Make the running compositor load (and watch) another config file."""
     try:

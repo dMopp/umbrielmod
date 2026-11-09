@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import math
+import queue
 import re
 import threading
+from collections.abc import Callable
 from pathlib import Path
 
 from gi.repository import Adw, Gdk, GdkPixbuf, GLib, Gtk, Pango
@@ -50,29 +53,32 @@ def _load_thumb(path: Path, width: int, height: int, picture: Gtk.Picture):
             return
         GLib.idle_add(lambda: picture.set_paintable(Gdk.Texture.new_for_pixbuf(pb)) and False)
 
-    _THUMB_POOL.append(work)
-    _kick_pool()
+    _THUMBS.put(work)
+    _start_thumb_worker()
 
 
-_THUMB_POOL: list = []
-_POOL_RUNNING = [False]
+# one worker thread decodes the thumbnails in order
+_THUMBS: queue.SimpleQueue = queue.SimpleQueue()
+_THUMB_WORKER: list[threading.Thread] = []
+_THUMB_LOCK = threading.Lock()
 
 
-def _kick_pool():
-    if _POOL_RUNNING[0]:
-        return
-    _POOL_RUNNING[0] = True
+def _start_thumb_worker():
+    with _THUMB_LOCK:
+        if _THUMB_WORKER:
+            return
 
-    def run():
-        try:
-            while _THUMB_POOL:
-                _THUMB_POOL.pop(0)()
-        finally:
-            _POOL_RUNNING[0] = False
-        if _THUMB_POOL:  # queued while this thread was finishing
-            _kick_pool()
+        def run():
+            while True:
+                job = _THUMBS.get()
+                try:
+                    job()
+                except Exception:  # one broken image must not stop the others
+                    pass
 
-    threading.Thread(target=run, daemon=True).start()
+        t = threading.Thread(target=run, daemon=True)
+        _THUMB_WORKER.append(t)
+        t.start()
 
 
 def _with_header(content: Gtk.Widget, end: Gtk.Widget | None = None) -> Gtk.Widget:
@@ -137,7 +143,27 @@ class ShadersPage(Gtk.Box):
     def show_config(self, tf: TomlFile, preset: str, effect: shaders.Effect | None):
         self.nav.push(PresetPage(self, tf, preset, effect))
 
+    def _confirm_unsaved(self, then: Callable[[], None]):
+        """Installing and uninstalling save the configuration. Unsaved edits
+        would be saved with it, so ask first instead of doing that silently."""
+        if not self.ctx.cfg.dirty:
+            then()
+            return
+        dlg = Adw.AlertDialog(
+            heading=_("Unsaved changes"),
+            body=_("This saves the configuration, including your unsaved changes."),
+        )
+        dlg.add_response("cancel", _("Cancel"))
+        dlg.add_response("save", _("Save and continue"))
+        dlg.set_response_appearance("save", Adw.ResponseAppearance.SUGGESTED)
+        dlg.connect("response", lambda _d, r: r == "save" and then())
+        dlg.present(self.window)
+
     def install(self, effect: shaders.Effect, activate: bool):
+        self._confirm_unsaved(lambda: self._install(effect, activate))
+
+    def _install(self, effect: shaders.Effect, activate: bool):
+        was_installed = shaders.is_installed(effect)
         try:
             shaders.install_files(effect)
         except OSError as exc:
@@ -157,6 +183,11 @@ class ShadersPage(Gtk.Box):
         else:
             self.ctx.cfg.undo()
             self.ctx.changed()
+            if not was_installed:  # nothing refers to the files: do not leave them behind
+                try:
+                    shaders.remove_files(installed)
+                except OSError:
+                    pass
         self.window.refresh_all()
 
     def uninstall(self, effect: shaders.Effect):
@@ -166,6 +197,8 @@ class ShadersPage(Gtk.Box):
         body = _("The files in {dir} will be deleted.").format(dir=shaders.installed_dir(effect))
         if refs:
             body += "\n\n" + _("These selections will be removed:") + "\n" + "\n".join("• " + ".".join(map(str, r)) for r in refs)
+        if self.ctx.cfg.dirty:
+            body += "\n\n" + _("This saves the configuration, including your unsaved changes.")
         dlg = Adw.AlertDialog(heading=_("Uninstall {name}?").format(name=effect.title), body=body)
         dlg.add_response("cancel", _("Cancel"))
         dlg.add_response("remove", _("Uninstall"))
@@ -789,7 +822,8 @@ class PresetPage(Adw.NavigationPage):
                     except ValueError:
                         r.add_css_class("error")
                         return
-                    if len(vals) != int(c.type[-1]):
+                    # GLSL has no literal for nan/inf
+                    if len(vals) != int(c.type[-1]) or not all(math.isfinite(v) for v in vals):
                         r.add_css_class("error")
                         return
                     r.remove_css_class("error")

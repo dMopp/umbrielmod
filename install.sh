@@ -32,8 +32,10 @@ while [[ $# -gt 0 ]]; do
     --install) MODE="install" ;;
     --uninstall) MODE="uninstall" ;;
     --skip-deps) SKIP_DEPS=1 ;;
-    --branch) BRANCH="$2"; shift ;;
-    --version) VERSION="${2#v}"; shift ;;
+    --branch|--version)
+      if [[ $# -lt 2 || -z "$2" || "$2" == -* ]]; then echo "Option $1 needs a value" >&2; exit 2; fi
+      if [[ "$1" == --branch ]]; then BRANCH="$2"; else VERSION="${2#v}"; fi
+      shift ;;
     -h|--help) sed -n '2,13p' "$0" 2>/dev/null || true; exit 0 ;;
     *) echo "Unknown option: $1" >&2; exit 2 ;;
   esac
