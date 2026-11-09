@@ -1,6 +1,6 @@
 """UmbrielMod – GTK4/libadwaita configuration editor for the Umbriel compositor."""
 
-__version__ = "0.5.2"
+__version__ = "0.6.0"
 
 try:  # set GI versions before any submodule imports gi.repository
     import gi
